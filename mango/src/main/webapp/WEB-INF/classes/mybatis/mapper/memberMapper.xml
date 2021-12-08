@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	<select id="loginMember" parameterType="String" resultType="com.sp.mango.member.Member">
+		SELECT userid, userPwd, userName, userNickName, regDate, update_Date
+		FROM member
+		WHERE userId = #{userId} AND memberEnable != 0
+	</select>
+</mapper>
