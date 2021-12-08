@@ -64,8 +64,12 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value = "member", method = RequestMethod.GET)
-	public String memberForm () {
-		return "";
+	public String memberForm (
+			Model model
+			) {
+		
+		model.addAttribute("mode","member");
+		return ".member.member";
 	}
 	
 	@RequestMapping(value = "member", method = RequestMethod.POST)
