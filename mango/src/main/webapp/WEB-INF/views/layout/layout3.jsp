@@ -13,10 +13,11 @@
 	
 	<!-- 부트 스트랩 적용위한 링크들 -->
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap2.css">
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/font-awesome.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/font-awesome.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/animate.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/templatemo-misc.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/templatemo-style.css">
+
 
 	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
 	
