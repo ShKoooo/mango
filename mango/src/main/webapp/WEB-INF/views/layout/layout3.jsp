@@ -31,6 +31,13 @@
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/util-jquery.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/menu.js"></script>
+	
+	
+	<script src="${pageContext.request.contextPath}/resources/js/vendor/jquery-1.11.0.min.js"></script>
+    <script>window.jQuery || document.write('<script src="${pageContext.request.contextPath}/resources/js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
+    <script src="${pageContext.request.contextPath}/resources/js/plugins.js"></script>
+    <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>	
+	
 </head>
 
 <body>
@@ -38,7 +45,7 @@
 <header>
     <tiles:insertAttribute name="header"/>
 </header>
-	
+
 <main>
     <tiles:insertAttribute name="body"/>
 </main>

@@ -65,20 +65,19 @@
                         <ul class="sf-menu hidden-xs hidden-sm">
                           
                     <!--    <li class="active"><a href="index.html">Home</a></li>	-->
-                            <li><a href="#">사고팔기</a>
+                            <li><a href="">사고팔기</a>
                                 <ul>
-                                    <li><a href="projects-2.html">중고거래</a></li>
-                                    <li><a href="projects-3.html">기프티콘 거래</a></li>
+                                    <li><a href="">중고거래</a></li>
+                                    <li><a href="">기프티콘 거래</a></li>
                                 </ul>
                             </li>
-                            <li><a href="services.html">동네 커뮤니티</a></li>
-                            <li><a href="#">고객센터</a>
+                            <li><a href="">동네 커뮤니티</a></li>
+                            <li><a href="">고객센터</a>
                                 <ul>
                                     <li><a href="blog.html">자주하는 질문</a></li>
                                     <li><a href="blog-single.html">1:1 문의</a></li>
                                 </ul>
                             </li>
-                           <!-- <li><a href="contact.html">Contact</a></li>  --> 
                         </ul>
                     </div> <!-- /.menu-wrapper -->
                 </div> <!-- /.row -->
@@ -87,17 +86,21 @@
                 <ul>
                     <li><a href="#">사고팔기</a>
                         <ul>
-                            <li><a href="projects-2.html">중고거래</a></li>
-                            <li><a href="projects-3.html">기프티콘 거래</a></li>
+                            <li><a href="">중고거래</a></li>
+                            <li><a href="">기프티콘 거래</a></li>
                         </ul>
                     </li>
-                    <li><a href="services.html">동네 커뮤니티</a></li>
+                    <li><a href="">동네 커뮤니티</a></li>
                     <li><a href="#">고객센터</a>
                         <ul>
-                            <li><a href="blog.html">자주하는 질문</a></li>
-                            <li><a href="blog-single.html">1:1 문의</a></li>
+                            <li><a href="">자주하는 질문</a></li>
+                            <li><a href="">1:1 문의</a></li>
                         </ul>
                     </li>
                 </ul>
             </div>
 	</header> <!-- /.site-header -->
+	
+	
+	
+	

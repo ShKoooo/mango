@@ -24,14 +24,9 @@
 
     
     <body>
-        <!--[if lt IE 7]>
-            <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-        <![endif]-->
-
-
-        <section id="pageloader">
+      	<section id="pageloader">
             <div class="loader-item fa fa-spin colored-border"></div>
-        </section> <!-- /#pageloader -->
+    	</section> <!-- /#pageloader --> 
        
 
         <div class="swiper-container">
@@ -72,13 +67,7 @@
 
             </div> <!-- /.swiper-wrapper -->
         </div> <!-- /.swiper-container -->
-
-   
-        <script src="resources/js/vendor/jquery-1.11.0.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
-        <script src="resources/js/plugins.js"></script>
-        <script src="resources/js/main.js"></script>
-
+        
         <!-- Preloader -->
        <script type="text/javascript">
             //<![CDATA[
@@ -89,10 +78,6 @@
             })
             //]]>
         </script>
-<!-- 
-<div class="body-container">       
-</div>
-  -->   
     </body>
     
 
