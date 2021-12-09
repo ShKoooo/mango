@@ -1473,3 +1473,12 @@ ul.archive-list li h3 a:hover {
 .map-canvas {
   height: 425px;
 }
+
+@font-face {
+	font-family: 'ImcreSoojin';
+	src: url(${pageContext.request.contextPath}/resources/fonts/ImcreSoojin.ttf) format('truetype');
+}
+
+.jalnanfont {
+	font-family: ImcreSoojin
+}

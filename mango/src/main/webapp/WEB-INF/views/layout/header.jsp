@@ -6,9 +6,9 @@
 	<header class="site-header container-fluid">
             <div class="top-header">
                 <div class="logo col-md-6 col-sm-6">
-                    <span>..</span> <!-- 아이콘 자리 -->
-                    <h1><a href="${pageContext.request.contextPath}/"><em>망고</em>마켓</a></h1>
-                </div> <!-- /.logo -->
+                    <span>..</span>
+                    <h1><a class="jalnanfont" href="${pageContext.request.contextPath}/" style="text-decoration: none;"><em>망고</em>마켓</a></h1>
+                </div>
                 
          	<div class="container">
 	         	<div class="row">
@@ -41,22 +41,31 @@
 					</div>
 	         	</div>	
 	         </div>		
-            </div> <!-- /.top-header -->
+            </div>
             
           
             <div class="main-header">
                 <div class="row">
                     <div class="main-header-left col-md-3 col-sm-6 col-xs-8">
                         <a id="search-icon" class="btn-left fa fa-search" href="#search-overlay"></a>
-                        <div id="search-overlay">
-                            <a href="#search-overlay" class="close-search"><i class="fa fa-times-circle"></i></a>
-                            <div class="search-form-holder">
-                                <h2>Type keywords and hit enter</h2>
-                                <form id="search-form" action="#">
-                                    <input type="search" name="s" placeholder="" autocomplete="off" />
-                                </form>
-                            </div>
-                        </div><!-- #search-overlay -->
+
+						<nav class="navbar navbar-light bg-light">
+						  <div class="container-fluid">
+						    <form class="d-flex">
+						      
+						      <button class="btn btn-outline-success" type="submit">Search</button>
+						    </form>
+						  </div>
+						</nav>
+
+						<p>
+						  <button id="search-icon" class="btn-left fa fa-search btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+						  </button>
+						</p>
+						<div class="collapse" id="collapseExample">
+						    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+						</div>
+                        
                         <a href="#" class="btn-left arrow-left fa fa-angle-left"></a>
                         <a href="#" class="btn-left arrow-right fa fa-angle-right"></a>
                     </div> <!-- /.main-header-left -->
@@ -64,7 +73,6 @@
                         <a href="#" class="toggle-menu visible-sm visible-xs"><i class="fa fa-bars"></i></a>
                         <ul class="sf-menu hidden-xs hidden-sm">
                           
-                    <!--    <li class="active"><a href="index.html">Home</a></li>	-->
                             <li><a href="">사고팔기</a>
                                 <ul>
                                     <li><a href="">중고거래</a></li>
@@ -79,9 +87,9 @@
                                 </ul>
                             </li>
                         </ul>
-                    </div> <!-- /.menu-wrapper -->
-                </div> <!-- /.row -->
-            </div> <!-- /.main-header -->
+                    </div>
+                </div>
+            </div>
             <div id="responsive-menu">
                 <ul>
                     <li><a href="#">사고팔기</a>
@@ -99,8 +107,4 @@
                     </li>
                 </ul>
             </div>
-	</header> <!-- /.site-header -->
-	
-	
-	
-	
+	</header>

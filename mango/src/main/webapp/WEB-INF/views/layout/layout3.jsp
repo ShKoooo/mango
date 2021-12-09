@@ -11,7 +11,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><tiles:insertAttribute name="title"/></title>
 	
-	<!-- 부트 스트랩 적용위한 링크들 -->
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap2.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/font-awesome.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/animate.css">
@@ -19,7 +18,7 @@
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/templatemo-style.css">
 
 
-	<link rel="icon" href="data:;base64,iVBORw0KGgo=">
+	<link rel="icon" href="data:;base64,iVBORw0KGgo=">	
 	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/vendor/bootstrap5/css/bootstrap.min.css" type="text/css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/vendor/bootstrap5/icon/bootstrap-icons.css" type="text/css">
@@ -28,14 +27,11 @@
 	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/core.css" type="text/css">
 	
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/vendor/jquery/js/jquery.min.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/vendor/jquery/js/jquery-1.12.4.min.js"></script>
 	
 	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/util-jquery.js"></script>
-	<script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/menu.js"></script>
 	
 	
-	<script src="${pageContext.request.contextPath}/resources/js/vendor/jquery-1.11.0.min.js"></script>
-    <script>window.jQuery || document.write('<script src="${pageContext.request.contextPath}/resources/js/vendor/jquery-1.11.0.min.js"><\/script>')</script>
     <script src="${pageContext.request.contextPath}/resources/js/plugins.js"></script>
     <script src="${pageContext.request.contextPath}/resources/js/main.js"></script>	
 	
@@ -63,7 +59,8 @@
 
 <script src="${pageContext.request.contextPath}/resources/js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
 
-<!-- Login Modal -->
+
+
 <script type="text/javascript">
 	function dialogLogin() {
 	    $("form[name=modelLoginForm] input[name=userId]").val("");
