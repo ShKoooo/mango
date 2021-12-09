@@ -80,7 +80,7 @@
                                 </ul>
                             </li>
                             <li><a href="">동네 커뮤니티</a></li>
-                            <li><a href="">고객센터</a>
+                            <li><a href="${pageContext.request.contextPath}/cscenter/list">고객센터</a>
                                 <ul>
                                     <li><a href="blog.html">자주하는 질문</a></li>
                                     <li><a href="blog-single.html">1:1 문의</a></li>

@@ -70,6 +70,7 @@
 			<exclude-mapping path="/member/complete"/>
             <exclude-mapping path="/member/idFind"/>
 			<exclude-mapping path="/member/pwdFind"/>
+			<exclude-mapping path="/cscenter/list"/>
 			<!-- 밑에 추가 -->
 			
 			<beans:bean class="com.sp.mango.member.LoginCheckInterceptor"/>

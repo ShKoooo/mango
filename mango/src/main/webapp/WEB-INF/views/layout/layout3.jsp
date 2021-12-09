@@ -11,6 +11,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><tiles:insertAttribute name="title"/></title>
 	
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap2.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/font-awesome.css">
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/animate.css">
