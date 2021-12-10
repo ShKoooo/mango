@@ -40,6 +40,10 @@
 
 <body>
 
+<section id="pageloader">
+	<div class="loader-item fa fa-spin colored-border"></div>
+</section>
+
 <header>
     <tiles:insertAttribute name="header"/>
 </header>
@@ -141,6 +145,14 @@
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	$(window).load(function() {
+    	$('.loader-item').fadeOut();
+        $('#pageloader').delay(350).fadeOut('slow');
+        $('body').delay(350).css({'overflow-y':'visible'});
+    })
+</script>
 
 </body>
 </html>
