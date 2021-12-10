@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 
-	<header class="site-header container-fluid">
+	<div class="site-header container-fluid">
             <div class="top-header">
                 <div class="logo col-md-6 col-sm-6">
                     <h1><a href="${pageContext.request.contextPath}/" style="text-decoration: none;"><em>망고</em>마켓</a></h1>
@@ -95,4 +95,4 @@
                     </li>
                 </ul>
             </div>
-	</header>
+	</div>
