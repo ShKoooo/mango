@@ -1,5 +1,8 @@
 package com.sp.mango.member;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller("member.memberController")
 @RequestMapping(value="/member/*")
@@ -75,5 +79,29 @@ public class MemberController {
 	@RequestMapping(value = "member", method = RequestMethod.POST)
 	public String memberSubmit () {
 		return "redirect:/";
+	}
+	
+	@RequestMapping(value="userDuplCheck", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> duplCheck(
+			@RequestParam String userParam,
+			@RequestParam String chkWay			
+			) throws Exception {
+		String p = "true";
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userParam", userParam);
+		map.put("chkWay", chkWay);
+		
+		System.out.println("::::" + chkWay + " : "+ userParam);
+		
+		int result = service.countMemberByParam(map);
+		
+		if (result > 0) p = "false";
+		
+		Map<String,Object> model = new HashMap<String, Object>();
+		model.put("passed",p);
+		
+		return model;
 	}
 }
