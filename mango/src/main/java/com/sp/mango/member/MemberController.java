@@ -85,8 +85,10 @@ public class MemberController {
 			final RedirectAttributes reAttr,
 			Model model
 			) {
+		
 		try {
-			// TODO : dto: email, tel
+			dto.setUserTel(dto.getTel1(), dto.getTel2(), dto.getTel3());
+			dto.setUserEmail(dto.getEmail1(),dto.getEmail2());
 			
 			service.insertMember(dto);
 		} catch (Exception e) {
@@ -98,7 +100,7 @@ public class MemberController {
 		String msg =  dto.getUserNickName()+"님의 회원가입이 정상적으로 처리되었습니다.<br>";
 		msg += "메인화면으로 이동하여 로그인하시기 바랍니다.<br>";
 		
-		reAttr.addFlashAttribute("message"+msg);
+		reAttr.addFlashAttribute("message",msg);
 		reAttr.addFlashAttribute("title","회원 가입");
 		
 		return "redirect:/member/complete";
@@ -110,6 +112,8 @@ public class MemberController {
 			) throws Exception {
 		
 		if (message == null || message.length() == 0 ) return "redirect:/";
+		
+		// http://localhost:9090/mango/?string=message어드민아님님의+회원가입이+정상적으로+처리되었습니다.<br>메인화면으로+이동하여+로그안하시기+바랍니다.<br>+&title=회원+가입&message=
 		
 		return ".member.complete";
 	}
