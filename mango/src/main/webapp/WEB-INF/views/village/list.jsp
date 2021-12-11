@@ -5,6 +5,8 @@
 
 <style type="text/css">
 
+
+
 .section-header {
 	margin-top : 60px;
 	margin-bottom: 60px;
@@ -17,12 +19,35 @@
 
  .carousel-control-prev {
  	justify-content: space-between;
+ 	width: 5%;
  }
 
 .carousel-control-next {
 	justify-content: flex-end;
+	width: 5%;
 }
 
+.nav-tabs .nav-link.active {
+	border-color: #fff;
+	color: #f69730;
+}
+
+
+.nav-tabs .nav-link {
+	border : none;
+	color: #495057;
+}
+
+.tab-content {
+	background: white;
+	padding: 25px;
+	overflow:hidden;
+}
+
+a:hover, a:active {
+	text-decoration : none;
+	color: #f69730;
+}
 
 
 </style>
@@ -39,6 +64,37 @@
 			</div>
 		</div> <!-- row -->
 	<div class="projects-holder">
+	
+		<div class="col-12">
+			<div class="row">
+				<div class="col-md-12 project-item">
+					<ul class="nav nav-tabs">
+					  <li class="nav-item">
+					    <a class="nav-link active" data-bs-toggle="tab" href="#qna">동네 질문</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" data-bs-toggle="tab" href="#eat">동네 맛집</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" data-bs-toggle="tab" href="#helpme">해주세요</a>
+					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" data-bs-toggle="tab" href="#withme">같이해요</a>
+					  </li>
+					</ul>
+					
+					<!-- Tab panes -->
+					<div class="tab-content">
+					  <div class="tab-pane container active" id="qna">동네질문게시판 리스트 (희망사항)</div>
+					  <div class="tab-pane container " id="eat">동네맛집게시판 리스트</div>
+					  <div class="tab-pane container " id="helpme">해주세요게시판 리스트</div>
+					  <div class="tab-pane container " id="withme">같이해요게시판 리스트</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
 		<div class="col-12">
 			<div id="carouselIndicators" class="carousel carousel-dark slide" data-bs-ride="carousel">
 					<button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
@@ -53,7 +109,7 @@
 					<div class="carousel-item active">
 						<div class="row">
 						
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
 								</div>
@@ -63,7 +119,7 @@
 								</div>
 							</div> 
 							
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="proeject-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/mBM4gHAj4XE" alt="">
 								</div>
@@ -72,7 +128,7 @@
 									<p> 분실 실종 내용 </p>
 								</div>
 							</div>
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/SsKf1L6rWJk" alt="">
 								</div>
@@ -82,12 +138,22 @@
 								</div>
 							</div>
 							
+							<div class="col-md-3 project-item">
+								<div class="project-thumb">
+									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
+								</div>
+								<div class="box-content project-detail">
+									<h2><a href="">1인 가구</a></h2>
+									<p> 추천내용 </p>
+								</div>
+							</div> 
+							
 						</div> <!-- row -->
 					</div> <!-- caousal-item active -->
 					<div class="carousel-item">
 						<div class="row">
 						
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -97,7 +163,7 @@
 								</div>
 							</div> 
 							
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="proeject-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -106,7 +172,7 @@
 									<p> 분실 실종 내용222 </p>
 								</div>
 							</div>
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -116,12 +182,22 @@
 								</div>
 							</div>
 							
+							<div class="col-md-3 project-item">
+								<div class="project-thumb">
+									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
+								</div>
+								<div class="box-content project-detail">
+									<h2><a href="">1인 가구</a></h2>
+									<p> 추천내용2 </p>
+								</div>
+							</div> 
+							
 						</div> <!-- row -->
 					</div>
 					<div class="carousel-item">
 						<div class="row">
 							
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -131,7 +207,7 @@
 								</div>
 							</div> 
 							
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="proeject-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -140,7 +216,7 @@
 									<p> 분실 실종 내용3 </p>
 								</div>
 							</div>
-							<div class="col-md-4 project-item">
+							<div class="col-md-3 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -149,6 +225,16 @@
 									<p> 가게 홍보 내용3 </p>
 								</div>
 							</div>
+							
+							<div class="col-md-3 project-item">
+								<div class="project-thumb">
+									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
+								</div>
+								<div class="box-content project-detail">
+									<h2><a href="">1인 가구</a></h2>
+									<p> 추천내용3 </p>
+								</div>
+							</div> 
 						
 						</div>
 					</div>
@@ -156,21 +242,6 @@
 			</div>
 		</div>
 		
-		<div class="col-12">
-			<div class="row">
-				<div class="col-md-8 project-item">
-					<div class="box-content">
-					
-						게시판..인데 탭을 넣을 수 있을까...............
-					</div>
-				</div>
-				<div class="col-md-4 project-item">
-					<div class="box-content">
-						1인 홍보,,,,,,인데 캐러셀을 하나 더 넣을 수 잇을지..
-					</div>
-				</div>
-			</div>
-		</div>
 	</div> <!-- project holder -->
 	</div>
 </div>
