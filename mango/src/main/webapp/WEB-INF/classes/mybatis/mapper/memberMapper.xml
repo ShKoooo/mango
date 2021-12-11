@@ -23,7 +23,17 @@
 		WHERE ${chkWay} = #{userParam}
 	</select>
 	
-	<select id="readMember" parameterType="String" resultType="com.sp.mango.member.Member">
+	<select id="readMember" parameterType="map" resultType="com.sp.mango.member.Member">
 		
 	</select>
+	
+	<insert id="insertMember" parameterType="com.sp.mango.member.Member">
+		INSERT INTO member (userId, userPwd, userName, userNickName,
+			regDate, update_Date, userTel, userEmail, memberEnable, 
+			loginFail, membershipNum, nickUpdate_date, birth)
+		VALUES (#{userId}, #{userPwd}, #{userName}, #{userNickName},
+			SYSDATE, SYSDATE, #{userTel}, #{userEmail}, 1,
+			0, 1, SYSDATE, #{birth})
+	</insert>	
+	
 </mapper>

@@ -10,7 +10,7 @@
 </style>
 
 <script type="text/javascript">
-function memberOk() {
+function memberOk() {	
 	var f = document.memberForm;
 	var mode = "${mode}";
 	var id = f.userId.value;
@@ -19,19 +19,122 @@ function memberOk() {
 	var pwd2 = f.userPwd2.value;
 	var name = f.userName.value;
 	var birth = f.birth.value;
+	var tel1 = f.tel1.value;
+	var tel2 = f.tel2.value;
+	var tel3 = f.tel3.value;
 	
-	if( !/^[a-z][a-z0-9_]{4,9}$/i.test(id) ) { 
-		alert("아이디를 다시 입력 하세요. ");
+	if( !/^[a-z][a-z0-9_]{4,9}$/i.test(id) ) {
 		f.userId.focus();
 		return;
 	}
 	
 	if(mode === "member" && f.userIdValid.value === "false") {
 		str = "아이디 중복 검사가 실행되지 않았습니다.";
-		$("#userId").parent().find(".help-block1").html(str);
+		$("#userId").parents().find(".help-block1").html(str);
 		f.userId.focus();
 		return;
 	}
+	
+	if(f.userNickValid.value === "false") {
+		str = "닉네임 중복 검사가 실행되지 않았습니다.";
+		$("#userNickName").parents().find(".help-block2").html(str);
+		f.userNickName.focus();
+		return;
+	}
+	
+	if(f.userEmailValid.value === "false") {
+		str = "이메일 중복 검사가 실행되지 않았습니다.";
+		$("#email1").parents().find(".help-block3").html(str);
+		f.email1.focus();
+		return;
+	}
+	
+	if( !/^(?=.*[a-z])(?=.*[!@#$%^*+=-]|.*[0-9]).{5,10}$/i.test(pwd) ) { 
+		alert("패스워드를 다시 입력 하세요. ");
+		f.userPwd.focus();
+		return;
+	}
+
+	if( pwd != pwd2 ) {
+        alert("패스워드가 일치하지 않습니다. ");
+        f.userPwd.focus();
+        return;
+	}
+	
+    if( !/^[가-힣]{2,5}$/.test(name) ) {
+        alert("이름을 다시 입력하세요. ");
+        f.userName.focus();
+        return;
+    }
+
+    if( !birth ) {
+        alert("생년월일를 입력하세요. ");
+        f.birth.focus();
+        return;
+    }
+    
+    if( !tel1 || !tel2 || !tel3 ) {
+        alert("전화번호를 입력하세요. ");
+        if (!tel1) {
+        	f.tel1.focus(); return;
+        }
+        if (!tel2) {
+        	f.tel2.focus(); return;
+        }
+        if (!tel3) { 
+        	f.tel3.focus(); return;
+        }
+    }
+    if( !/^\d{2,3}$/.test(tel1) ) {
+        alert("숫자만 가능합니다. ");
+        f.tel1.focus();
+        return;
+    }
+
+    if( !/^\d{3,4}$/.test(tel2) ) {
+        alert("숫자만 가능합니다. ");
+        f.tel2.focus();
+        return;
+    }
+
+    if( !/^\d{4}$/.test(tel3) ) {
+    	alert("숫자만 가능합니다. ");
+        f.tel3.focus();
+        return;
+    }
+    
+    str = f.email1.value.trim();
+    if( !str ) {
+        alert("이메일을 입력하세요. ");
+        f.email1.focus();
+        return;
+    }
+
+    str = f.email2.value.trim();
+    if( !str ) {
+        alert("이메일을 입력하세요. ");
+        f.email2.focus();
+        return;
+    }
+
+   	f.action = "${pageContext.request.contextPath}/member/${mode}";
+    f.submit();
+}
+
+function changeEmail() {
+    var f = document.memberForm;
+	    
+    var str = f.selectEmail.value;
+    if(str != "direct") {
+        f.email2.value = str; 
+        f.email2.readOnly = true;
+        f.email1.focus(); 
+    }
+    else {
+        f.email2.value = "";
+        f.email2.readOnly = false;
+        f.email1.focus();
+    }
 }
 
 // 아이디 중복 검사
@@ -48,9 +151,6 @@ function userIdCheck() {
 	var url = "${pageContext.request.contextPath}/member/userDuplCheck";
 	var query = "userParam=" + userId;
 	query += "&chkWay=userId";
-	
-	console.log(url);
-	console.log(query);
 	
 	$.ajax({
 		type:"POST"
@@ -82,6 +182,64 @@ function userNickCheck() {
 	var url = "${pageContext.request.contextPath}/member/userDuplCheck";
 	var query = "userParam=" + userNick;
 	query += "&chkWay=userNickName";
+	
+	$.ajax({
+		type:"POST"
+		,url:url
+		,data:query
+		,dataType:"json"
+		,success:function(data) {
+			var passed = data.passed;
+
+			if(passed === "true") {
+				var str = "<span style='color:blue; font-weight: bold;'>" + userNick + "</span> 닉네임은 사용가능 합니다.";
+				$(".userNick-box").find(".help-block2").html(str);
+				$("#userNickValid").val("true");
+			} else {
+				var str = "<span style='color:red; font-weight: bold;'>" + userNick + "</span> 닉네임은 이미 사용되고 있습니다.";
+				$(".userNick-box").find(".help-block2").html(str);
+				$("#userNickName").val("");
+				$("#userNickValid").val("false");
+				$("#userNickName").focus();
+			}
+		}
+	});
+}
+
+// 이메일 중복검사
+function userEmailCheck() {
+	var email1 = $("#email1").val();
+	var email2 = $("#email2").val();
+	var userEmail = email1 + "%40" + email2; // @: &#64;
+	
+	var url = "${pageContext.request.contextPath}/member/userDuplCheck";
+	var query = "userParam=" + userEmail;
+	query += "&chkWay=userEmail";
+	
+	console.log(query);
+	
+	$.ajax({
+		type:"POST"
+		,url:url
+		,data:query
+		,dataType:"json"
+		,success:function(data) {
+			var passed = data.passed;
+			
+			if(passed === "true") {
+				var str = "<span style='color:blue; font-weight: bold;'>" + email1+"&#64;"+email2 + "</span> 이메일은 사용가능 합니다.";
+				$(".userEmail-box").find(".help-block3").html(str);
+				$("#userEmailValid").val("true");
+			} else {
+				var str = "<span style='color:red; font-weight: bold;'>" + email1+"&#64;"+email2 + "</span> 이메일은 이미 사용되고 있습니다.";
+				$(".userEmail-box").find(".help-block3").html(str);
+				$("#email1").val("");
+				$("#email2").val("");
+				$("#userEmailValid").val("false");
+				$("#email1").focus();
+			}
+		}
+	});
 }
 
 
@@ -129,7 +287,7 @@ function userNickCheck() {
 	    		
 	    		<div class="row mb-3">
 	    			<label class="col-sm-2 col-form-label" for="userNickName">닉네임</label> <!-- 나이 및 닉 변경기간 체크는 memberOk()에서.. -->
-	    			<div class="col-sm-10 userId-box">
+	    			<div class="col-sm-10 userNick-box">
 	    				<div class="row">
 	    					<div class="col-5 pe-1">
     							<input type="text" name="userNickName" id="userNickName" class="form-control" value="${dto.userNickName}" placeholder="닉네임">
@@ -177,7 +335,7 @@ function userNickCheck() {
 			    
 			    <div class="row mb-3">
 			    	<label class="col-sm-2 col-form-label" for="selectEmail">이메일</label>
-			    	<div class="col-sm-10 row">
+			    	<div class="col-sm-10 row userEmail-box">
 						<div class="col-3 pe-0">
 							<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();">
 								<option value="">선 택</option>
@@ -190,11 +348,15 @@ function userNickCheck() {
 						</div>
 						
 						<div class="col input-group">
-							<input type="text" name="email1" class="form-control" maxlength="30" value="${dto.email1}" >
+							<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" >
 						    <span class="input-group-text p-1" style="border: none; background: none;">@</span>
-							<input type="text" name="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
-						</div>		
-	
+							<input type="text" name="email2" id="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
+							<div class="col-3 ps-3">
+								<button type="button" class="btn btn-light" onclick="userEmailCheck();">중복 확인</button>
+							</div>
+						</div>
+						
+						<small class="form-control-plaintext help-block3">&nbsp;</small>	
 			        </div>
 			    </div>
 			    
@@ -238,6 +400,8 @@ function userNickCheck() {
 			            <button type="button" name="sendButton" class="btn btn-primary" onclick="memberOk();"> ${mode=="member"?"회원가입":"정보수정"} <i class="bi bi-check2"></i></button>
 			            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/';"> ${mode=="member"?"가입취소":"수정취소"} <i class="bi bi-x"></i></button>
 						<input type="hidden" name="userIdValid" id="userIdValid" value="false">
+						<input type="hidden" name="userNickValid" id="userNickValid" value="false">
+						<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
 			        </div>
 			    </div>
 			

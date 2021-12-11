@@ -6,12 +6,15 @@ import java.util.Map;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller("member.memberController")
 @RequestMapping(value="/member/*")
@@ -77,8 +80,38 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value = "member", method = RequestMethod.POST)
-	public String memberSubmit () {
-		return "redirect:/";
+	public String memberSubmit (
+			Member dto,
+			final RedirectAttributes reAttr,
+			Model model
+			) {
+		try {
+			// TODO : dto: email, tel
+			
+			service.insertMember(dto);
+		} catch (Exception e) {
+			model.addAttribute("mode","member");
+			model.addAttribute("message","회원가입이 실패했습니다.");
+			return ".member.member";
+		}
+		
+		String msg =  dto.getUserNickName()+"님의 회원가입이 정상적으로 처리되었습니다.<br>";
+		msg += "메인화면으로 이동하여 로그인하시기 바랍니다.<br>";
+		
+		reAttr.addFlashAttribute("message"+msg);
+		reAttr.addFlashAttribute("title","회원 가입");
+		
+		return "redirect:/member/complete";
+	}
+	
+	@RequestMapping(value="complete")
+	public String complete(
+			@ModelAttribute("message") String message
+			) throws Exception {
+		
+		if (message == null || message.length() == 0 ) return "redirect:/";
+		
+		return ".member.complete";
 	}
 	
 	@RequestMapping(value="userDuplCheck", method=RequestMethod.POST)
