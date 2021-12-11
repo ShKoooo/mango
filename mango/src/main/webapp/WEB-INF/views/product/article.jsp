@@ -21,7 +21,7 @@
                     </div> <!-- /.project-slider -->
                     <div class="project-infos col-md-12">
                         <div class="box-content">
-                            <h2 class="project-title">Lampyridae Lamps by Christina Welldone</h2>
+                            <h2 class="project-title">글제목</h2>
                             <span class="project-subtitle">Another Subtilte In Here</span>
                             <p><a href="http://www.templatemo.com/preview/templatemo_423_artcore">Artcore</a> is free HTML5 bootstrap template by <b class="blue">template</b><b class="green">mo</b>. Credit goes to <a rel="nofollow" href="http://unsplash.com">Unsplash</a> for images used in this template. You can use this layout for your personal or commercial websites. Neque, quam, cum ut sapiente veniam ullam aspernatur modi repellat fugit quisquam maxime distinctio architecto aut suscipit recusandae nemo iusto inventore sunt amet nesciunt atque accusamus voluptatem molestias natus blanditiis. <br><br>Quos, atque, maxime, voluptates, voluptas praesentium qui quibusdam neque explicabo itaque harum voluptate aliquam dolore corporis quasi eaque laboriosam aspernatur. Repellat, animi, dolore harum laborum dicta fugit optio magni totam consectetur est vitae libero facere saepe cupiditate numquam dignissimos pariatur iusto temporibus delectus enim illo.</p>
                             <ul class="project-meta">

@@ -3,12 +3,29 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<style type="text/css">
+.section-header {
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+.jb {
+	width: 30px;
+	height: 30px;
+	
+}
+
+.jb:hover {
+  transform: scale( 1.2, 1.2 )
+}
+</style>
+
 		<div class="content-wrapper">
             <div class="inner-container container">
                 <div class="row">
                     <div class="section-header col-md-12">
-                        <h2>Projects 3 Columns</h2>
-                        <span>Subtitle Goes Here</span>
+                        <h2>중고거래</h2>
+                        <span>망설이지 말고 고! 이웃과 거래를 시작해보세요!</span>
                     </div>
                 </div>
                 <div class="projects-holder-3">
@@ -20,6 +37,9 @@
                             <li class="filter" data-filter="architecture"><span>Architecture</span></li>
                             <li class="filter" data-filter="nature"><span>Nature</span></li>
                         </ul>
+                    </div>
+                    <div>
+                    	<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
                     </div>
                     <div class="projects-holder">
                         <div class="row">
@@ -33,8 +53,10 @@
                                     </div>
                                 </div>
                                 <div class="box-content project-detail">
-                                    <h2><a href="project-details.html">Lamps by Monica Correia</a></h2>
-                                    <p>Nullam a vehicula tellus. Integer sodales ante eu feugiat. Sed fermentum diam dui at.</p>
+                                    <h2><a href="${articleUrl}&pNum=${dto.pNum}">글제목</a></h2>
+                                    <p>인증한동네(등록한 동네)</p>
+                                    <p>채팅현황(채팅몇건햇는지(유저당1))</p>
+                                    <p>관심 수</p>
                                 </div>
                             </div>
                             <div class="col-md-4 project-item mix nature">
