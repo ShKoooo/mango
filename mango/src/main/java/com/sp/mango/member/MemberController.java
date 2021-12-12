@@ -53,8 +53,15 @@ public class MemberController {
 		session.setAttribute("member", info);
 		
 		// 로그인 이전 URI로 이동 - LoginCheckInterceptor
-		
-		String uri = "redirect:/";
+		String uri = (String) session.getAttribute("preLoginURI");
+		session.removeAttribute("preLoginURI");
+		if (uri == null) { 
+			uri = "redirect:/";
+		} else if (uri.indexOf("mango/images/slide") >= 0) {	// 임시 처리
+			uri = "redirect:/";
+		} else {
+			uri = "redirect:" + uri;
+		}
 		
 		return uri;
 	}
@@ -112,8 +119,6 @@ public class MemberController {
 			) throws Exception {
 		
 		if (message == null || message.length() == 0 ) return "redirect:/";
-		
-		// http://localhost:9090/mango/?string=message어드민아님님의+회원가입이+정상적으로+처리되었습니다.<br>메인화면으로+이동하여+로그안하시기+바랍니다.<br>+&title=회원+가입&message=
 		
 		return ".member.complete";
 	}

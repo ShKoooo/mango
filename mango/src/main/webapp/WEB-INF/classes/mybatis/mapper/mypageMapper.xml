@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mypage">
+	<select id="getMannerProfile" parameterType="String" resultType="com.sp.mango.mypage.MannerProfile">
+		SELECT userId, mannerStar, productStar, minusDeg FROM mannerProfile
+		WHERE userId = #{userId}
+	</select>
+</mapper>
