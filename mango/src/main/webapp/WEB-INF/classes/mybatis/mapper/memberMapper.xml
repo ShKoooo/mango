@@ -24,7 +24,11 @@
 	</select>
 	
 	<select id="readMember" parameterType="map" resultType="com.sp.mango.member.Member">
-		
+		SELECT userId, userPwd, userName, userNickName, regDate, update_Date,
+			userTel, userEmail, memberEnable, userImgSaveFileName, userImgOrigFileName,
+			loginFail, nickUpdate_date, birth
+		FROM member
+		WHERE userId = #{userId}
 	</select>
 	
 	<insert id="insertMember" parameterType="com.sp.mango.member.Member">

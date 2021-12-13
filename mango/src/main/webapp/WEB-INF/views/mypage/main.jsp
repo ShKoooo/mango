@@ -18,7 +18,7 @@
 		<div class="body-main">
 			<div class="row mb-3">
 				<h3>
-					<a href="${pageContext.request.contextPath}/">
+					<a href="${pageContext.request.contextPath}/member/update">
 						<i class="icofont-refresh"></i> 회원 정보수정
 					</a>
 				</h3>

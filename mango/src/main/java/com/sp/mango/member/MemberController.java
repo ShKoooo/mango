@@ -54,10 +54,11 @@ public class MemberController {
 		
 		// 로그인 이전 URI로 이동 - LoginCheckInterceptor
 		String uri = (String) session.getAttribute("preLoginURI");
+		
 		session.removeAttribute("preLoginURI");
 		if (uri == null) { 
 			uri = "redirect:/";
-		} else if (uri.indexOf("mango/images/slide") >= 0) {	// 임시 처리
+		} else if (uri.indexOf("/images/slide") >= 0) {	// 임시 처리
 			uri = "redirect:/";
 		} else {
 			uri = "redirect:" + uri;
@@ -109,6 +110,39 @@ public class MemberController {
 		
 		reAttr.addFlashAttribute("message",msg);
 		reAttr.addFlashAttribute("title","회원 가입");
+		
+		return "redirect:/member/complete";
+	}
+	
+	@RequestMapping(value="update", method=RequestMethod.GET)
+	public String updateForm(Model model) throws Exception {
+		model.addAttribute("mode","update");
+		return ".member.member";
+	}
+	
+	@RequestMapping(value="update", method=RequestMethod.POST)
+	public String updateSubmit(
+			Member dto,
+			final RedirectAttributes reAttr,
+			Model model
+			) throws Exception {
+		
+		try {
+			dto.setUserTel(dto.getTel1(), dto.getTel2(), dto.getTel3());
+			dto.setUserEmail(dto.getEmail1(),dto.getEmail2());
+			
+			service.insertMember(dto);
+		} catch (Exception e) {
+			model.addAttribute("mode","update");
+			model.addAttribute("message","정보수정이 실패했습니다.");
+			return ".member.member";
+		}
+		
+		String msg =  dto.getUserNickName()+"님의 정보수정이 정상적으로 처리되었습니다.<br>";
+		msg += "메인화면으로 이동하여 로그인하시기 바랍니다.<br>";
+		
+		reAttr.addFlashAttribute("message",msg);
+		reAttr.addFlashAttribute("title","회원 정보 수정");
 		
 		return "redirect:/member/complete";
 	}
