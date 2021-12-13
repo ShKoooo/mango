@@ -1,12 +1,12 @@
 package com.sp.mango.member;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -115,8 +115,56 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="update", method=RequestMethod.GET)
-	public String updateForm(Model model) throws Exception {
+	public String updateForm(
+			Model model,
+			HttpSession session
+			) throws Exception {
+		
+		String nickChangeable = "false";
+		
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		if (memberInfo == null) {
+			return "redirect:/member/login";
+		}
+		
+		String userId = memberInfo.getUserId();
+		Member dto = service.readMember(userId);
+		
+		if (dto == null) {
+			return "redirect:/";
+		}
+		
+		String[] telTel = dto.getUserTel().split("-");
+		String[] mailMail = dto.getUserEmail().split("@");
+		
+		if (telTel.length == 3) {
+			dto.setTel1(telTel[0]);
+			dto.setTel2(telTel[1]);
+			dto.setTel3(telTel[2]);
+		}
+		
+		if (mailMail.length == 2) {
+			dto.setEmail1(mailMail[0]);
+			dto.setEmail2(mailMail[1]);
+		}
+		
+		String [] nickUpdate_YMD = dto.getNickUpdate_Date().split("-");
+		
+		Calendar date1 = Calendar.getInstance();	// 닉변경 + 30일
+		Calendar date2 = Calendar.getInstance();	// 오늘
+		
+		date1.set(Integer.parseInt(nickUpdate_YMD[0]),
+				Integer.parseInt(nickUpdate_YMD[1]+1),
+				Integer.parseInt(nickUpdate_YMD[2]+30));
+		
+		if (!date1.after(date2)) { // 닉변+30일이 오늘보다 미래가 아닐 때 (true)
+			nickChangeable = "true";
+		}
+		
 		model.addAttribute("mode","update");
+		model.addAttribute("dto",dto);
+		model.addAttribute("nickChangeable",nickChangeable);
+		
 		return ".member.member";
 	}
 	
@@ -131,15 +179,16 @@ public class MemberController {
 			dto.setUserTel(dto.getTel1(), dto.getTel2(), dto.getTel3());
 			dto.setUserEmail(dto.getEmail1(),dto.getEmail2());
 			
-			service.insertMember(dto);
+			service.updateMember(dto);
 		} catch (Exception e) {
-			model.addAttribute("mode","update");
-			model.addAttribute("message","정보수정이 실패했습니다.");
-			return ".member.member";
+			model.addAttribute("message", dto.getUserNickName()+"님의 정보수정이 실패했습니다.");
+			// model.addAttribute("mode","update");
+			// return ".member.member";
+			
+			return "redirect:/member/complete";
 		}
 		
 		String msg =  dto.getUserNickName()+"님의 정보수정이 정상적으로 처리되었습니다.<br>";
-		msg += "메인화면으로 이동하여 로그인하시기 바랍니다.<br>";
 		
 		reAttr.addFlashAttribute("message",msg);
 		reAttr.addFlashAttribute("title","회원 정보 수정");
@@ -168,8 +217,6 @@ public class MemberController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("userParam", userParam);
 		map.put("chkWay", chkWay);
-		
-		System.out.println("::::" + chkWay + " : "+ userParam);
 		
 		int result = service.countMemberByParam(map);
 		

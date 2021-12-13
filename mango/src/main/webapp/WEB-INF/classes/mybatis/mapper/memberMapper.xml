@@ -24,9 +24,11 @@
 	</select>
 	
 	<select id="readMember" parameterType="map" resultType="com.sp.mango.member.Member">
-		SELECT userId, userPwd, userName, userNickName, regDate, update_Date,
+		SELECT userId, userPwd, userName, userNickName, 
+			TO_CHAR(regDate,'YYYY-MM-DD') regDate, TO_CHAR(update_Date,'YYYY-MM-DD') update_Date,
 			userTel, userEmail, memberEnable, userImgSaveFileName, userImgOrigFileName,
-			loginFail, nickUpdate_date, birth
+			loginFail, TO_CHAR(nickUpdate_date, 'YYYY-MM-DD') nickUpdate_date, 
+			TO_CHAR(birth,'YYYY-MM-DD') birth
 		FROM member
 		WHERE userId = #{userId}
 	</select>
@@ -38,6 +40,13 @@
 		VALUES (#{userId}, #{userPwd}, #{userName}, #{userNickName},
 			SYSDATE, SYSDATE, #{userTel}, #{userEmail}, 1,
 			0, 1, SYSDATE, #{birth})
-	</insert>	
+	</insert>
+	
+	<update id="updateMember" parameterType="com.sp.mango.member.Member">
+		UPDATE member SET
+			userPwd=#{userPwd},
+			userTel=#{userTel}
+		WHERE userId = #{userId}
+	</update>
 	
 </mapper>

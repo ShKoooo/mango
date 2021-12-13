@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
 		Member dto = null;
 		
 		try {
-			// TODO
+			dto = dao.selectOne("member.readMember",userId);
 		} catch (Exception e) {
 		}
 		
@@ -56,6 +56,14 @@ public class MemberServiceImpl implements MemberService {
 			dao.insertData("member.insertMember",dto);
 		} catch (Exception e) {
 			throw e;
+		}
+	}
+
+	@Override
+	public void updateMember(Member dto) throws Exception {
+		try {
+			dao.updateData("member.updateMember",dto);
+		} catch (Exception e) {
 		}
 	}
 

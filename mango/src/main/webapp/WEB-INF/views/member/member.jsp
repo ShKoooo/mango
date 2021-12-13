@@ -23,57 +23,59 @@ function memberOk() {
 	var tel2 = f.tel2.value;
 	var tel3 = f.tel3.value;
 	
-	if( !/^[a-z][a-z0-9_]{4,9}$/i.test(id) ) {
+	if(mode === "member" && !/^[a-z][a-z0-9_]{4,9}$/i.test(id) ) {
+		console.log("1111");
 		f.userId.focus();
 		return;
 	}
 	
 	if(mode === "member" && f.userIdValid.value === "false") {
+		console.log("2222");
 		str = "아이디 중복 검사가 실행되지 않았습니다.";
 		$("#userId").parents().find(".help-block1").html(str);
 		f.userId.focus();
 		return;
 	}
 	
-	if(f.userNickValid.value === "false") {
+	if(mode === "member" &&f.userNickValid.value === "false") {
 		str = "닉네임 중복 검사가 실행되지 않았습니다.";
 		$("#userNickName").parents().find(".help-block2").html(str);
 		f.userNickName.focus();
 		return;
 	}
 	
-	if(f.userEmailValid.value === "false") {
+	if(mode === "member" &&f.userEmailValid.value === "false") {
 		str = "이메일 중복 검사가 실행되지 않았습니다.";
 		$("#email1").parents().find(".help-block3").html(str);
 		f.email1.focus();
 		return;
 	}
 	
-	if( !/^(?=.*[a-z])(?=.*[!@#$%^*+=-]|.*[0-9]).{5,10}$/i.test(pwd) ) { 
+	if(mode === "member" && !/^(?=.*[a-z])(?=.*[!@#$%^*+=-]|.*[0-9]).{5,10}$/i.test(pwd) ) { 
 		alert("패스워드를 다시 입력 하세요. ");
 		f.userPwd.focus();
 		return;
 	}
 
-	if( pwd != pwd2 ) {
+	if(pwd != pwd2 ) {
         alert("패스워드가 일치하지 않습니다. ");
         f.userPwd.focus();
         return;
 	}
 	
-    if( !/^[가-힣]{2,5}$/.test(name) ) {
+    if(mode === "member" && !/^[가-힣]{2,5}$/.test(name) ) {
         alert("이름을 다시 입력하세요. ");
         f.userName.focus();
         return;
     }
 
-    if( !birth ) {
+    if(mode === "member" && !birth ) {
         alert("생년월일를 입력하세요. ");
         f.birth.focus();
         return;
     }
     
-    if( !tel1 || !tel2 || !tel3 ) {
+    if(mode === "member" && !tel1 || !tel2 || !tel3 ) {
         alert("전화번호를 입력하세요. ");
         if (!tel1) {
         	f.tel1.focus(); return;
@@ -85,33 +87,33 @@ function memberOk() {
         	f.tel3.focus(); return;
         }
     }
-    if( !/^\d{2,3}$/.test(tel1) ) {
+    if(mode === "member" && !/^\d{2,3}$/.test(tel1) ) {
         alert("숫자만 가능합니다. ");
         f.tel1.focus();
         return;
     }
 
-    if( !/^\d{3,4}$/.test(tel2) ) {
+    if(mode === "member" && !/^\d{3,4}$/.test(tel2) ) {
         alert("숫자만 가능합니다. ");
         f.tel2.focus();
         return;
     }
 
-    if( !/^\d{4}$/.test(tel3) ) {
+    if(mode === "member" && !/^\d{4}$/.test(tel3) ) {
     	alert("숫자만 가능합니다. ");
         f.tel3.focus();
         return;
     }
     
     str = f.email1.value.trim();
-    if( !str ) {
+    if(mode === "member" && !str ) {
         alert("이메일을 입력하세요. ");
         f.email1.focus();
         return;
     }
 
     str = f.email2.value.trim();
-    if( !str ) {
+    if(mode === "member" && !str ) {
         alert("이메일을 입력하세요. ");
         f.email2.focus();
         return;
@@ -290,20 +292,27 @@ function userEmailCheck() {
 	    			<div class="col-sm-10 userNick-box">
 	    				<div class="row">
 	    					<div class="col-5 pe-1">
-    							<input type="text" name="userNickName" id="userNickName" class="form-control" value="${dto.userNickName}" placeholder="닉네임">
+    							<input type="text" name="userNickName" id="userNickName" class="form-control" value="${dto.userNickName}" placeholder="닉네임"
+    								${nickChangeable=="false" ? "readonly='readonly' ":""}>
 							</div>
 							<div class="col-3 ps-1">
-								<button type="button" class="btn btn-light" onclick="userNickCheck();">닉네임 중복 확인</button>
+								<c:if test="${mode=='member' || (mode=='update' && nickChangeable=='true')}">
+									<button type="button" class="btn btn-light" onclick="userNickCheck();">닉네임 중복 확인</button>
+								</c:if>
 							</div>
 	    				</div>
-						<small class="form-control-plaintext help-block2">욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.</small>
+						<small class="form-control-plaintext help-block2">
+							${nickChangeable=="true"?
+								"욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.":
+								"닉네임을 변경하고 30일이 지난 이후 변경할 수 있습니다."}
+						</small>
 	    			</div>
 	    		</div>
 	    		
 	    		<div class="row mb-3">
 					<label class="col-sm-2 col-form-label" for="userPwd">패스워드</label>
 					<div class="col-sm-10">
-			            <input type="password" name="userPwd" id="userPwd" class="form-control" autocomplete="off" placeholder="패스워드">
+			            <input type="password" name="userPwd" id="userPwd" class="form-control" autocomplete="off" placeholder="패스워드" value="${dto.userPwd}">
 			            <small class="form-control-plaintext">패스워드는 5~10자이며 하나 이상의 숫자나 특수문자가 포함되어야 합니다.</small>
 			        </div>
 			    </div>
@@ -311,7 +320,7 @@ function userEmailCheck() {
 			    <div class="row mb-3">
 			        <label class="col-sm-2 col-form-label" for="userPwd2">패스워드 확인</label>
 			        <div class="col-sm-10">
-			            <input type="password" name="userPwd2" id="userPwd2" class="form-control" autocomplete="off" placeholder="패스워드 확인">
+			            <input type="password" name="userPwd2" id="userPwd2" class="form-control" autocomplete="off" placeholder="패스워드 확인" value="${dto.userPwd}">
 			            <small class="form-control-plaintext">패스워드를 한번 더 입력해주세요.</small>
 			        </div>
 			    </div>
@@ -328,7 +337,8 @@ function userEmailCheck() {
 			    <div class="row mb-3">
 			        <label class="col-sm-2 col-form-label" for="birth">생년월일</label>
 			        <div class="col-sm-10">
-			            <input type="date" name="birth" id="birth" class="form-control" value="${dto.birth}" placeholder="생년월일">
+			            <input type="date" name="birth" id="birth" class="form-control" value="${dto.birth}" placeholder="생년월일"
+			            	${mode=="update" ? "readonly='readonly' ":""}>
 			            <small class="form-control-plaintext">생년월일은 2000-01-01 형식으로 입력 합니다.</small>
 			        </div>
 			    </div>
@@ -337,7 +347,7 @@ function userEmailCheck() {
 			    	<label class="col-sm-2 col-form-label" for="selectEmail">이메일</label>
 			    	<div class="col-sm-10 row userEmail-box">
 						<div class="col-3 pe-0">
-							<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();">
+							<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();" ${mode=="update" ? "readonly='readonly' ":""}>
 								<option value="">선 택</option>
 								<option value="naver.com" ${dto.email2=="naver.com" ? "selected='selected'" : ""}>네이버 메일</option>
 								<option value="gmail.com" ${dto.email2=="gmail.com" ? "selected='selected'" : ""}>지 메일</option>
@@ -348,11 +358,14 @@ function userEmailCheck() {
 						</div>
 						
 						<div class="col input-group">
-							<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" >
+							<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" 
+								${mode=="update" ? "readonly='readonly' ":""}>
 						    <span class="input-group-text p-1" style="border: none; background: none;">@</span>
 							<input type="text" name="email2" id="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
 							<div class="col-3 ps-3">
-								<button type="button" class="btn btn-light" onclick="userEmailCheck();">중복 확인</button>
+								<c:if test="${mode=='member'}">
+									<button type="button" class="btn btn-light" onclick="userEmailCheck();">중복 확인</button>
+								</c:if>
 							</div>
 						</div>
 						
@@ -398,10 +411,28 @@ function userEmailCheck() {
 			    <div class="row mb-3">
 			        <div class="text-center">
 			            <button type="button" name="sendButton" class="btn btn-primary" onclick="memberOk();"> ${mode=="member"?"회원가입":"정보수정"} <i class="bi bi-check2"></i></button>
-			            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/';"> ${mode=="member"?"가입취소":"수정취소"} <i class="bi bi-x"></i></button>
-						<input type="hidden" name="userIdValid" id="userIdValid" value="false">
-						<input type="hidden" name="userNickValid" id="userNickValid" value="false">
-						<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
+			            <c:if test="${mode=='member'}">
+				            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/';"> 가입취소 <i class="bi bi-x"></i></button>
+			            </c:if>
+			            <c:if test="${mode=='update'}">
+				            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 수정취소 <i class="bi bi-x"></i></button>
+			            </c:if>
+			            <c:if test="${mode=='member'}">
+							<input type="hidden" name="userIdValid" id="userIdValid" value="false">
+							<input type="hidden" name="userNickValid" id="userNickValid" value="false">
+							<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
+			            </c:if>
+			            <c:if test="${mode=='update'}">
+			            	<input type="hidden" name="userIdValid" id="userIdValid" value="true">
+							<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
+							<c:if test="${nickChangeable=='false'}">
+								<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
+							</c:if>
+							<c:if test="${nickChangeable=='true'}">
+								<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
+							</c:if>
+			            </c:if>
+			            <c:if test=""></c:if>
 			        </div>
 			    </div>
 			
