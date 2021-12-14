@@ -22,8 +22,8 @@ public class Product {
 	private String userNickName; // 회원 닉네임
 	
 	private int areaNum; // 판매지역번호
-	private int pLat; // 위도
-	private int pLon; // 경도
+	private double pLat; // 위도
+	private double pLon; // 경도
 	
 	private int pcNum; // 카테고리 번호
 	private String pcName; // 카테고리 이름
@@ -31,7 +31,6 @@ public class Product {
 	private int pImgNum; // 상품 이미지번호
 	private String pImgSaveFileName; // 상품 이미지 저장명
 	private List<MultipartFile> selectFile;
-	
 	
 	public int getpNum() {
 		return pNum;
@@ -117,16 +116,16 @@ public class Product {
 	public void setAreaNum(int areaNum) {
 		this.areaNum = areaNum;
 	}
-	public int getpLat() {
+	public double getpLat() {
 		return pLat;
 	}
-	public void setpLat(int pLat) {
+	public void setpLat(double pLat) {
 		this.pLat = pLat;
 	}
-	public int getpLon() {
+	public double getpLon() {
 		return pLon;
 	}
-	public void setpLon(int pLon) {
+	public void setpLon(double pLon) {
 		this.pLon = pLon;
 	}
 	public int getPcNum() {
