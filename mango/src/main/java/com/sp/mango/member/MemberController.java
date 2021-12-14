@@ -114,25 +114,69 @@ public class MemberController {
 		return "redirect:/member/complete";
 	}
 	
-	@RequestMapping(value="update", method=RequestMethod.GET)
-	public String updateForm(
-			Model model,
-			HttpSession session
-			) throws Exception {
+	@RequestMapping(value="pwd", method=RequestMethod.GET)
+	public String pwdForm(
+			String dropout,
+			Model model
+			) {
 		
-		String nickChangeable = "false";
+		if (dropout == null) {
+			model.addAttribute("mode","update");
+		} else {
+			model.addAttribute("mode","dropout");
+		}			
 		
-		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
-		if (memberInfo == null) {
-			return "redirect:/member/login";
-		}
+		return ".member.pwd";
+	}
+	
+	@RequestMapping(value="pwd", method=RequestMethod.POST)
+	public String pwdSubmit(
+			@RequestParam String userPwd,
+			@RequestParam String mode,
+			final RedirectAttributes reAttr,
+			HttpSession session,
+			Model model
+			) {
 		
-		String userId = memberInfo.getUserId();
-		Member dto = service.readMember(userId);
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		Member dto = service.readMember(info.getUserId());
 		
 		if (dto == null) {
+			session.invalidate();
 			return "redirect:/";
 		}
+		
+		if (!dto.getUserPwd().equals((userPwd))) {
+			if (mode.equals("update")) {
+				model.addAttribute("mode","update");
+			} else {
+				model.addAttribute("mode","dropout");
+			}
+			model.addAttribute("message","패스워드가 일치하지 않습니다.");
+			return ".member.pwd";
+		}
+		
+		if (mode.equals("dropout")) {
+			session.removeAttribute("member");
+			session.invalidate();
+			
+			String msg = dto.getUserNickName() + "("+dto.getUserName()+") "
+				+ " 님의 탈퇴처리가 정상적으로 처리되었습니다. <br>"
+				+ "메인화면으로 이동하시기 바랍니다. <br>";
+			
+			reAttr.addFlashAttribute("title","회원 탈퇴");
+			reAttr.addFlashAttribute("message",msg);
+			
+			return "redirect:/member/complete";
+		}
+		
+		String nickChangeable = "false";
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		
+		if (memberInfo == null) return "redirect:/member/login";
+		
+		// String userId = memberInfo.getUserId();
 		
 		String[] telTel = dto.getUserTel().split("-");
 		String[] mailMail = dto.getUserEmail().split("@");
@@ -161,8 +205,9 @@ public class MemberController {
 			nickChangeable = "true";
 		}
 		
-		model.addAttribute("mode","update");
+		
 		model.addAttribute("dto",dto);
+		model.addAttribute("mode","update");
 		model.addAttribute("nickChangeable",nickChangeable);
 		
 		return ".member.member";
@@ -208,7 +253,7 @@ public class MemberController {
 	
 	@RequestMapping(value="userDuplCheck", method=RequestMethod.POST)
 	@ResponseBody
-	public Map<String,Object> duplCheck(
+	public Map<String,Object> duplCheck (
 			@RequestParam String userParam,
 			@RequestParam String chkWay			
 			) throws Exception {
@@ -226,5 +271,32 @@ public class MemberController {
 		model.put("passed",p);
 		
 		return model;
+	}
+	
+	@RequestMapping(value = "noAuthorized")
+	public String noAuthrorized() {
+		return ".member.noAuthorized";
+	}
+	
+	@RequestMapping(value="business", method=RequestMethod.GET)
+	public String businessForm(
+			Model model
+			) throws Exception {
+		
+		model.addAttribute("mode", "insert");
+		return ".member.business";
+	}
+	
+	@RequestMapping(value="business", method=RequestMethod.POST)
+	public String businessSubmit () throws Exception {
+		
+		return "redirect:/";
+	}
+	
+	@RequestMapping(value="address", method=RequestMethod.GET)
+	public String addressList(
+			) throws Exception {
+		
+		return ".member.address";
 	}
 }

@@ -24,13 +24,11 @@ function memberOk() {
 	var tel3 = f.tel3.value;
 	
 	if(mode === "member" && !/^[a-z][a-z0-9_]{4,9}$/i.test(id) ) {
-		console.log("1111");
 		f.userId.focus();
 		return;
 	}
 	
 	if(mode === "member" && f.userIdValid.value === "false") {
-		console.log("2222");
 		str = "아이디 중복 검사가 실행되지 않았습니다.";
 		$("#userId").parents().find(".help-block1").html(str);
 		f.userId.focus();

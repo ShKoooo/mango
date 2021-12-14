@@ -3,7 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="member">
 	<select id="loginMember" parameterType="String" resultType="com.sp.mango.member.Member">
-		SELECT userId, userPwd, userName, userNickName, regDate, update_Date
+		SELECT userId, userPwd, userName, userNickName, membershipNum, regDate, update_Date
 		FROM member
 		WHERE userId = #{userId} AND memberEnable != 0
 	</select>
