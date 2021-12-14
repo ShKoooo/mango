@@ -6,4 +6,6 @@
 		SELECT userId, mannerStar, productStar, minusDeg FROM mannerProfile
 		WHERE userId = #{userId}
 	</select>
+	<select id="listAddr" parameterType="String" resultType="">
+	</select>
 </mapper>

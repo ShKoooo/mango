@@ -293,6 +293,16 @@ public class MemberController {
 		return "redirect:/";
 	}
 	
+	@RequestMapping(value="busnUpdate", method=RequestMethod.GET)
+	public String busnUpdateForm () throws Exception {
+		return "";
+	}
+	
+	@RequestMapping(value="busnUpdate", method=RequestMethod.POST)
+	public String busnUpdateSubmit() throws Exception {
+		return "";
+	}
+	
 	@RequestMapping(value="address", method=RequestMethod.GET)
 	public String addressList(
 			) throws Exception {
