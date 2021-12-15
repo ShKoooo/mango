@@ -1,9 +1,12 @@
 package com.sp.mango.mypage;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
+import com.sp.mango.member.MemberAddr;
 
 @Service("mypage.mypageService")
 public class MypageServiceImpl implements MypageService {
@@ -21,6 +24,20 @@ public class MypageServiceImpl implements MypageService {
 		}
 		
 		return dto;
+	}
+
+	@Override
+	public List<MemberAddr> listMemberAddr(String userId) throws Exception {
+		List<MemberAddr> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listAddr", userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+		return list;
 	}
 
 }

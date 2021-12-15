@@ -23,10 +23,10 @@
 
 $(function() {
 	var values = [];
-	var myDeg = Number($('#thermoContainer').attr('data-deg'));
-	// var myDeg = 66.5;
+	// var myDeg = Number($('#thermoContainer').attr('data-deg'));
+	var myDeg = 100;
 	values.push(myDeg);
-	var colorLim = ['#ddffff','#ff0000'];	// 0도 ~ 100도
+	var colorLim = ['#0000ff','#ffff00'];	// 0도 ~ 100도
 	
 	var cl1rr = colorLim[0][1]+colorLim[0][2];
 	var cl1gg = colorLim[0][3]+colorLim[0][4];
@@ -41,7 +41,13 @@ $(function() {
 	var gg = parseInt(ggN).toString(16);
 	var bbN = myDeg/100*(Number.parseInt(cl2bb,16)-Number.parseInt(cl1bb,16)) + Number.parseInt(cl1bb,16);
 	var bb = parseInt(bbN).toString(16);
+	
+	if (rr.length < 2) rr = '0'+rr;
+	if (gg.length < 2) gg = '0'+gg;
+	if (bb.length < 2) bb = '0'+bb;
+	
 	var rgb = '#'+rr+gg+bb;
+	console.log(rgb);
 	
 	Highcharts.chart('thermoContainer', {
 	  	chart: {
@@ -97,12 +103,23 @@ $(function() {
 				<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
 			</div>
 			<div class="row mb-3">
-				<h4><i class="icofont-location-pin"></i>주소 목록 - 리스트로 집어던지기</h4>
-				<c:if test="${empty addrDto}">
+				<h4><i class="icofont-location-pin"></i>주소 목록</h4>
+				<c:if test="${empty addrList}">
 					<div>등록한 주소 목록이 없습니다.</div>
 				</c:if>
-				<c:if test="${not empty addrDto}">
-					<div>무야호</div>
+				<c:if test="${not empty addrList}">
+					<table class="table table-striped">
+						<tr>
+							<th>기본주소</th>
+							<th>상세주소</th>
+						</tr>
+						<c:forEach var="addrDto" items="${addrList}">
+							<tr>
+								<td>${addrDto.maAddr1}</td>
+								<td>${addrDto.maAddr2}</td>
+							</tr>
+						</c:forEach>
+					</table>
 				</c:if>
 				<div class="col-3">
 					<button class="btn btn-light" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/address'">
@@ -120,7 +137,7 @@ $(function() {
 			<div class="row mb-3">
 				<h4>
 					<a href="#">
-						<i class="icofont-read-book-alt"></i> 관심유저, 차단유저, 관심키워드 (분리가능)
+						<i class="icofont-read-book-alt"></i> 관심유저, 차단유저, 관심키워드 (분리?)
 					</a>
 				</h4>
 			</div>

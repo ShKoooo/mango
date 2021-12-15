@@ -6,6 +6,9 @@
 		SELECT userId, mannerStar, productStar, minusDeg FROM mannerProfile
 		WHERE userId = #{userId}
 	</select>
-	<select id="listAddr" parameterType="String" resultType="">
+	<select id="listAddr" parameterType="String" resultType="com.sp.mango.member.MemberAddr">
+		SELECT maNum, maZip, maAddr1, maAddr2, userId, areaNum, maLat, maLon
+		FROM memberAddr
+		WHERE userId = #{userId}
 	</select>
 </mapper>

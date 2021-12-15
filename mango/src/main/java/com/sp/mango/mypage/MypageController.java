@@ -1,5 +1,7 @@
 package com.sp.mango.mypage;
 
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.sp.mango.member.MemberAddr;
 import com.sp.mango.member.MemberSessionInfo;
 
 @Controller("mypage.mypageController")
@@ -38,9 +41,12 @@ public class MypageController {
 		}
 		mannerDto.setMannerDeg(mannerDto.getMannerStar(), mannerDto.getProductStar(), mannerDto.getMinusDeg());
 		
+		List<MemberAddr> addrList = service.listMemberAddr(userId);
+		
 		model.addAttribute("userId",userId);
 		model.addAttribute("userNickName",userNickName);
 		model.addAttribute("mannerDto",mannerDto);
+		model.addAttribute("addrList",addrList);
 		
 		return ".mypage.main";
 	}
