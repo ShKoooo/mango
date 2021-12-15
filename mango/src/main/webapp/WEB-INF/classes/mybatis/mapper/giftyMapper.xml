@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gifty">
+	<select id="giftyconSeq" resultType="Integer"> 
+		SELECT giftycon_seq.NEXTVAL FROM dual 
+    </select>
+    
+    <insert id="insertGifty" parameterType="com.sp.mango.gifty.Gifty">
+    	INSERT INTO giftycon (gNum, userId, gSubject, gRegdate, gExpdate, gHitCount, gPrice, gContent, gStatus, gUpdate_date, gSoldDate, gcNum)
+					VALUES (#{gNum}, #{userId}, #{gSubject}, SYSDATE, #{gExpdate, jdbcType=VARCHAR}, 0, #{gPrice, jdbcType=VARCHAR}, #{gContent, jdbcType=VARCHAR}, #{gStatus, jdbcType=VARCHAR}, #{gUpdate_date, jdbcType=VARCHAR}, #{gSoldDate, jdbcType=VARCHAR}, #{gcNum})
+    </insert>
+    
+    <insert id="insertGiftyImg" parameterType="com.sp.mango.gifty.Gifty">
+    	INSERT INTO giftyImg (gImgNum, gImgSaveFileName, gNum)
+				VALUES (giftyImg_seq.NEXTVAL, #{gImgSaveFileName, jdbcType=VARCHAR}, #{gNum}) 
+    </insert>
+
+</mapper>

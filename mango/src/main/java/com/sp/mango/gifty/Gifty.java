@@ -1,8 +1,11 @@
 package com.sp.mango.gifty;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class Gifty {
 	private int gNum;
 	private String userId;
+	private String userNickName;
 	private String gSubject;
 	private String gRegdate;
 	private String gExpdate;
@@ -13,10 +16,15 @@ public class Gifty {
 	private String gStatus;
 	private String gSoldDate;
 	private int gcNum;
+	private String gcName;
+	
+	private String gIsProposable;
+	private int gPropPrice;
+	
 	
 	private int gImgNum;
-	private String saveFilename;
-	
+	private String gImgSaveFileName;
+	private MultipartFile selectFile;
 	public int getgNum() {
 		return gNum;
 	}
@@ -28,6 +36,12 @@ public class Gifty {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public String getUserNickName() {
+		return userNickName;
+	}
+	public void setUserNickName(String userNickName) {
+		this.userNickName = userNickName;
 	}
 	public String getgSubject() {
 		return gSubject;
@@ -89,18 +103,43 @@ public class Gifty {
 	public void setGcNum(int gcNum) {
 		this.gcNum = gcNum;
 	}
+	public String getGcName() {
+		return gcName;
+	}
+	public void setGcName(String gcName) {
+		this.gcName = gcName;
+	}
 	public int getgImgNum() {
 		return gImgNum;
 	}
 	public void setgImgNum(int gImgNum) {
 		this.gImgNum = gImgNum;
 	}
-	public String getSaveFilename() {
-		return saveFilename;
+	public String getgImgSaveFileName() {
+		return gImgSaveFileName;
 	}
-	public void setSaveFilename(String saveFilename) {
-		this.saveFilename = saveFilename;
+	public void setgImgSaveFileName(String gImgSaveFileName) {
+		this.gImgSaveFileName = gImgSaveFileName;
 	}
+	public MultipartFile getSelectFile() {
+		return selectFile;
+	}
+	public void setSelectFile(MultipartFile selectFile) {
+		this.selectFile = selectFile;
+	}
+	public String getgIsProposable() {
+		return gIsProposable;
+	}
+	public void setgIsProposable(String gIsProposable) {
+		this.gIsProposable = gIsProposable;
+	}
+	public int getgPropPrice() {
+		return gPropPrice;
+	}
+	public void setgPropPrice(int gPropPrice) {
+		this.gPropPrice = gPropPrice;
+	}
+	
 	
 	
 }
