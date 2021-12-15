@@ -35,6 +35,11 @@
 											<a href="${pageContext.request.contextPath}/admin" title="관리자"><i class="bi bi-gear"></i></a>
 										</div>					
 									</c:if>
+									<c:if test="${sessionScope.member.membership<50}">
+										<div class="p-2">
+											<a href="${pageContext.request.contextPath}/mypage/main" title="마이페이지">${sessionScope.member.userNickName} 님</a>
+										</div>					
+									</c:if>
 								</c:otherwise>
 							</c:choose>
 						</div>
