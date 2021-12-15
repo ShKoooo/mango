@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cscenter">
+
+	<insert id="insertBoard" parameterType="com.sp.mango.cscenter.Board">
+		INSERT INTO notice(noticeNum, userId, nSubject, nContent, nRegDate, 
+			saveFilename, originalFilename) 
+		VALUES(notice_seq.NEXTVAL, #{userId}, #{nSubject}, #{nContent},  
+				SYSDATE, #{saveFilename, jdbcType=VARCHAR}, 
+				#{originalFilename, jdbcType=VARCHAR} )
+	</insert>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) 
+		FROM notice n 
+		JOIN member m ON n.userId = m.userId
+	</select>
+	
+	<select id="listBoard" parameterType="map" resultType="com.sp.mango.cscenter.Board">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM ( 
+		        SELECT noticeNum, n.userId, nSubject, 
+		               TO_CHAR(nRegDate, 'YYYY-MM-DD') nRegDate, saveFilename 
+		        FROM notice n 
+		        JOIN member m ON n.userId=m.userId 
+		        ORDER BY noticeNum DESC 
+		    ) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="readBoard" parameterType="Integer" resultType="com.sp.mango.cscenter.Board">
+		SELECT noticeNum, m.userId, nSubject, nContent, nRegDate,  saveFilename, originalFilename 
+		FROM notice n 
+		JOIN member m ON n.userId=m.userId 
+		WHERE n.noticeNum = #{noticeNum}
+	</select>
+	
+	<delete id="deleteBoard" parameterType="Integer">
+		DELETE FROM notice WHERE noticeNum = #{noticeNum}
+	</delete>
+	
+	<update id="updateBoard" parameterType="com.sp.mango.cscenter.Board">
+		UPDATE notice SET nSubject=#{nSubject}, nContent=#{nContent}, 
+		    saveFilename=#{saveFilename, jdbcType=VARCHAR}, 
+		    originalFilename=#{originalFilename, jdbcType=VARCHAR} 
+		WHERE noticeNum = #{noticeNum}
+	</update>
+	
+	
+</mapper>
