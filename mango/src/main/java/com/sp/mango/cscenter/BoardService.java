@@ -15,5 +15,6 @@ public interface BoardService {
 	public void insertBoard(Board dto, String pathname) throws Exception;
 	public void updateBoard(Board dto, String pathname) throws Exception;
 	public void deleteBoard(int num, String pathname, String userId) throws Exception;
+	
 
 }

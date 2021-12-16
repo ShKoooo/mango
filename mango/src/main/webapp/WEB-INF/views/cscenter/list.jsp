@@ -78,33 +78,34 @@
 	
 }
 
-.psersonal-two div:nth-child(2) {
+.psersonal-two-two div:nth-child(1) {
 	text-align: left;
 	font-size: 15px;
 	font-weight: bold;
 	padding: 20px;
 	color: black;
+	background: white;
 }
 
-.psersonal-two div:nth-child(3) {
+.psersonal-two-two div:nth-child(2) {
 	text-align: left;
 	font-size: 15px;
 	font-weight: bold;
 	padding: 20px;
 }
 
-.psersonal-two div:nth-child(4) {
+.psersonal-two-two div:nth-child(3) {
 	text-align: left;
 	font-size: 15px;
 	font-weight: bold;
 	padding: 20px;
 }
 
-.psersonal-two div:nth-child(5) {
+.psersonal-two-two div:nth-child(4) {
 	padding: 20px;
 }
 
-.psersonal-two div:nth-child(5) > button {
+.psersonal-two-two div:nth-child(4) > button {
 	width: 100%;
 	border: 1px;
 	border-radius: 15px;
@@ -125,6 +126,33 @@
 	color: snow;
 }
 
+#psersonal-two-return {
+	width: 100%;
+	height: 260px;
+	text-align: center;
+	
+	background: white;
+	padding-left: 0px;
+}
+
+#psersonal-two-return2 {
+	width: 100%;
+	padding-left: 97px;
+}
+
+#personalBackBtn {
+
+	border-radius: 15px;
+	color: black;
+	background: white;
+	
+	width: 155px;
+}
+
+#personalOk {
+	display: none;
+}
+
 
 </style>
 
@@ -133,6 +161,43 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
 
 <script type="text/javascript">
+
+function sendPersonalBtn() {
+	var f = document.personalForm;
+	var str;
+	
+	str = f.inquiryEmail.value.trim();
+	if(!str) {
+		alert("이메일을 입력 해주세요");
+		f.inquiryEmail.focus();
+		return;
+	}
+	
+	str = f.inquiryContent.value.trim();
+	if(!str) {
+		alert("내용을 입력 해주세요");
+		f.inquiryContent.focus();
+		return;
+	}
+	
+	$(function(){
+		$("#personalSend").click(function(){ // 1대1 문의 전송 버튼 눌렀을때
+			$(".psersonal-two-two").hide();
+			$("#personalOk").show();
+		});
+		
+		$("#personalBackBtn").click(function(){
+			$("#personalOk").hide();
+			$(".psersonal-two-two input").val("");
+			$(".psersonal-two-two textarea").val("");
+			$(".psersonal-two-two").show();
+		});
+	});
+	
+	f.action = "${pageContext.request.contextPath}/inquiry/personalSend";
+	f.submit();
+	
+}
 
 $(function(){
 	
@@ -147,6 +212,8 @@ $(function(){
 	});
 	
 });
+
+	
 
 </script>
 
@@ -224,29 +291,42 @@ $(function(){
 		</button>
 	</div>
 	
-	<div class="psersonal-two">
-		<div>
-			문의하기
-			<i class="li_trash close"></i>
+	<form name="personalForm" method="post" enctype="multipart/form-data">
+		<div class="psersonal-two">
+			<div>
+				문의하기
+				<i class="li_trash close"></i>
+			</div>
+			<div class="psersonal-two-two">
+				<div>
+					<label style="width: 100%; padding-bottom: 10px;">이메일 주소</label>
+					<input type="text" name="inquiryEmail" style="color: black; width: 100%; border-radius: 10px;">
+				</div>
+				
+				<div>
+					<label style="width: 100%; padding-bottom: 10px;">무엇을 도와 드릴까요?</label>
+					<textarea rows="5" cols="38" name="inquiryContent" style="color: black; border-radius: 10px;"></textarea>
+				</div>
+				
+				<div>
+					<label style="width: 100%; padding-bottom: 10px;">첨부 파일</label>
+					<input type="file" name="selectFile" style="border-radius: 10px;">
+				</div>
+				<div>
+					<button type="button" id="personalSend" onclick="sendPersonalBtn();">보내기</button>
+				</div>
+			</div>
 		</div>
-		<div>
-			<label style="width: 100%; padding-bottom: 10px;">이메일 주소</label>
-			<input type="text" style="color: black; width: 100%; border-radius: 10px;">
-		</div>
+	</form>
 		
-		<div>
-			<label style="width: 100%; padding-bottom: 10px;">무엇을 도와 드릴까요?</label>
-			<textarea rows="5" cols="38" style="color: black; border-radius: 10px;"></textarea>
+		 <div id="personalOk">
+			<div id="psersonal-two-return">
+				<h3 style="line-height: 14">전송 완료</h3>
+			</div>
+			<div id="psersonal-two-return2">
+				<button type="button" id="personalBackBtn">돌아가기</button>
+			</div>
 		</div>
-		
-		<div>
-			<label style="width: 100%; padding-bottom: 10px;">첨부 파일</label>
-			<input type="file" style="border-radius: 10px;">
-		</div>
-		<div>
-			<button type="button">보내기</button>
-		</div>
-	</div>
 </div> <!-- /.content-wrapper -->
 
 

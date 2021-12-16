@@ -51,7 +51,9 @@ a:hover, a:active {
 
 
 </style>
-
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100">
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,400italic,300italic,300,500,500italic,700,900">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
 
 <div class="content-wrapper">
 	<div class="inner-container container">
@@ -67,11 +69,8 @@ a:hover, a:active {
 			<div class="row">
 				<div class="col-md-12 project-item">
 					<ul class="nav nav-tabs">
-					<li class="nav-item">
-					    <a class="nav-link active" data-bs-toggle="tab" href="#all">최신글</a>
-					  </li>
 					  <li class="nav-item">
-					    <a class="nav-link" data-bs-toggle="tab" href="#qna">동네 질문</a>
+					    <a class="nav-link active" data-bs-toggle="tab" href="#qna">동네 질문</a>
 					  </li>
 					  <li class="nav-item">
 					    <a class="nav-link" data-bs-toggle="tab" href="#eat">동네 맛집</a>
@@ -86,8 +85,7 @@ a:hover, a:active {
 					
 					<!-- Tab panes -->
 					<div class="tab-content">
-					  <div class="tab-pane container active " id ="all">최신글이 나왔으면 하는 부분</div>
-					  <div class="tab-pane container " id="qna">동네질문게시판 리스트 </div>
+					  <div class="tab-pane container active" id="qna">동네질문게시판 리스트 (희망사항)</div>
 					  <div class="tab-pane container " id="eat">동네맛집게시판 리스트</div>
 					  <div class="tab-pane container " id="helpme">해주세요게시판 리스트</div>
 					  <div class="tab-pane container " id="withme">같이해요게시판 리스트</div>

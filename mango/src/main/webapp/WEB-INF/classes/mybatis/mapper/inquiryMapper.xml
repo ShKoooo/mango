@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="inquiry">
+
+	<insert id="insertPersonalSend" parameterType="com.sp.mango.inquiry.Inquiry">
+		INSERT INTO inquiry(inquiryNum, userId, inquiryEmail, inquiryContent, inquiryRegDate, 
+				saveFilename, originalFilename) 
+		VALUES(inquiry_seq.NEXTVAL, #{userId}, #{inquiryEmail}, #{inquiryContent}, SYSDATE, 
+				#{saveFilename, jdbcType=VARCHAR}, 
+				#{originalFilename, jdbcType=VARCHAR} )
+	</insert>
+	
+</mapper>
