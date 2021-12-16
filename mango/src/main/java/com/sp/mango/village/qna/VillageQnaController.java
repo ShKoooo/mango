@@ -106,6 +106,7 @@ public class VillageQnaController {
 	public String writeForm(Model model) throws Exception {
 		
 		model.addAttribute("mode", "write");
+		
 		return ".village.qna.write";
 	}
 	
@@ -169,6 +170,60 @@ public class VillageQnaController {
 		model.addAttribute("query", query);
 		
 		return ".village.qna.article";
+	}
+	
+	@RequestMapping(value = "update", method = RequestMethod.GET)
+	public String updateForm(@RequestParam int num,
+			@RequestParam String page,
+			HttpSession session,
+			Model model) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		VillageQna dto = service.readBoard(num);
+		if(dto == null || ! info.getUserId().equals(dto.getUserId())) {
+			return "redirect:/village/qna/list?page=" + page;
+		}
+		
+		model.addAttribute("dto", dto);
+		model.addAttribute("page", page);
+		model.addAttribute("mode", "update");
+		
+		return ".village.qna.write";
+	}
+	
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	public String updateSubmit(VillageQna dto,
+			@RequestParam String page,
+			HttpSession session) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			service.updateBoard(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/village/qna/list?page=" + page;
+	}
+	
+	@RequestMapping(value = "delete")
+	public String delete(@RequestParam int num,
+			@RequestParam String page,
+			@RequestParam(defaultValue = "all") String condition,
+			@RequestParam(defaultValue = "") String keyword,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		keyword = URLDecoder.decode(keyword, "utf-8");
+		String query = "page="+page;
+		if (keyword.length() != 0) {
+			query += "&condition=" + condition +"&keyword=" + URLEncoder.encode(keyword, "UTF-8");
+		}
+		
+		service.deleteBoard(num, info.getUserId(), info.getMembership());
+		
+		return "redirect:/village/qna/list?"+query;
 	}
 	
 }

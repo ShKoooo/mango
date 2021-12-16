@@ -11,8 +11,8 @@ public interface VillageQnaService {
 	public void updateHitCount(int vNum) throws Exception;
 	public VillageQna preReadBoard(Map<String, Object> map);
 	public VillageQna nextReadBoard(Map<String, Object> map);
-	public void updateBoard(VillageQna dto, String pathname) throws Exception;
-	public void deleteBoard(VillageQna dto, String pathname) throws Exception;
+	public void updateBoard(VillageQna dto) throws Exception;
+	public void deleteBoard(int vNum, String userId, int membership) throws Exception;
 	
 	public void insertBoardLike(Map<String, Object> map) throws Exception;
 	public void deleteBoardLike(Map<String, Object> map) throws Exception;

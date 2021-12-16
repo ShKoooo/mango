@@ -113,15 +113,27 @@ public class VillageQnaServiceImpl implements VillageQnaService {
 	}
 
 	@Override
-	public void updateBoard(VillageQna dto, String pathname) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void updateBoard(VillageQna dto) throws Exception {
+		try {
+			dao.updateData("qna.updateBoard", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
-	public void deleteBoard(VillageQna dto, String pathname) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void deleteBoard(int vNum, String userId, int membership) throws Exception {
+		try {
+			VillageQna dto = readBoard(vNum);
+			if(dto == null || (membership < 51 && ! dto.getUserId().equals(userId))) {
+				return;
+			}
+			
+			dao.deleteData("qna.deleteBoard", vNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

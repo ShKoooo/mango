@@ -22,10 +22,6 @@
 				( INSTR(subject, #{keyword}) &gt; 0
 					OR DBMS_LOB.INSTR(content, #{keyword}) &gt; 0 )
 			</when>
-			<!--<when test="condition == 'reg_date'">
-				( TO_CHAR(regDate, 'YYYYMMDD') = #{keyword}
-					OR TO_CHAR(regDate, 'YYYY-MM-DD') = #{keyword} )
-			</when>-->
 			<when test="condition == 'content'">
 				DBMS_LOB.INSTR(content, #{keyword}) &gt; 0
 			</when>
@@ -51,10 +47,11 @@
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT vNum, v.userId, userNickName, subject,
 					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date,
-					hitCount
+					hitCount, vcNum 
 				FROM village_bbs v
 				JOIN member m ON v.userId = m.userId
 				<where>
+				vcNum = 1
 					<if test="keyword != null and keyword != ''">
 						<include refid="where-list"/>
 					</if>
@@ -107,5 +104,14 @@
 		) WHERE ROWNUM = 1
 	</select>
 	
+	
+	<update id="updateBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+		UPDATE village_bbs SET subject=#{subject}, content=#{content}
+		WHERE vNum = #{vNum}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+		DELETE FROM village_bbs WHERE vNum = #{vNum}
+	</delete>
 
 </mapper>

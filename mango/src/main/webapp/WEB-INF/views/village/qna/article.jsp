@@ -4,7 +4,46 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <script type="text/javascript">
+<c:if test="${sessionScope.member.userId==dto.userId||sessionScope.member.membership>50}">
+	function deleteBoard() {
+		if(confirm("게시글을 삭제하시겠습니까?")) {
+			var query = "num=${dto.vNum}&${query}";
+			var url = "${pageContext.request.contextPath}/village/qna/delete?" + query;
+			location.href = url;
+		}
+	}
+</c:if>
+</script>
 
+<script type="text/javascript">
+function login () {
+	location.href="${pageContext.request.contextPath}/member/login";
+}
+function ajaxFun(url, method, query, dataType, fn) {
+	$.ajax({
+		type:method,
+		url:url,
+		data:query,
+		dataType:dataType,
+		success:function(data) {
+			fn(data);
+		},
+		beforeSend:function(jqXHR) {
+			jqXHR.setRequestHeader("AJAX", true);
+		},
+		error:function(jqXHR) {
+			if(jqXHR.status === 403) {
+				login();
+				return false;
+			} else if(jqXHR.status === 400) {
+				alert("요청 처리가 실패했습니다.");
+				return false;
+			}
+			
+			console.log(jqXHR.responseText);
+		}
+	});
+}
 
 </script>
 
