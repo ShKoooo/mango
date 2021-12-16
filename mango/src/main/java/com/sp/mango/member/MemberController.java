@@ -304,9 +304,106 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="address", method=RequestMethod.GET)
-	public String addressList(
+	public String addressForm(
+			final RedirectAttributes reAttr,
+			HttpSession session
 			) throws Exception {
 		
+		int addrCount = 0;
+		
+		try {
+			MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+			String userId = info.getUserId();
+			
+			addrCount = service.countMemberAddr(userId);
+			
+			if (addrCount >= 2) {
+				String msg = info.getUserNickName()+ "님은 이미 2개의 주소를 등록하셨습니다.<br>"
+					+ "새로 등록하려면 먼저 삭제를 진행해 주세요.";
+				String goBack = "/mypage/main";
+				
+				reAttr.addFlashAttribute("title","주소 등록 불가");
+				reAttr.addFlashAttribute("message",msg);
+				reAttr.addFlashAttribute("goBack",goBack);
+				
+				return "redirect:/member/complete";
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		
 		return ".member.address";
+	}
+	
+	@RequestMapping(value="address", method=RequestMethod.POST)
+	public String addressSubmit(
+			HttpSession session,
+			MemberAddr dto,
+			Model model,
+			final RedirectAttributes reAttr
+			) throws Exception {
+		
+		int addrCount = 0;
+		Integer areaNum;
+		
+		try {
+			MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+			String userId = info.getUserId();
+			dto.setUserId(userId);
+			
+			addrCount = service.countMemberAddr(userId);
+			
+			if (addrCount >= 2) {
+				String msg = info.getUserNickName()+ "님은 이미 2개의 주소를 등록하셨습니다.<br>"
+					+ "새로 등록하려면 먼저 삭제를 진행해 주세요.";
+				String goBack = "/mypage/main";
+				
+				reAttr.addFlashAttribute("title","주소 등록 불가");
+				reAttr.addFlashAttribute("message",msg);
+				reAttr.addFlashAttribute("goBack",goBack);
+				
+				return "redirect:/member/complete";
+			}
+			
+			// area 테이블에서 해당 bcode에 해당하는 areaNum 없으면 새로 입력
+			areaNum = service.readAreaByBcode(dto.getBcodeCut());
+			if (areaNum == null) {
+				areaNum = service.getAreaSeqNum();
+				dto.setAreaNum(areaNum);
+				
+				service.insertArea(dto);
+			} else {
+				dto.setAreaNum(areaNum);
+			}
+			
+			// 멤버주소 입력
+			service.insertMemberAddr(dto);
+			
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return "redirect:/mypage/main";
+	}
+	
+	@RequestMapping(value="deleteAddr", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteAddr(
+			@RequestParam Integer maNum
+			) throws Exception {
+		Map<String, Object> model = new HashMap<>();
+		
+		try {
+			service.deleteMemberAddr(maNum);
+		} catch (Exception e) {
+			model.put("state", "false");
+			System.out.println(":::: false ::::");
+			return model;
+		}
+		
+		System.out.println(":::: true ::::");
+		model.put("state", "true");
+		return model;
 	}
 }

@@ -49,4 +49,32 @@
 		WHERE userId = #{userId}
 	</update>
 	
+	<select id="countAddrById" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0) FROM memberAddr WHERE userId = #{userId} 
+	</select>
+	
+	<select id="readAreaByBcode" parameterType="String" resultType="Integer">
+		SELECT areaNum FROM area WHERE bcodeCut = #{bcodeCut}
+	</select>
+	
+	<select id="getAreaSeqNum" resultType="Integer">
+		SELECT area_seq.NEXTVAL readedArea FROM dual
+	</select>
+	
+	<insert id="insertArea" parameterType="com.sp.mango.member.MemberAddr">
+		INSERT INTO area (areaNum, area1, area2, area3, aLat, aLon, bcodeCut, bcodeSigungu)
+		VALUES (#{areaNum}, #{area1},#{area2},#{area3},#{aLat},#{aLon},
+			#{bcodeCut, jdbcType=VARCHAR}, #{bcodeSigungu, jdbcType=VARCHAR})
+	</insert>
+	
+	<insert id="insertMemberAddr" parameterType="com.sp.mango.member.MemberAddr">
+		INSERT INTO memberAddr (maNum, maZip, maAddr1, maAddr2, userId, areaNum, maLat, maLon)
+		VALUES (memberAddr_seq.NEXTVAL,#{maZip},#{maAddr1, jdbcType=VARCHAR},#{maAddr2, jdbcType=VARCHAR},
+			#{userId},#{areaNum},#{maLat, jdbcType=DOUBLE},#{maLon, jdbcType=DOUBLE})
+	</insert>
+	
+	<delete id="deleteMemberAddr" parameterType="Integer">
+		DELETE FROM memberAddr WHERE maNum = #{maNum}
+	</delete>
+	
 </mapper>
