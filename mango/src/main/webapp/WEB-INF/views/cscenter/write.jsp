@@ -7,8 +7,20 @@
 .body-container {
 	max-width: 800px;
 }
+
+.ck.ck-editor {
+	max-width: 99%;
+}
+.ck-editor__editable {
+    min-height: 250px;
+}
+.ck-content .image>figcaption {
+	min-height: 25px;
+}
+
 </style>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/boot-board.css" type="text/css">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/vendor/ckeditor5/ckeditor.js"></script>
 
 <script type="text/javascript">
 function sendOk() {
@@ -22,12 +34,13 @@ function sendOk() {
         return;
     }
 
-    str = f.nContent.value.trim();
-    if(!str) {
+    str = window.editor.getData().trim();
+    if(! str) {
         alert("내용을 입력하세요. ");
-        f.nContent.focus();
+        window.editor.focus();
         return;
     }
+	f.content.value = str;
 
     f.action = "${pageContext.request.contextPath}/cscenter/${mode}";
     f.submit();
@@ -71,7 +84,11 @@ function sendOk() {
 					<tr>
 						<td class="table-light" scope="row">내 용</td>
 						<td>
-							<textarea name="nContent" id="content" class="form-control">${dto.nContent}</textarea>
+							<!-- 
+								<textarea name="nContent" id="content" class="form-control">${dto.nContent}</textarea>
+							 -->
+							<div class="editor form-control">${dto.nContent}</div>
+							<input type="hidden" name="nContent" id="content">
 						</td>
 					</tr>
 					
@@ -118,3 +135,55 @@ function sendOk() {
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+	ClassicEditor
+		.create( document.querySelector( '.editor' ), {
+			fontFamily: {
+	            options: [
+	                'default',
+	                '맑은 고딕, Malgun Gothic, 돋움, sans-serif',
+	                '나눔고딕, NanumGothic, Arial'
+	            ]
+	        },
+	        fontSize: {
+	            options: [
+	                9, 11, 13, 'default', 17, 19, 21
+	            ]
+	        },
+			toolbar: {
+				items: [
+					'heading','|',
+					'fontFamily','fontSize','bold','italic','fontColor','|',
+					'alignment','bulletedList','numberedList','|',
+					'imageUpload','insertTable','sourceEditing','blockQuote','mediaEmbed','|',
+					'undo','redo','|',
+					'link','outdent','indent','|',
+				]
+			},
+			image: {
+	            toolbar: [
+	                'imageStyle:full',
+	                'imageStyle:side',
+	                '|',
+	                'imageTextAlternative'
+	            ],
+	
+	            // The default value.
+	            styles: [
+	                'full',
+	                'side'
+	            ]
+	        },
+			language: 'ko',
+			ckfinder: {
+		        uploadUrl: '${pageContext.request.contextPath}/image/upload' // 업로드 url (post로 요청 감)
+		    }
+		})
+		.then( editor => {
+			window.editor = editor;
+		})
+		.catch( err => {
+			console.error( err.stack );
+		});
+</script>

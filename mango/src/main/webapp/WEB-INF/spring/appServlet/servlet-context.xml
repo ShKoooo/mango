@@ -76,6 +76,7 @@
 			<exclude-mapping path="/cscenter/csNotice"/>
 			<exclude-mapping path="/cscenter/article"/>
 			<exclude-mapping path="/cscenter/download"/>
+			<exclude-mapping path="/image/upload"/>
 			<!-- 밑에 추가 -->
 			
 			<beans:bean class="com.sp.mango.member.LoginCheckInterceptor"/>

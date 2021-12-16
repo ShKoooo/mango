@@ -167,7 +167,7 @@ public class CscenterController {
 			return "redirect:/cscenter/csNotice?" + query;
 		}
 		
-		dto.setnContent(myUtil.htmlSymbols(dto.getnContent()));
+		// dto.setnContent(myUtil.htmlSymbols(dto.getnContent()));
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
