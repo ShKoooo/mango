@@ -1,4 +1,4 @@
-package com.sp.mango.member;
+package com.sp.mango.mypage;
 
 public class MemberAddr {
 	private Integer maNum;
@@ -7,15 +7,13 @@ public class MemberAddr {
 	private String maAddr2;
 	private String userId;
 	private Integer areaNum;
-	private Double maLat;	// 지도에 찍은 좌표 (건물좌표)
+	private Double maLat;
 	private Double maLon;
-	
 	private String area1;
 	private String area2;
 	private String area3;
 	private String bcodeCut;
-	private String bcodeSigungu;
-	private Double aLat;	// 읍,면,동 주민센터 좌표
+	private Double aLat;
 	private Double aLon;
 	
 	public Integer getMaNum() {
@@ -89,12 +87,6 @@ public class MemberAddr {
 	}
 	public void setBcodeCut(String bcodeCut) {
 		this.bcodeCut = bcodeCut;
-	}
-	public String getBcodeSigungu() {
-		return bcodeSigungu;
-	}
-	public void setBcodeSigungu(String bcodeSigungu) {
-		this.bcodeSigungu = bcodeSigungu;
 	}
 	public Double getaLat() {
 		return aLat;

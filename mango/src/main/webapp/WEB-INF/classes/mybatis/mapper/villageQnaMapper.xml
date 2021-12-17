@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="qna">
+	<insert id="insertBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+		INSERT INTO village_bbs(vNum, userId, subject, content, hitCount, regDate, 
+				vcNum, areaNum, addr2, vBlat, vBlon)
+		VALUES (village_bbs_seq.NEXTVAL, #{userId}, #{subject}, #{content}, 0, SYSDATE, 
+		1, #{areaNum}, #{addr2, jdbcType=VARCHAR}, #{vBlat, jdbcType=INTEGER}, #{vBlon, jdbcType=INTEGER})
+	</insert>
+	
+	<!-- 이미지 첨부
+	<insert id="insertImg" parameterType="com.sp.mango.village.qna.VillageQna">
+		INSERT INTO villageImg (vimgNum, vimgSaveFilename, vimgOrigFilename, vNum)
+		VALUES (villageImg_seq.NEXTVAL, #{vimgSaveFilename}, #{vimgOrigFilename}, 1)
+	</insert>
+	-->
+	
+	<sql id="where-list">
+		<choose>
+			<when test="condition == 'all'">
+				( INSTR(subject, #{keyword}) &gt; 0
+					OR DBMS_LOB.INSTR(content, #{keyword}) &gt; 0 )
+			</when>
+			<when test="condition == 'content'">
+				DBMS_LOB.INSTR(content, #{keyword}) &gt; 0
+			</when>
+			<otherwise>
+			    INSTR(${condition}, #{keyword}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM village_bbs v
+		JOIN member m ON v.userId = m.userId
+		<where>
+			<if test="keyword!=null and keyword!='' ">
+				<include refid="where-list"/>
+			</if>
+		</where>
+	</select>
+	
+	<select id="listBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT vNum, v.userId, userNickName, subject,
+					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date,
+					hitCount, vcNum 
+				FROM village_bbs v
+				JOIN member m ON v.userId = m.userId
+				<where>
+				vcNum = 1
+					<if test="keyword != null and keyword != ''">
+						<include refid="where-list"/>
+					</if>
+				</where>
+				ORDER BY vNum DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="readBoard" parameterType="Integer" resultType="com.sp.mango.village.qna.VillageQna">
+		SELECT vNum, v.userId, userNickName, subject, 
+			content, TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, hitCount
+		FROM village_bbs v
+		JOIN member m ON v.userId = m.userId
+		WHERE vNum=#{vNum}
+	</select>
+	
+	<update id="updateHitCount" parameterType="Integer">
+		UPDATE village_bbs SET hitCount=hitCount+1 WHERE vNum=#{vNum}
+	</update>
+	
+	<!-- 이전글, 다음글 -->
+	<select id="preReadBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+		SELECT * FROM (
+			SELECT vNum, subject
+			FROM village_bbs v
+			JOIN member m ON v.userId = m.userId
+			<where>
+				<if test="keyword != null and keyword != '' ">
+					<include refid="where-list"/>
+				</if>
+				AND (vNum &lt; #{vNum})
+			</where>
+			ORDER BY vNum DESC
+		) WHERE ROWNUM = 1
+	</select>
+	
+	<select id="nextReadBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+		SELECT * FROM (
+			SELECT vNum, subject
+			FROM village_bbs v
+			JOIN member m ON v.userId = m.userId
+			<where>
+				<if test="keyword != null and keyword != '' ">
+					<include refid="where-list"/>
+				</if>
+				AND (vNum &gt; #{vNum})
+			</where>
+			ORDER BY vNum ASC
+		) WHERE ROWNUM = 1
+	</select>
+	
+	
+	<update id="updateBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+		UPDATE village_bbs SET subject=#{subject}, content=#{content}
+		WHERE vNum = #{vNum}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+		DELETE FROM village_bbs WHERE vNum = #{vNum}
+	</delete>
+
+</mapper>

@@ -23,10 +23,14 @@
 
 $(function() {
 	var values = [];
-	// var myDeg = Number($('#thermoContainer').attr('data-deg'));
-	var myDeg = 100;
+	var myDeg = Number($('#thermoContainer').attr('data-deg'));
+	// var myDeg = 50;
+	
+	if (myDeg > 100) myDeg = 100;
+	if (myDeg < 0) myDeg = 0;
+	
 	values.push(myDeg);
-	var colorLim = ['#0000ff','#ffff00'];	// 0도 ~ 100도
+	var colorLim = ['#aaff00','#ffaa00'];	// 0도 ~ 100도
 	
 	var cl1rr = colorLim[0][1]+colorLim[0][2];
 	var cl1gg = colorLim[0][3]+colorLim[0][4];
@@ -82,6 +86,34 @@ $(function() {
 	  	}]
 	});
 });
+
+$(function() {
+	$("body").on("click",".btn-delAddr", function() {
+		if(!confirm("주소를 삭제하시겠습니까?")) {
+			return false;
+		}
+		
+		var maNum = $(this).closest("tr").attr("data-maNum");
+		var url = "${pageContext.request.contextPath}/member/deleteAddr";
+		var query = "maNum="+maNum;
+		
+		$.ajax({
+			type:"POST"
+			,url:url
+			,data:query
+			,dataType:"json"
+			,success:function(data) {
+				var passed = data.state;
+
+				if (passed==="true") {
+					location.href = "${pageContext.request.contextPath}/mypage/main";
+					location.reload();
+				}
+			}
+		});
+	});
+});
+
 </script>
 
 <div class="container">
@@ -99,33 +131,49 @@ $(function() {
 				</h4>
 			</div>
 			<div class="row mb-3">
-				<h4><i class="icofont-thermometer"></i>나의 매너 온도</h4>
+				<h4><i class="icofont-thermometer"></i> 나의 매너 온도</h4>
 				<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
 			</div>
 			<div class="row mb-3">
-				<h4><i class="icofont-location-pin"></i>주소 목록</h4>
+				<div class="row mb-3">
+					<h4><i class="icofont-location-pin"></i> 주소 목록</h4>
+				</div>
 				<c:if test="${empty addrList}">
-					<div>등록한 주소 목록이 없습니다.</div>
+					<div class="border bg-light mb-3 p-3 text-center">등록한 주소 목록이 없습니다.</div>
 				</c:if>
 				<c:if test="${not empty addrList}">
-					<table class="table table-striped">
-						<tr>
-							<th>기본주소</th>
-							<th>상세주소</th>
-						</tr>
-						<c:forEach var="addrDto" items="${addrList}">
-							<tr>
-								<td>${addrDto.maAddr1}</td>
-								<td>${addrDto.maAddr2}</td>
-							</tr>
-						</c:forEach>
-					</table>
+					<div class="row mb-1 mx-3">
+						<table class="table">
+							<thead class="table-light">
+								<tr>
+									<th class="col-6">기본주소</th>
+									<th class="col-3">상세주소</th>
+									<th class="col-1">&nbsp;</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="addrDto" items="${addrList}">
+									<tr data-maNum = '${addrDto.maNum}'>
+										<td class="col-6">${addrDto.maAddr1}</td>
+										<td class="col-3">${addrDto.maAddr2}</td>
+										<td class="col-1">
+											<button type="button" class="btn btn-outline-danger btn-delAddr" name="deleteAddr">X</button>
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
 				</c:if>
-				<div class="col-3">
-					<button class="btn btn-light" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/address'">
-						주소 등록
-					</button>
+				
+				<div class="row">
+					<div class="col-md-12 text-right">
+						<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/address'">
+							주소 등록
+						</button>
+					</div>
 				</div>
+					
 			</div>
 			<div class="row mb-3">
 				<h4>

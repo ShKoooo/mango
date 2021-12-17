@@ -67,4 +67,70 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
+	@Override
+	public void insertMemberAddr(MemberAddr dto) throws Exception {
+		try {
+			dao.insertData("member.insertMemberAddr",dto);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public int countMemberAddr(String userId) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("member.countAddrById",userId);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public Integer readAreaByBcode(String bcodeCut) throws Exception {
+		Integer result = null;
+		
+		try {
+			result = dao.selectOne("member.readAreaByBcode",bcodeCut);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void insertArea(MemberAddr dto) throws Exception {
+		try {
+			dao.insertData("member.insertArea",dto);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public int getAreaSeqNum() throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("member.getAreaSeqNum");
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void deleteMemberAddr(Integer maNum) throws Exception {
+		try {
+			dao.deleteData("member.deleteMemberAddr",maNum);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
 }
