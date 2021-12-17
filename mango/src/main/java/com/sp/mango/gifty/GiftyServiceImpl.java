@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sp.mango.common.FileManager;
 import com.sp.mango.common.dao.CommonDAO;
 
 
@@ -16,16 +15,11 @@ public class GiftyServiceImpl implements GiftyService {
 	@Autowired
 	private CommonDAO dao;
 	
-	@Autowired
-	private FileManager fileManager;
+	
 	
 	@Override
-	public void insertGifty(Gifty dto, String pathname) throws Exception {
+	public void insertGifty(Gifty dto) throws Exception {
 		try {
-			String saveFilename = fileManager.doFileUpload(dto.getSelectFile(), pathname);
-			if(saveFilename != null) {
-				dto.setgImgSaveFileName(saveFilename);
-			}
 			
 			int giftyconSeq = dao.selectOne("gifty.giftyconSeq");
 			dto.setgNum(giftyconSeq);
@@ -42,37 +36,75 @@ public class GiftyServiceImpl implements GiftyService {
 
 	@Override
 	public List<Gifty> listGifty(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Gifty> list = null;
+		
+		try {
+			list = dao.selectList("gifty.listGifty", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override
 	public int dataCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("gifty.dataCount", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public Gifty readGifty(int gnum) {
-		// TODO Auto-generated method stub
-		return null;
+		Gifty dto = null;
+		
+		try {
+			dto = dao.selectOne("gifty.readGifty", gnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
 	}
 
 	@Override
 	public void updateHitCount(int gnum) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			dao.updateData("gifty.updateHitCount", gnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 		
 	}
 
 	@Override
-	public void updategifty(Gifty dto, String pathname) throws Exception {
-		// TODO Auto-generated method stub
+	public void updateGifty(Gifty dto) throws Exception {
+		try {
+			dao.updateData("gifty.updateGifty", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 		
 	}
 
 	@Override
-	public void deletegifty(int gnum, String pahtname, String userId) throws Exception {
-		// TODO Auto-generated method stub
+	public void deleteGifty(int gnum, String userId) throws Exception {
+		try {
+			Gifty dto = readGifty(gnum);
+			if(dto==null)
+				return;
+			
+			dao.deleteData("gifty.deleteGifty", gnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 		
 	}
 

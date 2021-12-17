@@ -89,25 +89,16 @@ function sendOk() {
 		return;
 	}
 	
-	/*
-	str = f.pContent.value.trim();
-	if(! str) {
-		alert("내용을 입력하세요.");
-		f.pContent.focus();
-		return;
-	}
-	*/
-	
 	str = window.editor.getData().trim();
     if(! str) {
         alert("내용을 입력하세요. ");
         window.editor.focus();
         return;
     }
-	f.pContent.value = str;
+	f.gContent.value = str;
 	
 	
-	str = f.pIsProposable.value;
+	str = f.gIsProposable.value;
 	if(str != "T") {
 		str = "F";
 	}
@@ -223,31 +214,19 @@ $(function(){
 						</td>
 					</tr>
 					
-					<!-- 
-					<tr>
-						<td class="table-light" scope="row">판매할 동네</td>
-						<td>
-							<div>
-				  				<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01">
-				  					<option selected value="0">선택</option>
-				  					<c:forEach var="vo" items="${listMemberAddr}">
-				    					<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.maAddr1}</option>				    
-				    				</c:forEach>
-				  				</select>
-							</div>
-							<div>
-								<input type="hidden" name="pLat" id="pLat" value="${dto.pLat}">
-								<input type="hidden" name="pLon" id="pLon" value="${dto.pLon}">
-							</div>
-						</td>
-					</tr>
-					 -->
 					<tr>
 						<td class="table-light" scope="row">가격</td>
 						<td>
 							<input type="text" name="gPrice" value="${dto.gPrice}" placeholder="무료나눔시 0원을 입력해주세요." class="form-input" style="width: 400px; float: left;" >
 							<input type="checkbox" name="gIsProposable" value="T" id="prop" style="clear: both; margin-left:20px; margin-top:12px; margin-right:5px;"/>가격 제안받기
 							<input type="hidden" name="gIsProposable" value="F" id="prop_hidden"/>
+						</td>
+					</tr>
+					
+					<tr>
+						<td class="table-light" scope="row">기프티콘 유효기간</td>
+						<td>
+				  			<input type="text" name="gExpdate" class="form-control" value="${dto.gExpdate}">
 						</td>
 					</tr>
 					
