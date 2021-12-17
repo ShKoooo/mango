@@ -233,7 +233,7 @@ $(function(){
 					<tr>
 						<td class="table-light" scope="row">내 용</td>
 						<td>
-							<div class="editor">${dto.content}</div>
+							<div class="editor">${dto.gContent}</div>
 							<input type="hidden" name="gContent">
 						</td>
 					</tr>

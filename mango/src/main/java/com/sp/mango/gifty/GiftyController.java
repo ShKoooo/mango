@@ -188,9 +188,14 @@ public class GiftyController {
 			return "redirect:/gifty/list";
 		}
 		
+		List<Gifty> listGcategory = service.listGcategory();
+		
+		model.addAttribute("listGcategory", listGcategory);
+		
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
+	
 		
 		
 		return ".gifty.write";

@@ -40,7 +40,7 @@
                         <div class="box-content">
                         	<c:choose>
 								<c:when test="${sessionScope.member.userId==dto.userId}">
-									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/gifty/update?gnum=${dto.gNum}&page=${page}';">수정</button>
+									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/gifty/update?gNum=${dto.gNum}&page=${page}';">수정</button>
 								</c:when>
 								<c:otherwise>
 									<button type="button" class="btn btn-light" disabled="disabled">수정</button>
