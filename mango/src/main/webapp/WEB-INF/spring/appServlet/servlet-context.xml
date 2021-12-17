@@ -77,6 +77,8 @@
 			<exclude-mapping path="/cscenter/article"/>
 			<exclude-mapping path="/cscenter/download"/>
 			<exclude-mapping path="/image/upload"/>
+			<exclude-mapping path="/gifty/list"/>
+			<exclude-mapping path="/gifty/article"/>
 			<!-- 밑에 추가 -->
 			
 			<beans:bean class="com.sp.mango.member.LoginCheckInterceptor"/>

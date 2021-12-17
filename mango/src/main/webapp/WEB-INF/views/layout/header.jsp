@@ -72,13 +72,13 @@
                                     <li><a href="${pageContext.request.contextPath}/gifty/list">기프티콘 거래</a></li>
                                 </ul>
                             </li>
-                            <li><a href="${pageContext.request.contextPath}/village/list">동네 커뮤니티</a></li>
-                            <li><a href="${pageContext.request.contextPath}/cscenter/list">고객센터</a>
-                                <ul>
-                                    <li><a href="">자주하는 질문</a></li>
-                                    <li><a href="">1:1 문의</a></li>
-                                </ul>
+                            <li><a href="${pageContext.request.contextPath}/village/list">동네 커뮤니티</a>
+                            	<ul>
+                            		<li><a href="${pageContext.request.contextPath}/village/list">동네 커뮤니티</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/qna/list">동네 질문 게시판</a></li>
+                            	</ul>
                             </li>
+                            <li><a href="${pageContext.request.contextPath}/cscenter/list">고객센터</a></li>
                         </ul>
                     </div>
                 </div>
