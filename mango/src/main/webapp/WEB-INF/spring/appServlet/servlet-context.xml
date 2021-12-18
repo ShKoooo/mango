@@ -71,6 +71,7 @@
             <exclude-mapping path="/member/idFind"/>
 			<exclude-mapping path="/member/pwdFind"/>
 			<exclude-mapping path="/product/list"/>
+			<exclude-mapping path="/product/morelist"/>
 			<exclude-mapping path="/product/article"/>
 			<exclude-mapping path="/cscenter/list"/>
 			<exclude-mapping path="/cscenter/csNotice"/>
