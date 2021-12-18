@@ -32,6 +32,13 @@ public class Product {
 	private String pImgSaveFileName; // 상품 이미지 저장명
 	private List<MultipartFile> selectFile;
 	
+	private String maAddr1; // 회원 주소 (리스트 때문에 만들어 놓음)
+	private int pWishCount; // 관심상품 개수 (리스트 때문에 만들어 놓음)
+	
+	private int pWishNum; // 관심상품 아이디
+	private String pwRegDate; // 관심상품 등록일자
+	
+	
 	public int getpNum() {
 		return pNum;
 	}
@@ -158,4 +165,32 @@ public class Product {
 	public void setSelectFile(List<MultipartFile> selectFile) {
 		this.selectFile = selectFile;
 	}
+	
+	
+	public String getMaAddr1() {
+		return maAddr1;
+	}
+	public void setMaAddr1(String maAddr1) {
+		this.maAddr1 = maAddr1;
+	}
+	public int getpWishCount() {
+		return pWishCount;
+	}
+	public void setpWishCount(int pWishCount) {
+		this.pWishCount = pWishCount;
+	}
+	
+	public int getpWishNum() {
+		return pWishNum;
+	}
+	public void setpWishNum(int pWishNum) {
+		this.pWishNum = pWishNum;
+	}
+	public String getPwRegDate() {
+		return pwRegDate;
+	}
+	public void setPwRegDate(String pwRegDate) {
+		this.pwRegDate = pwRegDate;
+	}
+	
 }

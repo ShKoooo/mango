@@ -2,8 +2,14 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="product">
+	
 	<select id="seq" resultType="Integer">
 		SELECT product_seq.NEXTVAL FROM dual
+	</select>
+	
+	<!-- 글 개수 -->
+	<select id="dataCount" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) FROM product
 	</select>
 	
 	<!-- 중고거래 글 작성 -->
@@ -36,12 +42,125 @@
 		FROM pCategory
 	</select>
  
-	<!-- 회원 주소 검색 -->
+	<!-- 회원이 등록한 주소와 해당 주소가 속한 지역 검색 -->
 	<select id="listMemberAddr" parameterType="String" resultType="com.sp.mango.product.MemberAddr">
-		SELECT maNum, maZip, maAddr1, maAddr2, maLat, maLon, areaNum 
-		FROM memberAddr
+		SELECT maNum, maZip, maAddr1, maAddr2, maLat, maLon, a.areaNum, a.area1, a.area2, a.area3, a.aLat, a.aLon 
+		FROM memberAddr ma
+		JOIN area a ON ma.areaNum = a.areaNum
 		WHERE userId = #{userId}
 	</select>
+
+
+	<!-- 상품 리스트 : 전체보기 -->
+	<select id="listProduct" parameterType="map" resultType="com.sp.mango.product.Product">
+		SELECT * FROM (
+    		SELECT ROWNUM rnum, tb.* FROM (
+        		SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+                		TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
+                		NVL(pWishCount, 0) pWishCount, pc.pcNum
+        		FROM product p
+        		JOIN area a ON p.areaNum = a.areaNum
+        		JOIN pCategory pc ON p.pcNum = pc.pcNum
+        		LEFT OUTER JOIN (
+            		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+            		GROUP BY pNum
+        		) c ON p.pNum = c.pNum
+        		ORDER BY pNum DESC
+    		) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	
+	<!-- 상품 리스트(회원) : 회원 지정 위치 기준 반경 5km내의 판매글  -->
+	<select id="memberListProduct" parameterType="map" resultType="com.sp.mango.product.Product">
+		SELECT * FROM (
+    		SELECT ROWNUM rnum, tb.* FROM (
+        		SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+                TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
+                NVL(pWishCount, 0) pWishCount, pc.pcNum
+        		FROM product p
+        		JOIN area a ON p.areaNum = a.areaNum
+        		JOIN pCategory pc ON p.pcNum = pc.pcNum
+        		LEFT OUTER JOIN (
+            		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+            		GROUP BY pNum
+        		) c ON p.pNum = c.pNum
+        		WHERE p.areaNum IN (
+            		SELECT areaNum
+            		FROM (
+                    	SELECT * FROM (
+                        	SELECT areaNum,
+                        		(6371*acos(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180)))
+                        		AS distance
+                        		FROM area ar
+                    		) WHERE distance &lt;= 5    
+                		)
+            		)
+        		ORDER BY pNum DESC
+    		) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<!-- 조회수 증가 --> 
+ 	<update id="updateHitCount" parameterType="Integer">
+		UPDATE product SET pHitCount=pHitCount+1 WHERE pNum = #{pNum}
+	</update>
+ 
+	<!-- 특정 판매게시글이 받은 관심 개수 -->
+	<select id="pWishCount" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(pWishNum) FROM product_WishList WHERE pNum = #{pNum}
+	</select>
+
+	<!-- 쪽지받은 수 -->
+	
+	
+	<!-- 회원이 등록한 주소 개수 세기 -->
+	<select id="memAddrCount" parameterType="String" resultType="Integer">
+		SELECT COUNT(maAddr1) FROM memberAddr WHERE userId = #{userId}
+	</select>
+
+	
+<!-- 
+	회원이 선택한 동네의 위도, 경도 구하기 
+	<select id="pickMemberAddr" parameterType="Integer" resultType="com.sp.mango.product.MemberAddr">
+		SELECT maLat, maLon
+		FROM (
+        	SELECT userId, maLat, maLon, maAddr1, maAddr2, areaNum 
+        	FROM memberAddr 
+        	WHERE maNum = #{maNum}
+     	)
+	</select>
+	
+	 회원의 동네 기준 반경 거리 구하기 
+	<select id="radius" parameterType="map" resultType="com.sp.mango.product.MemberAddr">
+		SELECT * FROM (
+	    	SELECT areaNum, area1, area2, area3,
+	        	(6371*acos(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+	        	-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180)))
+	        	AS distance
+	    FROM area
+		) WHERE distance &lt;= 5
+	</select>
+-->
+
+	
+	<!-- 게시글 관심 추가 -->
+	<insert id="insertProductLike" parameterType="map">
+		INSERT INTO product_WishList(pWishNum, pwRegDate, userId, pNum) 
+		VALUES (product_WishList_seq.NEXTVAL, SYSDATE, #{userId}, #{pNum})
+	</insert>
+	
+	<!-- 게시글 관심 삭제 -->
+	<delete id="deleteProductLike" parameterType="map">
+		DELETE FROM product_WishList WHERE pNum = #{pNum} AND userId = #{userId}
+	</delete>
+
+	<!-- 게시글 관심 여부 -->
+	<select id="userProductLiked" parameterType="map" resultType="com.sp.mango.product.Product">
+		SELECT pNum, userId FROM product_WishList WHERE pNum = #{pNum} AND userId = #{userId}
+	</select>
+
 
 
 

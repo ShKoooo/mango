@@ -1,9 +1,11 @@
 package com.sp.mango.product;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.sp.mango.common.FileManager;
+import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
 
 @Controller("product.productController")
@@ -22,13 +26,223 @@ public class ProductController {
 	private ProductService service;
 	
 	@Autowired
-	private FileManager fileManager;
+	private MyUtil myUtil;
+	
+	
+	@RequestMapping(value = "list2")
+	@ResponseBody
+	public List<Product> list2(
+			@RequestParam(value = "page", defaultValue = "1") int current_page,
+			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
+			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
+			HttpServletRequest req,
+			Model model
+			) throws Exception {	
+		// maLat, maLot의 defaultValue를 0을 준 이유는 0,0은 우리나라에 없는 좌표기도하고, 밑에 조건으로 쓰기위해...
+		
+		HttpSession session = req.getSession();
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		
+		int rows = 6; // 한 화면에 보여주는 게시물 수
+		int dataCount = service.dataCount();
+		int total_page = myUtil.pageCount(rows, dataCount);
+		if(current_page > total_page) {
+			current_page = total_page;
+		}
+				
+		// 전체 페이지 수
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		if (dataCount != 0) {
+			total_page = myUtil.pageCount(rows, dataCount);
+		}
+		
+		// 다른 사람이 자료를 삭제하여 전체 페이지수가 변화 된 경우
+		if (total_page < current_page) {
+			current_page = total_page;
+		}
+		
+		// 리스트에 출력할 데이터 가져오기
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
+		
+		// 회원이 선택한 회원 주소의 위도 경로도 map으로 넣기
+		map.put("maLat", maLat);
+		map.put("maLon", maLon);
+		
+		String articleUrl = cp + "/product/article?page=" + current_page;
+		
+		// 작업 결과를 json으로 전송
+//		Map<String, Object> model = new HashMap<String, Object>();
+
+		// 리스트
+		List<Product> list = null;
+//		List<Product> memberList = null;
+		
+		List<MemberAddr> listMemberAddr = null;
+		int memAddrCount = 0;
+		if (info != null) { // 회원일 때. (주소가 하나라도 등록되어 있을 때)
+			listMemberAddr = service.listMemberAddr(info.getUserId());	
+			
+			memAddrCount = service.memAddrCount(info.getUserId());
+			list = service.memberListProduct(map);
+			
+		} else if(info == null || maLat==0 && maLon==0) { // 회원이 아니거나, 주소가 하나도 등록되어 있지 않을 때
+			list = service.listProduct(map);
+		}
+		
+
+		model.addAttribute("listMemberAddr", listMemberAddr);
+		model.addAttribute("memAddrCount", memAddrCount);
+
+		model.addAttribute("dataCount", dataCount);
+		model.addAttribute("total_page", total_page);
+		model.addAttribute("page", current_page);
+		model.addAttribute("list", list);
+		
+		
+		model.addAttribute("articleUrl", articleUrl);
+		
+		List<Product> listCategory = service.listCategory();
+		
+		model.addAttribute("listCategory", listCategory);
+		
+
+		return list;
+	}
 	
 	@RequestMapping(value = "list")
-	public String list() throws Exception {
+	public String list(
+			@RequestParam(value = "page", defaultValue = "1") int current_page,
+			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
+			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
+			HttpServletRequest req,
+			Model model
+			) throws Exception {	
+		// maLat, maLot의 defaultValue를 0을 준 이유는 0,0은 우리나라에 없는 좌표기도하고, 밑에 조건으로 쓰기위해...
 		
+		HttpSession session = req.getSession();
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		
+		int rows = 6; // 한 화면에 보여주는 게시물 수
+		int dataCount = service.dataCount();
+		int total_page = myUtil.pageCount(rows, dataCount);
+		if(current_page > total_page) {
+			current_page = total_page;
+		}
+				
+		// 전체 페이지 수
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		if (dataCount != 0) {
+			total_page = myUtil.pageCount(rows, dataCount);
+		}
+		
+		// 다른 사람이 자료를 삭제하여 전체 페이지수가 변화 된 경우
+		if (total_page < current_page) {
+			current_page = total_page;
+		}
+		
+		// 리스트에 출력할 데이터 가져오기
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
+		
+		// 회원이 선택한 회원 주소의 위도 경로도 map으로 넣기
+		map.put("maLat", maLat);
+		map.put("maLon", maLon);
+		
+		String articleUrl = cp + "/product/article?page=" + current_page;
+		
+		// 작업 결과를 json으로 전송
+//		Map<String, Object> model = new HashMap<String, Object>();
+
+		// 리스트
+		List<Product> list = null;
+//		List<Product> memberList = null;
+		
+		List<MemberAddr> listMemberAddr = null;
+		int memAddrCount = 0;
+		if (info != null) { // 회원일 때. (주소가 하나라도 등록되어 있을 때)
+			listMemberAddr = service.listMemberAddr(info.getUserId());	
+			
+			memAddrCount = service.memAddrCount(info.getUserId());
+			list = service.memberListProduct(map);
+			
+		} else if(info == null || maLat==0 && maLon==0) { // 회원이 아니거나, 주소가 하나도 등록되어 있지 않을 때
+			list = service.listProduct(map);
+		}
+		
+
+		model.addAttribute("listMemberAddr", listMemberAddr);
+		model.addAttribute("memAddrCount", memAddrCount);
+//		model.addAttribute("memberList", memberList);
+
+		model.addAttribute("dataCount", dataCount);
+		model.addAttribute("total_page", total_page);
+		model.addAttribute("page", current_page);
+		model.addAttribute("list", list);
+		
+		
+		model.addAttribute("articleUrl", articleUrl);
+		
+		List<Product> listCategory = service.listCategory();
+		
+		model.addAttribute("listCategory", listCategory);
+		
+
 		return ".product.list";
 	}
+	
+	
+	// AJAX - Map을 JSON으로 변환 반환
+	@RequestMapping(value = "morelist")
+	@ResponseBody
+	public Map<String, Object> list(
+			@RequestParam(value = "page", defaultValue = "2") int current_page
+			// @RequestParam(defaultValue = "all") String condition,
+			// @RequestParam(defaultValue = "") String keyword
+			) throws Exception {
+		
+		int rows = 6;
+		int dataCount = service.dataCount();
+		int total_page = myUtil.pageCount(rows, dataCount);
+		if (current_page > total_page) {
+			current_page = total_page;
+		}
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
+		
+		List<Product> list = service.listProduct(map);
+
+//		for (Guest dto : list) {
+//			dto.setContent(dto.getContent().replaceAll("\n", "<br>"));
+//		}		
+		
+		Map<String, Object> model = new HashMap<>();
+		
+		model.put("dataCount", dataCount);
+		model.put("total_page", total_page);
+		model.put("page", current_page);
+
+		model.put("list", list);
+		
+		return model;
+	}
+	
+	
+	
 	
 	@RequestMapping(value = "write", method = RequestMethod.GET)
 	public String writeForm(Model model, HttpSession session) throws Exception {
@@ -54,15 +268,6 @@ public class ProductController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-
-						
-//			// 유저의 지역(동네)정보 가져오기
-//			Product readAreaNum = service.readMemberArea(info.getUserId());
-//			dto.setAreaNum(readAreaNum.getAreaNum());
-			
-//			위도 경도 어떻게 넣지.
-//			dto.setpLat(readAreaNum.getpLat());
-//			dto.setpLon(readAreaNum.getpLon());
 			
 			service.insertProduct(dto, path);
 		} catch (Exception e) {
@@ -73,8 +278,36 @@ public class ProductController {
 	}
 	
 	
-	
-	public String article() throws Exception {
+	@RequestMapping(value = "article")
+	public String article(
+			@RequestParam int pNum,
+			@RequestParam String page,
+			HttpSession session,
+			Model model
+			) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		String query = "page=" + page;
+		
+		service.updateHitCount(pNum);
+		
+		// 글보기
+		Product dto = service.readProduct(pNum);
+		if(dto == null) {
+			return "redirect:/product/list?" + query;
+		}
+		
+		// 게시글 관심 여부
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("pNum", pNum);
+		map.put("userId", info.getUserId());
+		boolean userProductLiked = service.userProductLiked(map);
+		
+		model.addAttribute("dto", dto);
+		model.addAttribute("userProductLiked", userProductLiked);
+		model.addAttribute("page", page);
+		model.addAttribute("query", query);
 		
 		return ".product.article";
 	}

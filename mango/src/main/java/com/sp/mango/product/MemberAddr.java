@@ -11,6 +11,12 @@ public class MemberAddr {
 	private double maLon; // 경도
 	private int areaNum; // 지역번호
 	
+	private String area1; // 광역시도
+	private String area2; // 시군구
+	private String area3; // 하위 행정구역
+	private double aLat; // 지역 위도
+	private double aLon; // 지역 경도
+	
 	
 	public int getMaNum() {
 		return maNum;
@@ -60,4 +66,35 @@ public class MemberAddr {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
+	public String getArea1() {
+		return area1;
+	}
+	public void setArea1(String area1) {
+		this.area1 = area1;
+	}
+	public String getArea2() {
+		return area2;
+	}
+	public void setArea2(String area2) {
+		this.area2 = area2;
+	}
+	public String getArea3() {
+		return area3;
+	}
+	public void setArea3(String area3) {
+		this.area3 = area3;
+	}
+	public double getaLat() {
+		return aLat;
+	}
+	public void setaLat(double aLat) {
+		this.aLat = aLat;
+	}
+	public double getaLon() {
+		return aLon;
+	}
+	public void setaLon(double aLon) {
+		this.aLon = aLon;
+	}
+	
 }

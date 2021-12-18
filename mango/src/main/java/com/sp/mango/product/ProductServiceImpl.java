@@ -5,17 +5,15 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.sp.mango.common.FileManager;
 import com.sp.mango.common.dao.CommonDAO;
 
 @Service("product.productServiceImpl")
 public class ProductServiceImpl implements ProductService{
 	@Autowired
 	private CommonDAO dao;
-	@Autowired
-	private FileManager fileManager;
+//	@Autowired
+//	private FileManager fileManager;
 	
 	@Override
 	public void insertProduct(Product dto, String pathname) throws Exception {
@@ -60,8 +58,15 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public List<Product> listProduct(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Product> list = null;
+		
+		try {
+			list = dao.selectList("product.listProduct", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
 	}
 
 	@Override
@@ -130,5 +135,74 @@ public class ProductServiceImpl implements ProductService{
 		
 		return listMemberAddr;
 	}
+
+	@Override
+	public int dataCount() {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("product.dataCount");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int memAddrCount(String userId) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("product.memAddrCount", userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<Product> memberListProduct(Map<String, Object> map) {
+		List<Product> memberList = null;
+		
+		try {
+			memberList = dao.selectList("product.memberListProduct", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return memberList;
+	}
+
+	@Override
+	public void updateHitCount(int pNum) throws Exception {
+		// 조회수 증가
+		try {
+			dao.updateData("product.updateHitCount", pNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public boolean userProductLiked(Map<String, Object> map) {
+		boolean result = false;
+		
+		try {
+			Product dto = dao.selectOne("product.userProductLiked", map);
+			if(dto != null) {
+				result = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+
 
 }

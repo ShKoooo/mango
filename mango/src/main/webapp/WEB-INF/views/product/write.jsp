@@ -79,16 +79,7 @@ function sendOk() {
 		alert("카테고리를 선택하세요.");
 		f.pcNum.focus();
 		return;
-	}
-	
-	/*
-	str = f.pContent.value.trim();
-	if(! str) {
-		alert("내용을 입력하세요.");
-		f.pContent.focus();
-		return;
-	}
-	*/
+	}	
 	
 	str = window.editor.getData().trim();
     if(! str) {
@@ -222,7 +213,7 @@ $(function(){
 				  				<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01">
 				  					<option selected value="0">선택</option>
 				  					<c:forEach var="vo" items="${listMemberAddr}">
-				    					<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.maAddr1}</option>				    
+				    					<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>	<!-- 기존 : ${vo.maAddr1} -->				    
 				    				</c:forEach>
 				  				</select>
 							</div>
