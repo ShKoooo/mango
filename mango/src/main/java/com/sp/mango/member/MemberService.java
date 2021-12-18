@@ -6,8 +6,8 @@ public interface MemberService {
 	public Member loginMember(String userId);
 	public Integer countMemberByParam(Map<String, Object> map);
 	public Member readMember(String userId);
-	public void insertMember(Member dto) throws Exception;
-	public void updateMember(Member dto) throws Exception;
+	public void insertMember(Member dto, String pathname) throws Exception;
+	public void updateMember(Member dto, String pathname) throws Exception;
 	
 	public int countMemberAddr(String userId) throws Exception;
 	public Integer readAreaByBcode(String bcodeCut) throws Exception;
@@ -15,4 +15,10 @@ public interface MemberService {
 	public void insertArea(MemberAddr dto) throws Exception;
 	public void insertMemberAddr(MemberAddr dto) throws Exception;
 	public void deleteMemberAddr(Integer maNum) throws Exception;
+	
+	public Integer countBusnByParam(Map<String, Object> map);
+	public void insertBusiness(Business dto, String pathname) throws Exception;
+	public void insertArea2(Business dto) throws Exception;
+	public void updateBusiness(Business dto, String pathname) throws Exception;
+	public void deleteBusiness(String userId, String pathname) throws Exception;
 }

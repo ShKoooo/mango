@@ -17,7 +17,7 @@ public class Member {
 	private int membershipNum;
 	private String userImgSaveFileName;
 	private String userImgOrigFileName;
-	private MultipartFile userImgFile;
+	private MultipartFile profileImg;
 	
 	private String birth;
 	
@@ -117,11 +117,11 @@ public class Member {
 	public void setUserImgOrigFileName(String userImgOrigFileName) {
 		this.userImgOrigFileName = userImgOrigFileName;
 	}
-	public MultipartFile getUserImgFile() {
-		return userImgFile;
+	public MultipartFile getProfileImg() {
+		return profileImg;
 	}
-	public void setUserImgFile(MultipartFile userImgFile) {
-		this.userImgFile = userImgFile;
+	public void setProfileImg(MultipartFile profileImg) {
+		this.profileImg = profileImg;
 	}
 	public String getBirth() {
 		return birth;

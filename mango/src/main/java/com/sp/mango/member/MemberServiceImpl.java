@@ -5,12 +5,15 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.sp.mango.common.FileManager;
 import com.sp.mango.common.dao.CommonDAO;
 
 @Service("member.memberService")
 public class MemberServiceImpl implements MemberService {
 	@Autowired
 	private CommonDAO dao;
+	@Autowired
+	private FileManager fileManager;
 	
 	@Override
 	public Member loginMember(String userId) {
@@ -51,8 +54,14 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void insertMember(Member dto) throws Exception {
+	public void insertMember(Member dto, String pathname) throws Exception {
 		try {
+			String saveFilename = fileManager.doFileUpload(dto.getProfileImg(), pathname);
+			
+			if (saveFilename != null) {
+				dto.setUserImgSaveFileName(saveFilename);
+			}
+			
 			dao.insertData("member.insertMember",dto);
 		} catch (Exception e) {
 			throw e;
@@ -60,8 +69,18 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void updateMember(Member dto) throws Exception {
+	public void updateMember(Member dto, String pathname) throws Exception {
 		try {
+			String saveFilename = fileManager.doFileUpload(dto.getProfileImg(), pathname);
+			
+			if (saveFilename != null) {
+				if (dto.getUserImgSaveFileName().length() != 0) {
+					fileManager.doFileDelete(dto.getUserImgSaveFileName(),pathname);
+				}
+				
+				dto.setUserImgSaveFileName(saveFilename);
+			}
+			
 			dao.updateData("member.updateMember",dto);
 		} catch (Exception e) {
 		}
@@ -133,4 +152,73 @@ public class MemberServiceImpl implements MemberService {
 		}
 	}
 
+	@Override
+	public Integer countBusnByParam(Map<String, Object> map) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("member.busnDuplCheck",map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void insertBusiness(Business dto, String pathname) throws Exception {
+		try {
+			String saveFilename = fileManager.doFileUpload(dto.getProfileImg(), pathname);
+			
+			if (saveFilename != null) {
+				dto.setBusImgSaveFileName(saveFilename);
+			}
+			
+			dao.insertData("member.insertBusiness",dto);
+		} catch (Exception e) {
+		}
+	}
+
+	@Override
+	public void insertArea2(Business dto) throws Exception {
+		try {
+			dao.insertData("member.insertArea2",dto);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateBusiness(Business dto, String pathname) throws Exception {
+		try {
+			String saveFilename = fileManager.doFileUpload(dto.getProfileImg(), pathname);
+			// System.out.println(":::: profileImg : "+dto.getProfileImg().toString());
+			
+			if (saveFilename != null) {
+				if (dto.getBusImgSaveFileName().length() != 0) {
+					fileManager.doFileDelete(dto.getBusImgSaveFileName(),pathname);
+				}
+				
+				dto.setBusImgSaveFileName(saveFilename);
+			}
+			
+			dao.updateData("member.updateBusiness",dto);
+		} catch (Exception e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public void deleteBusiness(String userId, String pathname) throws Exception {
+		try {
+			if (pathname != null) {
+				fileManager.doFileDelete(pathname);
+			}
+			
+			dao.deleteData("member.deleteBusiness",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+	
 }

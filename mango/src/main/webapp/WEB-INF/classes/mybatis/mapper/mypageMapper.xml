@@ -6,9 +6,21 @@
 		SELECT userId, mannerStar, productStar, minusDeg FROM mannerProfile
 		WHERE userId = #{userId}
 	</select>
+	<insert id="insertMannerProfile" parameterType="String">
+		INSERT INTO mannerProfile (userId, mannerStar, productStar, minusDeg)
+		VALUES (#{userId}, 0,0,0)
+	</insert>
 	<select id="listAddr" parameterType="String" resultType="com.sp.mango.member.MemberAddr">
-		SELECT maNum, maZip, maAddr1, maAddr2, userId, areaNum, maLat, maLon
-		FROM memberAddr
+		SELECT maNum, a.area1, a.area2, a.area3
+		FROM memberAddr m
+		JOIN area a ON m.areaNum = a.areaNum
+		WHERE userId = #{userId}
+	</select>
+	<select id="readBusiness" parameterType="String" resultType="com.sp.mango.member.Business">
+		SELECT userId, busNickName, busTel, busEmail, membershipNum, busImgSaveFileName, busImgOrigFileName,
+			b.areaNum, busAddr1, busAddr2, busZip, bpLat, bpLon, a.area1, a.area2, a.area3
+		FROM businessProfile b
+		JOIN area a ON a.areaNum = b.areaNum
 		WHERE userId = #{userId}
 	</select>
 </mapper>

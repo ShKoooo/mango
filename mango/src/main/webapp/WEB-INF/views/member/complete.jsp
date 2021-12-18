@@ -27,11 +27,20 @@
 	                        <button type="button" class="btn btn-lg btn-primary" onclick="location.href='${pageContext.request.contextPath}/';">메인화면 <i class="bi bi-check2"></i> </button>
 	                    </div>
                     </c:if>
-                    <c:if test="${not empty goBack}">
+                    <c:if test="${not empty goBack && fin ne 'true'}">
 	                    <div class="d-grid">
-	                        <button type="button" class="btn btn-lg btn-primary" onclick="location.href='${pageContext.request.contextPath}${goBack}';">뒤로가기 <i class="bi bi-check2"></i> </button>
+	                        <button type="button" class="btn btn-lg btn-primary" onclick="location.href='${pageContext.request.contextPath}${goBack}';">
+	                        	뒤로가기 <i class="icofont-arrow-left"></i>
+	                        </button>
 	                    </div>
-                    </c:if>   
+                    </c:if>
+                    <c:if test="${not empty goBack && fin eq 'true'}">
+	                    <div class="d-grid">
+	                        <button type="button" class="btn btn-lg btn-primary" onclick="location.href='${pageContext.request.contextPath}${goBack}';">
+	                        	확인 <i class="bi bi-check2"></i>
+	                        </button>
+	                    </div>
+                    </c:if>
                 </div>
 
             </div>

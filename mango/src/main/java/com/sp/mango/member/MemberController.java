@@ -1,5 +1,6 @@
 package com.sp.mango.member;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +17,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.sp.mango.mypage.MypageService;
+
 @Controller("member.memberController")
 @RequestMapping(value="/member/*")
 public class MemberController {
 	@Autowired
 	private MemberService service;
+	@Autowired
+	private MypageService mypageService;
 	
 	@RequestMapping(value="login", method=RequestMethod.GET)
 	public String loginForm() {
@@ -91,14 +96,19 @@ public class MemberController {
 	public String memberSubmit (
 			Member dto,
 			final RedirectAttributes reAttr,
-			Model model
+			Model model,
+			HttpSession session
 			) {
+		String root = session.getServletContext().getRealPath("/");
+		String path = root + "uploads" + File.separator + "photo";
 		
 		try {
 			dto.setUserTel(dto.getTel1(), dto.getTel2(), dto.getTel3());
 			dto.setUserEmail(dto.getEmail1(),dto.getEmail2());
 			
-			service.insertMember(dto);
+			// 유저 가입 및 매너프로필 신규등록
+			service.insertMember(dto, path);
+			mypageService.insertMannerProfile(dto.getUserId());
 		} catch (Exception e) {
 			model.addAttribute("mode","member");
 			model.addAttribute("message","회원가입이 실패했습니다.");
@@ -117,11 +127,12 @@ public class MemberController {
 	@RequestMapping(value="pwd", method=RequestMethod.GET)
 	public String pwdForm(
 			String dropout,
+			String mode,
 			Model model
 			) {
 		
 		if (dropout == null) {
-			model.addAttribute("mode","update");
+			model.addAttribute("mode",mode);
 		} else {
 			model.addAttribute("mode","dropout");
 		}			
@@ -136,7 +147,7 @@ public class MemberController {
 			final RedirectAttributes reAttr,
 			HttpSession session,
 			Model model
-			) {
+			) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
@@ -171,64 +182,93 @@ public class MemberController {
 			return "redirect:/member/complete";
 		}
 		
-		String nickChangeable = "false";
-		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
-		
-		if (memberInfo == null) return "redirect:/member/login";
-		
-		// String userId = memberInfo.getUserId();
-		
-		String[] telTel = dto.getUserTel().split("-");
-		String[] mailMail = dto.getUserEmail().split("@");
-		
-		if (telTel.length == 3) {
-			dto.setTel1(telTel[0]);
-			dto.setTel2(telTel[1]);
-			dto.setTel3(telTel[2]);
-		}
-		
-		if (mailMail.length == 2) {
-			dto.setEmail1(mailMail[0]);
-			dto.setEmail2(mailMail[1]);
-		}
-		
-		String [] nickUpdate_YMD = dto.getNickUpdate_Date().split("-");
-		
-		Calendar date1 = Calendar.getInstance();	// 닉변경 + 30일
-		Calendar date2 = Calendar.getInstance();	// 오늘
-		
-		date1.set(Integer.parseInt(nickUpdate_YMD[0]),
-				Integer.parseInt(nickUpdate_YMD[1]+1),
-				Integer.parseInt(nickUpdate_YMD[2]+30));
-		
-		if (!date1.after(date2)) { // 닉변+30일이 오늘보다 미래가 아닐 때 (true)
-			nickChangeable = "true";
-		}
-		
-		
-		model.addAttribute("dto",dto);
-		model.addAttribute("mode","update");
-		model.addAttribute("nickChangeable",nickChangeable);
-		
-		return ".member.member";
+		if (mode.equals("update")) {
+			String nickChangeable = "false";
+			MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+			
+			if (memberInfo == null) return "redirect:/member/login";
+			
+			// String userId = memberInfo.getUserId();
+			
+			String[] telTel = dto.getUserTel().split("-");
+			String[] mailMail = dto.getUserEmail().split("@");
+			
+			if (telTel.length == 3) {
+				dto.setTel1(telTel[0]);
+				dto.setTel2(telTel[1]);
+				dto.setTel3(telTel[2]);
+			}
+			
+			if (mailMail.length == 2) {
+				dto.setEmail1(mailMail[0]);
+				dto.setEmail2(mailMail[1]);
+			}
+			
+			String [] nickUpdate_YMD = dto.getNickUpdate_Date().split("-");
+			
+			Calendar date1 = Calendar.getInstance();	// 닉변경 + 30일
+			Calendar date2 = Calendar.getInstance();	// 오늘
+			
+			date1.set(Integer.parseInt(nickUpdate_YMD[0]),
+					Integer.parseInt(nickUpdate_YMD[1]+1),
+					Integer.parseInt(nickUpdate_YMD[2]+30));
+			
+			if (!date1.after(date2)) { // 닉변+30일이 오늘보다 미래가 아닐 때 (true)
+				nickChangeable = "true";
+			}
+			
+			
+			model.addAttribute("dto",dto);
+			model.addAttribute("mode","update");
+			model.addAttribute("nickChangeable",nickChangeable);
+			
+			return ".member.member";
+		} else {		// mode.equals("busnUpdate")
+			MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+			
+			Business businessDto = mypageService.readBusiness(memberInfo.getUserId());
+			
+			String[] telTel = businessDto.getBusTel().split("-");
+			String[] mailMail = businessDto.getBusEmail().split("@");
+			
+			if (telTel.length == 3) {
+				businessDto.setTel1(telTel[0]);
+				businessDto.setTel2(telTel[1]);
+				businessDto.setTel3(telTel[2]);
+			}
+			
+			if (mailMail.length == 2) {
+				businessDto.setEmail1(mailMail[0]);
+				businessDto.setEmail2(mailMail[1]);
+			}
+			
+			model.addAttribute("mode", "busnUpdate");
+			model.addAttribute("dto", businessDto);
+			return ".member.business";
+		}		
 	}
 	
 	@RequestMapping(value="update", method=RequestMethod.POST)
 	public String updateSubmit(
 			Member dto,
 			final RedirectAttributes reAttr,
-			Model model
+			Model model,
+			HttpSession session
 			) throws Exception {
+		String root = session.getServletContext().getRealPath("/");
+		String path = root + "uploads" + File.separator + "photo";
+		String goBack = "/mypage/main";
+		reAttr.addFlashAttribute("goBack",goBack);
 		
 		try {
 			dto.setUserTel(dto.getTel1(), dto.getTel2(), dto.getTel3());
 			dto.setUserEmail(dto.getEmail1(),dto.getEmail2());
 			
-			service.updateMember(dto);
+			service.updateMember(dto, path);
 		} catch (Exception e) {
-			model.addAttribute("message", dto.getUserNickName()+"님의 정보수정이 실패했습니다.");
-			// model.addAttribute("mode","update");
-			// return ".member.member";
+			String msg = dto.getUserNickName()+"님의 정보수정이 실패했습니다.";
+			reAttr.addFlashAttribute("title","업체 등록 중복 방지");
+			reAttr.addFlashAttribute("message",msg);
 			
 			return "redirect:/member/complete";
 		}
@@ -237,6 +277,7 @@ public class MemberController {
 		
 		reAttr.addFlashAttribute("message",msg);
 		reAttr.addFlashAttribute("title","회원 정보 수정");
+		reAttr.addFlashAttribute("fin","true");
 		
 		return "redirect:/member/complete";
 	}
@@ -283,24 +324,137 @@ public class MemberController {
 			Model model
 			) throws Exception {
 		
-		model.addAttribute("mode", "insert");
+		model.addAttribute("mode", "business");
 		return ".member.business";
 	}
 	
-	@RequestMapping(value="business", method=RequestMethod.POST)
-	public String businessSubmit () throws Exception {
+	@RequestMapping(value="busDuplCheck", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> busDuplCheck (
+			@RequestParam String userParam,
+			@RequestParam String chkWay			
+			) throws Exception {
+		String p = "true";
 		
-		return "redirect:/";
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userParam", userParam);
+		map.put("chkWay", chkWay);
+		
+		int result = service.countBusnByParam(map);
+		
+		if (result > 0) p = "false";
+		
+		Map<String,Object> model = new HashMap<String, Object>();
+		model.put("passed",p);
+		
+		return model;
 	}
 	
-	@RequestMapping(value="busnUpdate", method=RequestMethod.GET)
-	public String busnUpdateForm () throws Exception {
-		return "";
+	@RequestMapping(value="business", method=RequestMethod.POST)
+	public String businessSubmit (
+			Business dto,
+			final RedirectAttributes reAttr,
+			Model model,
+			HttpSession session
+			) {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userNickName = memberInfo.getUserNickName();
+		Integer areaNum;
+		int hasAlreadyBusn = 0;
+		String root = session.getServletContext().getRealPath("/");
+		String path = root + "uploads" + File.separator + "photo";
+		
+		try {
+			dto.setUserId(memberInfo.getUserId());
+			dto.setBusTel(dto.getTel1()+"-"+dto.getTel2()+"-"+dto.getTel3());
+			dto.setBusEmail(dto.getEmail1()+"@"+dto.getEmail2());
+			
+			// Business 중복등록 방지
+			Map<String, Object> chkDuplmap = new HashMap<String, Object>();
+			chkDuplmap.put("chkWay","userId");
+			chkDuplmap.put("userParam",memberInfo.getUserId());
+			hasAlreadyBusn = service.countBusnByParam(chkDuplmap);
+			if (hasAlreadyBusn > 0) {
+				String msg =  userNickName+"님은 이미 업체 등록을 하셨습니다.<br>";
+				msg += "업체는 1개만 등록하실 수 있습니다. <br>";
+				
+				String goBack = "/mypage/main";
+				reAttr.addFlashAttribute("title","업체 등록 중복 방지");
+				reAttr.addFlashAttribute("message",msg);
+				reAttr.addFlashAttribute("goBack",goBack);
+				
+				return "redirect:/member/complete";
+			}
+			
+			// area 테이블에서 해당 bcode에 해당하는 areaNum 없으면 새로 입력
+			areaNum = service.readAreaByBcode(dto.getBcodeCut());
+			if (areaNum == null) {
+				areaNum = service.getAreaSeqNum();
+				dto.setAreaNum(areaNum);
+				
+				service.insertArea2(dto);
+			} else {
+				dto.setAreaNum(areaNum);
+			}
+			
+			// Business 신규등록
+			service.insertBusiness(dto, path);
+		} catch (Exception e) {
+			model.addAttribute("mode","member");
+			model.addAttribute("message","업체 등록이 실패했습니다.");
+			return ".member.business";
+		}
+		
+		String msg =  userNickName+"님 ("+ dto.getBusNickName() +") 의 업체 등록이 정상적으로 처리되었습니다.<br>";
+		
+		String goBack = "/mypage/main";
+		reAttr.addFlashAttribute("title","업체 등록");
+		reAttr.addFlashAttribute("message",msg);
+		reAttr.addFlashAttribute("goBack",goBack);
+		reAttr.addFlashAttribute("fin","true");
+		
+		return "redirect:/member/complete";
 	}
 	
 	@RequestMapping(value="busnUpdate", method=RequestMethod.POST)
-	public String busnUpdateSubmit() throws Exception {
-		return "";
+	public String busnUpdateSubmit(
+			Business dto,
+			final RedirectAttributes reAttr,
+			Model model,
+			HttpSession session
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String msg = "";
+		String goBack = "/mypage/main";
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "photo";
+		
+		try {
+			dto.setBusTel(dto.getTel1()+"-"+dto.getTel2()+"-"+dto.getTel3());
+			dto.setBusEmail(dto.getEmail1()+"@"+dto.getEmail2());
+			dto.setUserId(memberInfo.getUserId());
+			System.out.println(":::: "+dto.getProfileImg().toString());
+			
+			service.updateBusiness(dto, pathname);
+		} catch (Exception e) {
+			msg += dto.getBusNickName()+"님의 비즈니스 프로필 수정이 실패했습니다.";
+			model.addAttribute("message", msg);
+			reAttr.addFlashAttribute("title","비즈니스 프로필 수정");
+			reAttr.addFlashAttribute("message",msg);
+			reAttr.addFlashAttribute("goBack",goBack);
+			
+			return "redirect:/member/complete";
+		}
+		
+		msg += dto.getBusNickName()+"님의 비즈니스 프로필 수정이 정상적으로 처리되었습니다.<br>";
+		
+		reAttr.addFlashAttribute("message",msg);
+		reAttr.addFlashAttribute("title","비즈니스 프로필 수정");
+		reAttr.addFlashAttribute("message",msg);
+		reAttr.addFlashAttribute("goBack",goBack);
+		reAttr.addFlashAttribute("fin","true");
+		
+		return "redirect:/member/complete";
 	}
 	
 	@RequestMapping(value="address", method=RequestMethod.GET)
@@ -398,11 +552,30 @@ public class MemberController {
 			service.deleteMemberAddr(maNum);
 		} catch (Exception e) {
 			model.put("state", "false");
-			System.out.println(":::: false ::::");
 			return model;
 		}
 		
-		System.out.println(":::: true ::::");
+		model.put("state", "true");
+		return model;
+	}
+	
+	@RequestMapping(value="deleteBusiness", method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteBusiness(
+			@RequestParam String userId,
+			HttpSession session
+			) throws Exception {
+		Map<String, Object> model = new HashMap<>();
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "photo";
+		
+		try {
+			service.deleteBusiness(userId, pathname);
+		} catch (Exception e) {
+			model.put("state", "false");
+			return model;
+		}
+		
 		model.put("state", "true");
 		return model;
 	}

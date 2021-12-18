@@ -7,6 +7,19 @@
 .body-container {
 	max-width: 800px;
 }
+
+.img-viewer {
+	cursor: pointer;
+	border: 1px solid #ccc;
+	width: 45px;
+	height: 45px;
+	border-radius: 45px;
+	background-image: url("${pageContext.request.contextPath}/resources/images/add_photo.png");
+	position: relative;
+	z-index: 9999;
+	background-repeat : no-repeat;
+	background-size : cover;
+}
 </style>
 
 <script type="text/javascript">
@@ -242,6 +255,47 @@ function userEmailCheck() {
 	});
 }
 
+//수정필요
+$(function() {
+	var img = "${dto.userImgSaveFileName}";
+	if( img ) { // 수정인 경우
+		img = "${pageContext.request.contextPath}/uploads/photo/" + img;
+		$(".memberForm .img-viewer").empty();
+		$(".memberForm .img-viewer").css("background-image", "url("+img+")");
+	}
+	
+	$(".memberForm .img-viewer").click(function(){
+		$("form[name=memberForm] input[name=profileImg]").trigger("click"); 
+	});
+	
+	$("form[name=memberForm] input[name=profileImg]").change(function(){
+		var file=this.files[0];
+		
+		if(! file) {
+			$(".memberForm .img-viewer").empty();
+			if( img ) {
+				img = "${pageContext.request.contextPath}/uploads/photo/" + img;
+				$(".memberForm .img-viewer").css("background-image", "url("+img+")");
+			} else {
+				img = "${pageContext.request.contextPath}/resources/images/add_photo.png";
+				$(".memberForm .img-viewer").css("background-image", "url("+img+")");
+			}
+			return false;
+		}
+		
+		if(! file.type.match("image.*")) {
+			this.focus();
+			return false;
+		}
+		
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			$(".memberForm .img-viewer").empty();
+			$(".memberForm .img-viewer").css("background-image", "url("+e.target.result+")");
+		}
+		reader.readAsDataURL(file);
+	});
+});
 
 </script>
 
@@ -263,7 +317,16 @@ function userEmailCheck() {
 	    </div>
 	    
 	    <div class="body-main">
-	    	<form name="memberForm" method="post">
+	    	<form name="memberForm" method="post" enctype="multipart/form-data">
+	    		
+	    		<div class="row mb-3">
+			    	<label class="col-sm-2 col-form-label" for="selectProfileImg">프로필 사진</label>
+			    	<div class="col-sm-10 row">
+				    	<div class="img-viewer" ></div>
+				    	<input type="file" id="selectProfileImg" name="profileImg" accept="image/*" class="form-control" style="display: none;">
+			    	</div>
+			    </div>
+	    	
 	    		<div class="row mb-3">
 	    			<label class="col-sm-2 col-form-label" for="userId">아이디</label>
 	    			<div class="col-sm-10 userId-box">
@@ -437,6 +500,10 @@ function userEmailCheck() {
 			    <div class="row">
 					<p class="form-control-plaintext text-center">${message}</p>
 			    </div>
+			    
+			    <c:if test="${mode=='update'}">
+					<input type="hidden" name="userImgSaveFileName" value="${dto.userImgSaveFileName}">
+				</c:if>
 	    	</form>
 	    </div>
 	</div>

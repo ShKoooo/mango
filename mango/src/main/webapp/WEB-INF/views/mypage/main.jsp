@@ -88,6 +88,7 @@ $(function() {
 });
 
 $(function() {
+	// 주소 삭제
 	$("body").on("click",".btn-delAddr", function() {
 		if(!confirm("주소를 삭제하시겠습니까?")) {
 			return false;
@@ -96,6 +97,32 @@ $(function() {
 		var maNum = $(this).closest("tr").attr("data-maNum");
 		var url = "${pageContext.request.contextPath}/member/deleteAddr";
 		var query = "maNum="+maNum;
+		
+		$.ajax({
+			type:"POST"
+			,url:url
+			,data:query
+			,dataType:"json"
+			,success:function(data) {
+				var passed = data.state;
+
+				if (passed==="true") {
+					location.href = "${pageContext.request.contextPath}/mypage/main";
+					location.reload();
+				}
+			}
+		});
+	});
+	
+	// 비즈니스 프로필 삭제 --- TODO ---
+	$("body").on("click",".btn-delBusn", function() {
+		if(!confirm("프로필을 삭제하시겠습니까?")) {
+			return false;
+		}
+		
+		var userId = "${sessionScope.member.userId}";
+		var url = "${pageContext.request.contextPath}/member/deleteBusiness";
+		var query = "userId="+userId;
 		
 		$.ajax({
 			type:"POST"
@@ -125,7 +152,7 @@ $(function() {
 		<div class="body-main">
 			<div class="row mb-3">
 				<h4>
-					<a href="${pageContext.request.contextPath}/member/pwd">
+					<a href="${pageContext.request.contextPath}/member/pwd?mode=update">
 						<i class="icofont-edit"></i> 회원 정보수정
 					</a>
 				</h4>
@@ -146,18 +173,16 @@ $(function() {
 						<table class="table">
 							<thead class="table-light">
 								<tr>
-									<th class="col-6">기본주소</th>
-									<th class="col-3">상세주소</th>
+									<th class="col-8">등록 지역</th>
 									<th class="col-1">&nbsp;</th>
 								</tr>
 							</thead>
 							<tbody>
 								<c:forEach var="addrDto" items="${addrList}">
 									<tr data-maNum = '${addrDto.maNum}'>
-										<td class="col-6">${addrDto.maAddr1}</td>
-										<td class="col-3">${addrDto.maAddr2}</td>
+										<td class="col-8">${addrDto.area1}&nbsp;${addrDto.area2}&nbsp;${addrDto.area3}</td>
 										<td class="col-1">
-											<button type="button" class="btn btn-outline-danger btn-delAddr" name="deleteAddr">X</button>
+											<button type="button" class="btn btn-outline-danger btn-delAddr" name="deleteAddr"><i class="icofont-close"></i></button>
 										</td>
 									</tr>
 								</c:forEach>
@@ -176,11 +201,53 @@ $(function() {
 					
 			</div>
 			<div class="row mb-3">
-				<h4>
-					<a href="${pageContext.request.contextPath}/member/business">
-						<i class="icofont-briefcase-2"></i> 비즈니스 프로필 관리
-					</a>
-				</h4>
+				<div class="row mb-3">
+					<h4>
+						<i class="icofont-briefcase-2"></i> 비즈니스 프로필
+					</h4>
+				</div>
+				
+				<c:if test="${empty businessDto}">
+					<div class="border bg-light mb-3 p-3 text-center">망고마켓에서 ${sessionScope.member.userNickName}님의 업체를 홍보하세요!</div>
+				</c:if>
+				<c:if test="${not empty businessDto}">
+					<div class="row mb-1 mx-3">
+						<table class="table">
+							<thead class="table-light">
+								<tr>
+									<th class="col-3">업체 닉네임</th>
+									<th class="col-5">등록 지역</th>
+									<th class="col-1">&nbsp;</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="col-3">${businessDto.busNickName}</td>
+									<td class="col-5">${businessDto.area1}&nbsp;${businessDto.area2}&nbsp;${businessDto.area3}</td>
+									<td class="col-1">
+										<button type="button" class="btn btn-outline-danger btn-delBusn" name="deleteBusn"><i class="icofont-close"></i></button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</c:if>
+				
+				<div class="row">
+					<div class="col-md-12 text-right">
+						<c:if test="${empty businessDto}">
+							<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/business'">
+								업체 등록
+							</button>
+						</c:if>
+						<c:if test="${not empty businessDto}">
+							<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/pwd?mode=busnUpdate'">
+								프로필 수정
+							</button>
+						</c:if>
+					</div>
+				</div>
+				
 			</div>
 			<div class="row mb-3">
 				<h4>

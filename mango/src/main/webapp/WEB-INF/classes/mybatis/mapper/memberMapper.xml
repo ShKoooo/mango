@@ -77,4 +77,43 @@
 		DELETE FROM memberAddr WHERE maNum = #{maNum}
 	</delete>
 	
+	<select id="busnDuplCheck" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0)
+		FROM businessProfile
+		WHERE ${chkWay} = #{userParam}
+	</select>
+	
+	<insert id="insertBusiness" parameterType="com.sp.mango.member.Business">
+		INSERT INTO businessProfile (userId, busNickName, busTel, busEmail, membershipNum,
+			busImgSaveFileName, busImgOrigFileName, areaNum, busAddr1, busAddr2, bpLat, bpLon, busZip)
+		VALUES (#{userId}, #{busNickName}, #{busTel, jdbcType=VARCHAR}, #{busEmail, jdbcType=VARCHAR},
+			30, #{busImgSaveFileName,jdbcType=VARCHAR}, #{busImgOrigFileName, jdbcType=VARCHAR},#{areaNum},
+			#{busAddr1,jdbcType=VARCHAR},#{busAddr2,jdbcType=VARCHAR},#{bpLat,jdbcType=DOUBLE},#{bpLon,jdbcType=DOUBLE},
+			#{busZip,jdbcType=VARCHAR})	
+	</insert>
+	
+	<insert id="insertArea2" parameterType="com.sp.mango.member.Business">
+		INSERT INTO area (areaNum, area1, area2, area3, aLat, aLon, bcodeCut, bcodeSigungu)
+		VALUES (#{areaNum}, #{area1},#{area2},#{area3},#{aLat},#{aLon},
+			#{bcodeCut, jdbcType=VARCHAR}, #{bcodeSigungu, jdbcType=VARCHAR})
+	</insert>
+	
+	<update id="updateBusiness" parameterType="com.sp.mango.member.Business">
+		UPDATE businessProfile SET
+			busTel=#{busTel, jdbcType=VARCHAR},
+			busZip=#{busZip, jdbcType=VARCHAR},
+			areaNum=#{areaNum},
+			busAddr1=#{busAddr1, jdbcType=VARCHAR},
+			busAddr2=#{busAddr2, jdbcType=VARCHAR},
+			bpLat=#{bpLat, jdbcType=DOUBLE},
+			bpLon=#{bpLon, jdbcType=DOUBLE},
+			busImgSaveFileName=#{busImgSaveFileName, jdbcType=VARCHAR},
+			busImgOrigFileName=#{busImgOrigFileName, jdbcType=VARCHAR}
+		WHERE userId = #{userId}
+	</update>
+	
+	<delete id="deleteBusiness" parameterType="String">
+		DELETE FROM businessProfile WHERE userId = #{userId}
+	</delete>
+	
 </mapper>
