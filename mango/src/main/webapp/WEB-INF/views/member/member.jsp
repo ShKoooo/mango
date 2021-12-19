@@ -317,7 +317,7 @@ $(function() {
 	    </div>
 	    
 	    <div class="body-main">
-	    	<form name="memberForm" method="post" enctype="multipart/form-data">
+	    	<form name="memberForm" class="memberForm" method="post" enctype="multipart/form-data">
 	    		
 	    		<div class="row mb-3">
 			    	<label class="col-sm-2 col-form-label" for="selectProfileImg">프로필 사진</label>

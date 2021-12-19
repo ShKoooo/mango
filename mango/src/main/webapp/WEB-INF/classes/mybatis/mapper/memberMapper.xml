@@ -28,7 +28,7 @@
 			TO_CHAR(regDate,'YYYY-MM-DD') regDate, TO_CHAR(update_Date,'YYYY-MM-DD') update_Date,
 			userTel, userEmail, memberEnable, userImgSaveFileName, userImgOrigFileName,
 			loginFail, TO_CHAR(nickUpdate_date, 'YYYY-MM-DD') nickUpdate_date, 
-			TO_CHAR(birth,'YYYY-MM-DD') birth
+			TO_CHAR(birth,'YYYY-MM-DD') birth, userImgOrigFileName, userImgSaveFileName
 		FROM member
 		WHERE userId = #{userId}
 	</select>
@@ -36,16 +36,21 @@
 	<insert id="insertMember" parameterType="com.sp.mango.member.Member">
 		INSERT INTO member (userId, userPwd, userName, userNickName,
 			regDate, update_Date, userTel, userEmail, memberEnable, 
-			loginFail, membershipNum, nickUpdate_date, birth)
+			loginFail, membershipNum, nickUpdate_date, birth,
+			userImgOrigFileName, userImgSaveFileName)
 		VALUES (#{userId}, #{userPwd}, #{userName}, #{userNickName},
 			SYSDATE, SYSDATE, #{userTel}, #{userEmail}, 1,
-			0, 1, SYSDATE, #{birth})
+			0, 1, SYSDATE, #{birth},
+			#{userImgOrigFileName,jdbcType=VARCHAR},
+			#{userImgSaveFileName,jdbcType=VARCHAR})
 	</insert>
 	
 	<update id="updateMember" parameterType="com.sp.mango.member.Member">
 		UPDATE member SET
 			userPwd=#{userPwd},
-			userTel=#{userTel}
+			userTel=#{userTel},
+			userImgOrigFileName=#{userImgOrigFileName,jdbcType=VARCHAR},
+			userImgSaveFileName=#{userImgSaveFileName,jdbcType=VARCHAR}
 		WHERE userId = #{userId}
 	</update>
 	
