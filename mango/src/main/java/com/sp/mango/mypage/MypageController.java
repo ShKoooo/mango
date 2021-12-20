@@ -205,6 +205,19 @@ public class MypageController {
 			return "redirect:/member/complete";
 		}
 		
+		int hasAlreadyBlocked = service.myBlockCount(map);
+		if (hasAlreadyBlocked > 0) {
+			String msg = "닉네임 ["+keyword+"] 에 해당하는 유저가 이미 차단 목록에 있습니다. <br>";
+			msg += "다른 닉네임을 입력하거나 먼저 차단 목록에서 삭제해 주세요. <br>";
+			String goBack = "/mypage/mypick";
+			
+			reAttr.addFlashAttribute("title","등록 실패");
+			reAttr.addFlashAttribute("message",msg);
+			reAttr.addFlashAttribute("goBack",goBack);
+			
+			return "redirect:/member/complete";
+		}
+		
 		try {
 			Map<String, Object> insertMap = new HashMap<String, Object>();
 			insertMap.put("userId", userId);
@@ -373,6 +386,19 @@ public class MypageController {
 			return "redirect:/member/complete";
 		}
 		
+		int hasAlreadyPicked = service.myPickCount(map);
+		if (hasAlreadyPicked > 0) {
+			String msg = "닉네임 ["+keyword+"] 에 해당하는 유저가 이미 관심 목록에 있습니다. <br>";
+			msg += "다른 닉네임을 입력하시거나 먼저 관심 목록에서 삭제해 주세요. <br>";
+			String goBack = "/mypage/myblock";
+			
+			reAttr.addFlashAttribute("title","차단 실패");
+			reAttr.addFlashAttribute("message",msg);
+			reAttr.addFlashAttribute("goBack",goBack);
+			
+			return "redirect:/member/complete";
+		}
+		
 		try {
 			Map<String, Object> insertMap = new HashMap<String, Object>();
 			insertMap.put("userId", userId);
@@ -383,7 +409,7 @@ public class MypageController {
 			e.printStackTrace(); throw e;
 		}
 		
-		reAttr.addFlashAttribute("message","등록 성공");
+		reAttr.addFlashAttribute("message","차단 성공");
 		return "redirect:/mypage/myblock";
 	}
 	
