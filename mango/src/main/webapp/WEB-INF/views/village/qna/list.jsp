@@ -19,11 +19,29 @@ a:hover {
 }
 </style>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
+
 <script type="text/javascript">
 function searchList() {
 	var f = document.searchForm;
 	f.submit();
 }
+
+$(function() {
+	
+	$("#selectArea").change( function() {
+		// 주소 바꿨을 때 좌표 영역에 값 세팅
+		var maLat = $("#selectArea option:selected").attr("data-maLat");
+		var maLon = $("#selectArea option:selected").attr("data-maLon");
+		
+		var f = document.searchForm;
+		f.maLat.value = maLat;
+		f.maLon.value = maLon;
+		f.areaNum.value = $(this).val();
+		searchList()
+	});
+	
+});
 </script>
 
 <div class="content-wrapper">
@@ -37,6 +55,21 @@ function searchList() {
 	<div class="projects-holder">
 		<div class="col-12">
 			<div class="box-content">
+				<c:if test="${! empty sessionScope.member}">
+					<div style="width: 120px; float: right;">
+						<select name="areaNum" id="selectArea" class="form-select">
+							<c:forEach var="vo" items="${listMemberAddr}">
+								<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}' ${areaNum == vo.areaNum ? "selected='selected'" :"" }>${vo.area3}</option>
+							</c:forEach>
+							
+							<c:if test="${empty listMemberAddr}">
+								<option value="${pageContext.request.contextPath}/member/address">동네 설정</option>
+							</c:if>
+						</select>
+					</div>
+					<div>
+					</div>
+				</c:if>
 				<table class="table table-hover board-list">
 					<thead>
 						<tr style="text-align: center;">
@@ -53,7 +86,7 @@ function searchList() {
 							<tr style="text-align: center">
 								<td>${dto.listNum}</td>
 								<td style="text-align: left;">
-									<a href="${articleUrl}&num=${dto.vNum}" class="text-reset">${dto.subject}</a>
+									<a href="${articleUrl}&vNum=${dto.vNum}" class="text-reset">${dto.subject}</a>
 								</td>
 								<td> ${dto.userNickName} </td>
 								<td> ${dto.reg_date} </td>
@@ -84,6 +117,9 @@ function searchList() {
 							</div>
 							<div class="col-8 p-1">
 								<input type="text" name="keyword" value="${keyword}" class="form-control">
+								<input type="hidden" name="maLat" value="0">
+								<input type="hidden" name="maLon" value="0">
+								<input type="hidden" name="areaNum" value="0">
 							</div>
 							<div class="col-auto p-1">
 								<button type="button" class="btn btn-light" onclick="searchList()"><i class="bi bi-search"></i></button>

@@ -18,7 +18,7 @@ public class VillageQna {
 	private int replyCount;
 	private int boardLikeCount;
 	
-	private int categoryNum;
+	private int categoryNum; // 게시판 카테고리
 	private String category;
 	
 	private List<MultipartFile> selectFile;
@@ -26,10 +26,12 @@ public class VillageQna {
 	private String vimageSaveFilename;
 	private String vimageOrigFilename;
 	
-	private int areaNum;
+	private int areaNum; // 지역
 	private String addr2;
-	private int vBlat;
-	private int vBlon;
+	private double vBlat;
+	private double vBlon;
+	
+	private String maAddr1; // 회원 주소
 	
 	public int getListNum() {
 		return listNum;
@@ -139,17 +141,24 @@ public class VillageQna {
 	public void setAddr2(String addr2) {
 		this.addr2 = addr2;
 	}
-	public int getvBlat() {
+	public double getvBlat() {
 		return vBlat;
 	}
-	public void setvBlat(int vBlat) {
+	public void setvBlat(double vBlat) {
 		this.vBlat = vBlat;
 	}
-	public int getvBlon() {
+	public double getvBlon() {
 		return vBlon;
 	}
-	public void setvBlon(int vBlon) {
+	public void setvBlon(double vBlon) {
 		this.vBlon = vBlon;
 	}
+	public String getMaAddr1() {
+		return maAddr1;
+	}
+	public void setMaAddr1(String maAddr1) {
+		this.maAddr1 = maAddr1;
+	}
+
 
 }
