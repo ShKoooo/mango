@@ -86,14 +86,12 @@ function sendOk() {
 		return;
 	}
 	
-	/*
-	str = f.content.value.trim();
-	if(!str) {
-		alert("내용을 입력하세요.");
-		f.content.focus();
+	str = f.areaNum.value.trim();
+	if(str == "0") {
+		alert("등록 지역을 선택하세요. ");
+		f.areaNum.focus();
 		return;
 	}
-	*/
 	
 	str = window.editor.getData().trim();
     if(! str) {
@@ -101,87 +99,18 @@ function sendOk() {
         window.editor.focus();
         return;
     }
-	f.content.value = str;;
+	f.content.value = str;
+	
+	f.vBlat.value = $("select[name=areaNum] option:selected").attr("data-maLat");
+	f.vBlon.value = $("select[name=areaNum] option:selected").attr("data-maLon");
+	
 	
 	f.action = "${pageContext.request.contextPath}/village/qna/${mode}";
 	f.submit();
 	
 }
 
-/*
-$(function() {
-	var sel_files = [];
-	
-	$("body").on("click", ".write-form .img-add", function(evnet) {
-		$("form[name=qnaForm] input[name=selectFile]").trigger("click"); 
-	});
-	
-	$("form[name=qnaForm] input[name=selectFile]").change(function(){
-		if(! this.files) {
-			var dt = new DataTransfer();
-			for(file of sel_files) {
-				dt.items.add(file);
-			}
-			document.qnaForm.selectFile.files = dt.files;
-			
-			return false;
-		}
-		
-		// 유사 배열 배열로 변환
-		const fileArr = Array.from(this.files);
-		
-		fileArr.forEach((file, index) => {
-			sel_files.push(file);
-			
-			const reader = new FileReader();
-			const $img = $("<img>", {class:"item img-item"});
-			$img.attr("data-filename", file.name);
-			reader.onload = e => {
-				$img.attr("src", e.target.result);
-			};
-			
-			reader.readAsDataURL(file);
-			
-			$(".img-grid").append($img);
-		});
-		
-		var dt = new DataTransfer();
-		for(file of sel_files) {
-			dt.items.add(file);
-		}
-		document.qnaForm.selectFile.files = dt.files;
-		
-	});
-	$("body").on("click", ".write-form .img-item", function(event) {
-		if(! confirm("선택한 파일을 삭제 하시겠습니까 ?")) {
-			return false;
-		}
-		
-		var filename = $(this).attr("data-filename");
-		
-	    for(var i = 0; i < sel_files.length; i++) {
-	    	if(filename === sel_files[i].name){
-	    		sel_files.splice(i, 1);
-	    		break;
-			}
-	    }
-	
-		var dt = new DataTransfer();
-		for(file of sel_files) {
-			dt.items.add(file);
-		}
-		document.qnaForm.selectFile.files = dt.files;
-		
-		$(this).remove();
-	});
-	
-	
-}); */
-
 </script>
-
-
-
 
 
 <div class="content-wrapper">
@@ -199,6 +128,21 @@ $(function() {
 				<div class="body-main">
 				<form name="qnaForm" method="post" enctype="multipart/form-data">
 					<table class="table write-form mt-5">
+						
+						<tr>
+							<td class="table-light  col-2" scope="row">등록지역</td>
+							<td class="col-6">
+								<select name="areaNum" id="selectArea" class="form-select">
+									<option selected value="0">선택 </option>
+									<c:forEach var="vo" items="${listMemberAddr}">
+										<option value="${vo.areaNum}" ${dto.areaNum==vo.areaNum? "selected='selected'" : ""}  data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.maAddr1}</option>
+									</c:forEach>
+								</select>							
+							 
+								<input type="hidden" name="vBlat" id="vBlat" value="${dto.vBlat}">
+								<input type="hidden" name="vBlon" id="vBlon" value="${dto.vBlon}">
+							</td>
+						</tr>
 						<tr>
 							<td class="table-light col-2" scope="row">제 목</td>
 							<td>
@@ -216,24 +160,8 @@ $(function() {
 							<td>
 								<div class="editor">${dto.content}</div>
 								<input type="hidden" name="content">
-								<!-- <textarea name="content" id="editor" class="form-control">${dto.content}</textarea> -->
 							</td>
 						</tr>
-						<tr>
-							<td class="table-light  col-2" scope="row">지역번호 (임시)</td>
-							<td>
-								<input type="text" name="areaNum" class="form-control" value="${dto.areaNum}">
-							</td>
-						</tr>
-						<!-- 이미지첨부
-						<tr>
-							<td class="table-light col-2" scope="row">이미지 첨부</td>
-							<td>
-								<div class="img-grid"><img class="item img-add rounded" src="${pageContext.request.contextPath}/resources/images/add_photo.png"></div>
-								<input type="file" name="selectFile" accept="image/*" multiple="multiple" style="display: none;" class=form-control>
-							</td>
-						</tr>
-						-->
 						
 					</table>
 				
@@ -242,7 +170,12 @@ $(function() {
 							<td class="text-center">
 								<button type="button" class="btn btn-dark" onclick="sendOk();">${mode=='update'?'수정완료':'등록하기'}&nbsp;<i class="bi bi-check2"></i></button>
 								<button type="reset" class="btn btn-light">다시입력</button>
-								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/qna/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button> 
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/qna/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button>
+								<c:if test="${mode=='update'}">
+									<input type="hidden" name="vNum" value="${dto.vNum}">
+									<input type="hidden" name="page" value="${page}">
+								</c:if>
+								 
 							</td>
 						</tr>
 					</table>
