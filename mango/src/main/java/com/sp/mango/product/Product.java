@@ -38,6 +38,12 @@ public class Product {
 	private int pWishNum; // 관심상품 아이디
 	private String pwRegDate; // 관심상품 등록일자
 	
+	private String area1;
+	private String area2;
+	private String area3;
+	
+	private double manner; // 글쓴이의 매너온도
+	
 	
 	public int getpNum() {
 		return pNum;
@@ -192,5 +198,31 @@ public class Product {
 	public void setPwRegDate(String pwRegDate) {
 		this.pwRegDate = pwRegDate;
 	}
+	public String getArea1() {
+		return area1;
+	}
+	public void setArea1(String area1) {
+		this.area1 = area1;
+	}
+	public String getArea2() {
+		return area2;
+	}
+	public void setArea2(String area2) {
+		this.area2 = area2;
+	}
+	public String getArea3() {
+		return area3;
+	}
+	public void setArea3(String area3) {
+		this.area3 = area3;
+	}
+	
+	public double getManner() {
+		return manner;
+	}
+	public void setManner(double manner) {
+		this.manner = manner;
+	}
+	
 	
 }

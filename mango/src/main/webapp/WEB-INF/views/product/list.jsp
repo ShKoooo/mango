@@ -100,7 +100,7 @@ function printGuest(data) {
 		var pNum = data.list[idx].pNum;
 		var pSubject = data.list[idx].pSubject;
 		var pWishCount = data.list[idx].pWishCount;
-		var maAddr1 = data.list[idx].maAddr1; // 바꿀 것
+		var maAddr1 = data.list[idx].maAddr1 || '주소'; // 바꿀 것
 		var articleUrl = data.list[idx].articleUrl;
 		
 	}
@@ -150,16 +150,6 @@ $(function(){
 */
 
 
-function PickAddr() {
-	/*var url = "${pageContext.request.contextPath}/product/list";
-	var query = {maLat: $("#maLat").val(), maLon: $("#maLon").val()};
-	
-	ajaxFun(url, "post", query, "json");*/
-	
-}
-
-
-
 $(function(){
 	if($("#selectArea").val()) {
 		selectAreaList();
@@ -204,32 +194,47 @@ function printJson2(data) {
 		var pNum = data[i].pNum;
 		var pSubject = data[i].pSubject;
 		var pRegDate = data[i].pRegDate;
-		var maAddr1 = "";
-		var pWishCount = "";
+		var area3 = data[i].area3 || '주소';
+		var pWishCount = data[i].pWishCount;
+		var userNickName = data[i].userNickName;
 		
-		out += "<div class='col-md-4 project-item mix " + pcNum + "'>";
-		out += "    <div class='project-thumb'>";
-		out += "    	<img src='' alt=''>";
-		out += "		<div class='overlay-b'>";
-		out += "			<div class='overlay-inner'>";
-		out += "				<img src=''>";	
-		out += "			</div>";
+		out += "<div class='col-lg-4 mb-5'>";
+		out += "    <div class='card h-100 shadow border-0'>";
+		out += "    	<img class='card-img-top' src='' alt='' />";
+		out += "		<div class='card-body p-4'>";
+		out += "			<a class='text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
+		out += "			<p class='card-text mb-0'>"+area3+"</p>";	
 		out += "		</div>";
-		out += "	</div>";
-		out += "	<div class='box-content project-detail'>";
-		out += "		<h2><a href='${articleUrl}&pNum=" + pNum + "'>" + pSubject + "</a></h2>";
-		out += "		<p>" + maAddr1 + "</p>";
-		out += "		<p>채팅현황(채팅몇건햇는지(유저당1))</p>";
-		out += "		<p>" + pWishCount + "</p>";
-		out += "	</div>";
+		out += "		<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
+		out += "			<div class='d-flex align-items-end justify-content-between'>";
+		out += "				<div class='d-flex align-items-center'>";
+		out += "					<img class='rounded-circle me-3' src='' alt='' />";
+		out += "					<div class='small'>";
+		out += "						<div class='fw-bold'>"+userNickName+"</div>";
+		out += "						<div class='text-muted'>"+pRegDate+" &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>";
+		out += "					</div>";
+		out += "				</div>"
+		out += "			</div>"
+		out += "		</div>"
+		out += "	</div>"
 		out += "</div>"
 	}
 	
 	$(".more-list").html(out);
 }
 
-/*
+
+
 $(function(){
+	if($(".cate").attr('data-pcNum')) {
+		selectCategoryList();
+	}
+	
+	$(".cate").click(function(){
+		selectCategoryList();
+	});
+
+	
 	$("#selectArea").change( function() {
 		// 주소 바꿨을때 좌측 좌표 영역에 값 셋팅
 		if($(this).val()=="0") {
@@ -237,32 +242,28 @@ $(function(){
 			$("#maLon").val("0");
 			return false;
 		}
-		
-		var opt = $("#selectArea option:selected");
-	
-		$("#maLat").val(opt.attr("data-maLat"));
-		$("#maLon").val(opt.attr("data-maLon"));
-		// 주소 바꿨을때 좌측 좌표 영역에 값 셋팅
-		
-		var url = "${pageContext.request.contextPath}/product/list";
-		var query = {
-			maLat: $("#maLat").val(),
-			maLon: $("#maLon").val()
-		}
-		
-		var fn = function(data) {
-			console.log('===data====', data)
-			var dataCount = data.dataCount;
-			var page = data.page;
-			var total_page = data.total_page;
-		};
-		ajaxFun(url, "get", query, "json", fn);
-	
-		
+		selectAreaList();
 		
 	});
-})
-*/
+
+
+	function selectCategoryList() {
+		// 주소 바꿨을때 좌측 좌표 영역에 값 셋팅
+		$(".cate").attr('data-pcNum');
+		
+		var url = "${pageContext.request.contextPath}/product/list"
+		var query = {pcNum: $(".cate").attr('data-pcNum')};
+		
+		var fn = function(data){
+			printJson2(data);
+		};
+		
+
+		ajaxFun(url, "get", query, "json");
+	}
+
+});
+
 </script>
 
 
@@ -278,7 +279,7 @@ $(function(){
 
                 <c:if test="${! empty sessionScope.member}">
 	                <div style="width: 120px; float: right;">
-						<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01" onchange="PickAddr();"> <!-- onchange="if(this.value) location.href=(this.value);" -->
+						<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01"> <!-- onchange="if(this.value) location.href=(this.value);" -->
 					  		<!-- 
 					  			<option selected value="0">동네 선택</option>
 					  		 -->
@@ -311,7 +312,7 @@ $(function(){
 					</c:forEach>
                  -->
                 
-                <!-- 탭 영역 -->
+                <!-- 탭 영역 
                 <ul class="nav nav-tabs" id="myTab" role="tablist" style="clear: both;">
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">전체</button>
@@ -319,55 +320,86 @@ $(function(){
 					<li class="nav-item" role="presentation">
 						<button class="nav-link" id="tab-1" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="1" aria-selected="true" data-tab="1">인기매물</button>
 					</li>
-				</ul>
+				</ul> -->
                 
                 <div class="tab-content pt-2" id="nav-tabContent">
-                <div class="projects-holder-3 tab-pane fade show active mt-3" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content">
-                    <div class="filter-categories">
+                    <!--        
+                        <section class="py-5">-->
+			                <div class="container px-5">
+			                	
+			                	<!-- 탭 영역 -->
+				                <ul class="nav nav-tabs" id="myTab" role="tablist" style="clear: both;">
+									<li class="nav-item" role="presentation">
+										<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">전체</button>
+									</li>
+									<li class="nav-item" role="presentation">
+										<button class="nav-link" id="tab-1" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="1" aria-selected="true" data-tab="1">인기매물</button>
+									</li>
+								</ul>
+								 
+			                    <div class="container">
+									
+									<!-- 카테고리 -->
+								    <div class="d-flex justify-content-center py-3">
+								      <ul id="categorySelect" class="nav nav-pills">
+								      	<li class="nav-item" value="0"><a href="" class="nav-link active cate" aria-current="page" data-pcNum="0">ALL</a></li>
+								        <c:forEach var="vo" items="${listCategory}">
+								    		<li class="nav-item"><a href="" class="nav-link cate" data-pcNum="${vo.pcNum}">${vo.pcName}</a></li> 
+								      	</c:forEach>
+								      </ul>
+								    </div>
+								    
+								    
+				                    <div class="row gx-5">
+					                    <!-- list div 반복 영역 -->
+					                    <c:forEach var="dto" items="${list}">
+					                        <div class="col-lg-4 mb-5">
+					                            <div class="card h-100 shadow border-0">
+					                                <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="" />
+					                                <div class="card-body p-4">
+					                                    <a class="text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
+					                                    <p class="card-text mb-0">${dto.area3}</p>
+					                                </div>
+					                                <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+					                                    <div class="d-flex align-items-end justify-content-between">
+					                                        <div class="d-flex align-items-center">
+					                                            <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" alt="..." />
+					                                            <div class="small">
+					                                                <div class="fw-bold">${dto.userNickName}</div>
+					                                                <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>
+					                                            </div>
+					                                            <!--  
+					                                            <div class="small">
+					                                                <div class="fw-bold">${dto.pWishCount}</div>
+					                                                <div class="text-muted">쪽지</div>
+					                                            </div>
+					                                            -->
+					                                        </div>
+					                                    </div>
+					                                </div>
+					                            </div>
+					                        </div>
+					                    </c:forEach>
+					                    <!-- list div 반복 영역 -->
+					                    
+					                    <!--  
+					                    <div class="text-end mb-5 mb-xl-0">
+					                        <a class="text-decoration-none" href="#!">
+					                            More stories
+					                            <i class="bi bi-arrow-right"></i>
+					                        </a>
+					                    </div>
+					                    --> 
+					                </div>
+			                	</div>
+			                </div>
+			      <!--      </section>  --> 
                         
-                        <ul class="project-filter">
-                        <!--  
-                            <li class="filter" data-filter="all"><span>All</span></li>
-                            <li class="filter" data-filter="buildings"><span>Buildings</span></li>
-                            <li class="filter" data-filter="design"><span>Design</span></li>
-                            <li class="filter" data-filter="architecture"><span>Architecture</span></li>
-                            <li class="filter" data-filter="nature"><span>Nature</span></li>
-                        -->
-                        	<li class="filter" data-filter="all"><span>All</span></li>
-                        	<c:forEach var="vo" items="${listCategory}">
-                        		<li class="filter" data-filter="${vo.pcNum}"><span>${vo.pcName}</span></li>
-                        	</c:forEach>    
-                        </ul>
-                    </div>
-                    
-                    
-                    <div>
-                    	<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
-                    </div>
-                    
-                   
-                    <div class="projects-holder2">
-                        <div class="row more-list">
-                        	<c:forEach var="dto" items="${list}">
-	                        	<div class="col-md-4 project-item mix ${dto.pcNum}">
-	                                <div class="project-thumb">
-	                                    <img src="" alt="">
-	                                    <div class="overlay-b">
-	                                        <div class="overlay-inner">
-	                                        	<img alt="" src="">
-	                                        </div>
-	                                    </div>
-	                                </div>
-	                                
-	                                <div class="box-content project-detail">
-	                                    <h2><a href="${articleUrl}&pNum=${dto.pNum}">${dto.pSubject}</a></h2>
-	                                    <p>${dto.maAddr1}</p>
-	                                    <p>채팅현황(채팅몇건햇는지(유저당1))</p>
-	                                    <p>${dto.pWishCount}</p>
-	                                </div>
-	                            </div>
-                        	</c:forEach>
-                        </div>
+                        <div>
+                    		<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
+                    	</div>
+                        
+                        
 						
 						
 						<c:if test="${dataCount > 6}">	

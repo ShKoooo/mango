@@ -11,8 +11,12 @@ public interface ProductService {
 	public List<Product> memberListProduct(Map<String, Object> map); // 회원 지정 위치 기준 반경 5km내의 판매글
 	public void updateHitCount(int pNum) throws Exception;
 	
-	public boolean userProductLiked(Map<String, Object> map); // 관심 여부
+	public int pWishCount(int pNum); // 특정 개시글이 받은 관심 개수
 	
+	public void insertProductWish(Map<String, Object> map) throws Exception; // 관심 등록
+	public void deleteProductWish(Map<String, Object> map) throws Exception; // 관심 취소
+	public int productWishCount(int pNum); // 관심 개수
+	public boolean userProductWished(Map<String, Object> map) throws Exception; // 관심 여부
 	
 	public Product readProduct(int pNum);
 	public List<Product> listCategory(); // 카테고리 리스트

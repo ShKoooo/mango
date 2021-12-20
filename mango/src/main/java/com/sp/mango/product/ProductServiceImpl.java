@@ -71,8 +71,16 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public Product readProduct(int pNum) {
-		// TODO Auto-generated method stub
-		return null;
+		Product dto = null;
+		
+		// 게시물 가져오기
+		try {
+			dto = dao.selectOne("product.readProduct", pNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return dto;
 	}
 
 	@Override
@@ -188,14 +196,60 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public boolean userProductLiked(Map<String, Object> map) {
+	public boolean userProductWished(Map<String, Object> map) {
 		boolean result = false;
 		
 		try {
-			Product dto = dao.selectOne("product.userProductLiked", map);
+			Product dto = dao.selectOne("product.userProductWished", map);
 			if(dto != null) {
 				result = true;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void insertProductWish(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("product.insertProductWish", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void deleteProductWish(Map<String, Object> map) throws Exception {
+		try {
+			dao.deleteData("product.deleteProductWish", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}	
+	}
+
+	@Override
+	public int productWishCount(int pNum) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("product.productWishCount", pNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int pWishCount(int pNum) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("product.pWishCount", pNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

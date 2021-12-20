@@ -53,6 +53,7 @@
 
 	<!-- 상품 리스트 : 전체보기 -->
 	<select id="listProduct" parameterType="map" resultType="com.sp.mango.product.Product">
+		<!--  
 		SELECT * FROM (
     		SELECT ROWNUM rnum, tb.* FROM (
         		SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
@@ -68,6 +69,29 @@
         		ORDER BY pNum DESC
     		) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
+		-->
+		
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM (
+		        SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+		                TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
+		                NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName
+		        FROM product p
+		        JOIN area a ON p.areaNum = a.areaNum
+		        JOIN pCategory pc ON p.pcNum = pc.pcNum
+		        JOIN member m ON p.userId = m.userId
+		        LEFT OUTER JOIN (
+		            SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+		            GROUP BY pNum
+		        ) c ON p.pNum = c.pNum
+		        <where>		        
+		        	<if test="pcNum != 0">
+		        		WHERE pc.pcNum = #{pcNum}
+		        	</if>
+		        </where>
+		        ORDER BY pNum DESC
+		    ) tb WHERE ROWNUM &lt;= 10
+		) WHERE rnum &gt;= 1
 	</select>
 	
 	
@@ -144,25 +168,46 @@
 	</select>
 -->
 
+	<!-- 글보기 -->
+	<select id="readProduct" parameterType="Integer" resultType="com.sp.mango.product.Product">
+		SELECT p.pNum, pSubject, pStatus, pContent, pPrice, pHitCount, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+		        TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, pSoldDate, pIsProposable, area1, area2, area3,
+		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, 
+		        (36.5 + (0.1* NVL(manner.mannerStar, 0)) + (0.1* NVL(manner.productStar, 0)) - NVL(manner.minusDeg, 0)) AS manner
+		FROM product p
+		JOIN area a ON p.areaNum = a.areaNum
+		JOIN pCategory pc ON p.pcNum = pc.pcNum
+		JOIN member m ON p.userId = m.userId
+		JOIN mannerProfile manner ON p.userId = manner.userId
+		LEFT OUTER JOIN (
+		    SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+		    GROUP BY pNum
+		) c ON p.pNum = c.pNum
+		WHERE p.pNum = #{pNum}
+	</select>
+	
+	
 	
 	<!-- 게시글 관심 추가 -->
-	<insert id="insertProductLike" parameterType="map">
+	<insert id="insertProductWish" parameterType="map">
 		INSERT INTO product_WishList(pWishNum, pwRegDate, userId, pNum) 
 		VALUES (product_WishList_seq.NEXTVAL, SYSDATE, #{userId}, #{pNum})
 	</insert>
 	
 	<!-- 게시글 관심 삭제 -->
-	<delete id="deleteProductLike" parameterType="map">
+	<delete id="deleteProductWish" parameterType="map">
 		DELETE FROM product_WishList WHERE pNum = #{pNum} AND userId = #{userId}
 	</delete>
 
 	<!-- 게시글 관심 여부 -->
-	<select id="userProductLiked" parameterType="map" resultType="com.sp.mango.product.Product">
+	<select id="userProductWished" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT pNum, userId FROM product_WishList WHERE pNum = #{pNum} AND userId = #{userId}
 	</select>
 
-
-
+	<!-- 게시글 관심 개수 -->
+	<select id="productWishCount" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(*) FROM product_WishList WHERE pNum = #{pNum}
+	</select>
 
 
 
