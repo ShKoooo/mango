@@ -41,7 +41,7 @@ public class GiftyController {
 			) throws Exception {
 		
 		List<Gifty> listGcategory = service.listGcategory();
-		
+		//ㄱㄱㄱㄱㄱ
 		int dataCount;
 		int rows = 6;
 		int total_page = 0;

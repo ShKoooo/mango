@@ -148,7 +148,7 @@ public class GiftyServiceImpl implements GiftyService {
 		
 		return result;
 	}
-	
+	//가각가
 	public int giftyWishCount(int gNum) {
 		int result = 0;
 		

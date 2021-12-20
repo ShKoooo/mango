@@ -120,7 +120,7 @@ function printGifty(data) {
 */
 	
 }
-
+//ㅗ허허헣
 function printGifty2(data) {
 	var dataCount = data.dataCount;
 	var pageNo = data.pageNo;
