@@ -81,6 +81,7 @@
 			<exclude-mapping path="/gifty/list"/>
 			<exclude-mapping path="/gifty/article"/>
 			<exclude-mapping path="/village/list"/>
+			<exclude-mapping path="/village/qna/list"/>
 			<!-- 밑에 추가 -->
 			
 			<beans:bean class="com.sp.mango.member.LoginCheckInterceptor"/>
