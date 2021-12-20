@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +34,8 @@ public class GiftyController {
 	
 	@RequestMapping(value = "list")
 	public String list(
-			@RequestParam(value = "pageNo", defaultValue = "1") int current_page,
+			@RequestParam(value = "page", defaultValue = "1") int current_page,
+			@RequestParam(defaultValue = "1") int group,
 			HttpServletRequest req,
 			Model model
 			) throws Exception {
@@ -42,20 +44,21 @@ public class GiftyController {
 		
 		int dataCount;
 		int rows = 6;
+		int total_page = 0;
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		int start = (current_page - 1) * rows + 1;
 		int end = current_page * rows;
 		map.put("start", start);
 		map.put("end", end);
+		map.put("group", group);
 		
 		dataCount = service.dataCount(map);
-		
-		int total_page = myUtil.pageCount(rows, dataCount);
 		
 		if(dataCount != 0) {
 			total_page = myUtil.pageCount(rows, dataCount);
 		}
+		
 		if(current_page > total_page) {
 			current_page = total_page;
 		}
@@ -64,8 +67,8 @@ public class GiftyController {
 		
 		String cp = req.getContextPath();
 		// String query = "rows=" + rows;
-		// String listUrl = cp + "/gifty/list";
-		String articleUrl = cp +"/gifty/article?page=" + current_page;
+		// String listUrl = cp + "/gifty/list?group=" +group;
+		String articleUrl = cp +"/gifty/article?group="+group+"&page=" + current_page;
 		
 		//if (query.length() != 0) {
 		// listUrl += "?" + query;
@@ -79,6 +82,7 @@ public class GiftyController {
 		model.addAttribute("page", current_page);
 		model.addAttribute("dataCount", dataCount);
 		model.addAttribute("rows", rows);
+		model.addAttribute("group", group);
 		
 		return ".gifty.list";
 	}
@@ -87,7 +91,7 @@ public class GiftyController {
 	@ResponseBody
 	public Map<String, Object> moreList (@RequestParam(value = "pageNo", defaultValue = "2") int current_page) throws Exception {
 		
-		int rows = 6;
+		int rows = 10;
 		int dataCount;
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -161,7 +165,7 @@ public class GiftyController {
 		service.updateHitCount(gNum);
 		Gifty dto = service.readGifty(gNum);
 		if(dto==null) {
-			return "redirect:/gifty/list";
+			return "redirect:/gifty/list?" + query;
 		}
 		
 		// dto.setgContent(myUtil.htmlSymbols(dto.getgContent()));
@@ -185,7 +189,7 @@ public class GiftyController {
 		
 		Gifty dto = service.readGifty(gNum);
 		if(dto==null || !info.getUserId().equals(dto.getUserId())) {
-			return "redirect:/gifty/list";
+			return "redirect:/gifty/list?page=" + page;
 		}
 		
 		List<Gifty> listGcategory = service.listGcategory();
@@ -195,15 +199,12 @@ public class GiftyController {
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
-	
-		
 		
 		return ".gifty.write";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String updateSubmit(Gifty dto,
-			@RequestParam int rows,
 			@RequestParam String page,
 			HttpSession session) throws Exception {
 		
@@ -215,10 +216,63 @@ public class GiftyController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/gifty/list";
+		return "redirect:/gifty/list?page=" + page;
 	}
 	
+	@RequestMapping(value = "delete")
+	public String deleteGifty(@RequestParam int gNum,
+			@RequestParam String page,
+			@RequestParam(defaultValue = "all") String condition,
+			@RequestParam(defaultValue = "") String keyword,
+			HttpSession session
+			) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		keyword = URLDecoder.decode(keyword, "utf-8");
+		String query = "page=" + page;
+		if (keyword.length() != 0) {
+			query += "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "UTF-8");
+		}
+		
+		service.deleteGifty(gNum, info.getUserId());
+		
+		return "redirect:/gifyt/list?" + query;
+	}
 	
-	
+	@RequestMapping(value = "insertGwish", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> insertGwish(@RequestParam int gNum,
+			@RequestParam boolean userWished,
+			HttpSession session) {
+		String state = "true";
+		int giftyWishCount = 0;
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("gNum", gNum);
+		paramMap.put("userId", info.getUserId());
+		
+		try {
+			if(userWished) {
+				service.deleteGwish(paramMap);
+			} else {
+				service.insertGwish(paramMap);
+			}
+		} catch (DuplicateKeyException e) {
+			state = "liked";
+		} catch (Exception e) {
+			state = "false";
+		}
+		
+		giftyWishCount = service.giftyWishCount(gNum);
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("state", state);
+		model.put("giftyWishCount", giftyWishCount);
+		
+		return model;
+		
+	}
 	
 }

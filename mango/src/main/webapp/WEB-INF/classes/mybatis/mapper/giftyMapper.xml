@@ -54,13 +54,17 @@
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, gcNum,
+					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
 					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId
+				JOIN giftyCategory gc ON g.gcNum = gc.gcNum
 				<where>
+					<if test="group!=0">
+						gc.gcNum = #{group}
+					</if>
 					<if test="keyword!=null and keyword!='' ">
-						<include refid="where-list"/>
+						AND <include refid="where-list"/>
 					</if>
 				</where> 
 				ORDER BY gNum DESC  
@@ -91,6 +95,29 @@
 	<delete id="deletGifty" parameterType="map">
 		DELETE FROM giftycon WHERE gNum = #{gNum}
 	</delete>
+	
+	
+	<insert id="insertGwish" parameterType="map">
+		INSERT INTO gifty_WishList (giftyWishNum, userId, gwRegDate, gNum)
+		VALUES (gifty_WishList_seq.NEXTVAL, #{userId}, SYSDATE, #{gNum})
+	</insert>
+	
+	<delete id="deleteGwish" parameterType="map">
+		DELETE FROM gifty_WishList WHERE gNum = #{gNum} AND userId = #{userId}
+	</delete>
+	
+	<select id="gwishCount" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(giftyWishNum) FROM gifty_WishList WHERE gNum = #{gNum}
+	</select>
+	
+	<select id="giftyWishCount" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(*) FROM gifty_WishList WHERE gNum = #{gNum}
+	</select>
+	
+	<select id="userGwished" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
+		SELECT gNum, userId FROM gifty_WishList  WHERE gNum = #{gNum} AND userId = #{userId}
+	</select>
+	
 	
 
 </mapper>

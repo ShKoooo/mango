@@ -21,6 +21,9 @@ public class Gifty {
 	private String gIsProposable;
 	private int gPropPrice;
 	
+	private int giftyWishNum;
+	private String gwRegDate;
+	
 	
 	private int gImgNum;
 	private String gImgSaveFileName;
@@ -138,6 +141,18 @@ public class Gifty {
 	}
 	public void setgPropPrice(int gPropPrice) {
 		this.gPropPrice = gPropPrice;
+	}
+	public int getGiftyWishNum() {
+		return giftyWishNum;
+	}
+	public void setGiftyWishNum(int giftyWishNum) {
+		this.giftyWishNum = giftyWishNum;
+	}
+	public String getGwRegDate() {
+		return gwRegDate;
+	}
+	public void setGwRegDate(String gwRegDate) {
+		this.gwRegDate = gwRegDate;
 	}
 	
 	

@@ -120,4 +120,68 @@ public class GiftyServiceImpl implements GiftyService {
 		return listGcategory;
 	}
 
+	@Override
+	public void insertGwish(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("gifty.insertGwish", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public Map<String, Object> listGwish(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int gwishCount(int gNum) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("gifty.gwishCount", gNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	public int giftyWishCount(int gNum) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("gifty.giftyWishCount", gNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public void deleteGwish(Map<String, Object> map) throws Exception {
+		try {
+			dao.deleteData("gifty.deleteGwish", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean userGwished(Map<String, Object> map) {
+		boolean result = false;
+		try {
+			Gifty dto = dao.selectOne("gifty.userGwished", map);
+			if(dto != null) {
+				result = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
 }

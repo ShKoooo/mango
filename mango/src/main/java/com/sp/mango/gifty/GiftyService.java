@@ -14,4 +14,11 @@ public interface GiftyService {
 
 	public List<Gifty> listGcategory();
 	
+	public void insertGwish(Map<String, Object> map) throws Exception;
+	public Map<String, Object> listGwish(Map<String, Object> map);
+	public int gwishCount(int gNum);
+	public int giftyWishCount(int gNum);
+	public void deleteGwish(Map<String, Object> map) throws Exception;
+	public boolean userGwished(Map<String, Object> map);
+	
 }
