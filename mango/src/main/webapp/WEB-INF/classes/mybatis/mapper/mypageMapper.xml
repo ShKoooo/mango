@@ -23,4 +23,144 @@
 		JOIN area a ON a.areaNum = b.areaNum
 		WHERE userId = #{userId}
 	</select>
+	
+	<select id="listPickedUser" parameterType="String" resultType="com.sp.mango.mypage.PickedUser">
+		SELECT pickedNum, target_id, TO_CHAR(regDate,'YYYY-MM-DD') regDate
+		FROM pickedUser
+		WHERE userId = #{userId}
+	</select>
+	
+	<select id="listBlockedUser" parameterType="String" resultType="com.sp.mango.mypage.PickedUser">
+		SELECT blockNum, target_id, TO_CHAR(regDate,'YYYY-MM-DD') regDate
+		FROM blockedUser
+		WHERE userId = #{userId}
+	</select>
+	
+	<select id="listKeyword" parameterType="String" resultType="com.sp.mango.mypage.PickedUser">
+		SELECT keywordNum, keyword, TO_CHAR(regDate,'YYYY-MM-DD') regDate
+		FROM keyword
+		WHERE userId = #{userId}
+	</select>
+	
+	<select id="myPickCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0)
+		FROM pickedUser p
+		JOIN member m ON p.target_id = m.userId
+		<where>
+			p.userId = #{userId}
+			<if test="keyword != null and keyword != '' ">
+				AND
+				INSTR(m.userNickName, #{keyword}) > 0
+			</if>
+		</where>
+	</select>
+	
+	<select id="listMyPickedUser" parameterType="map" resultType="com.sp.mango.mypage.PickedUser">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (	
+				SELECT pickedNum, p.userId, p.target_id, m.userNickName, p.regDate
+				FROM pickedUser p
+				JOIN member m ON p.target_id = m.userId
+				<where>
+					p.userId = #{userId}
+					<if test="keyword != null and keyword != '' ">
+						AND
+						INSTR(m.userNickName, #{keyword}) > 0
+					</if>
+				</where>
+				ORDER BY p.regDate DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="readUserIdByNickName" parameterType="String" resultType="String">
+		SELECT userId
+		FROM member
+		WHERE userNickName = #{userNickName}
+	</select>
+	
+	<insert id="insertPickedUser" parameterType="map">
+		INSERT INTO pickedUser
+		(pickedNum, userId, target_id, regDate)
+		VALUES
+		(pickedUser_seq.NEXTVAL, #{userId}, #{target_id}, SYSDATE)
+	</insert>
+	
+	<delete id="deleteMySelection" parameterType="map">
+		DELETE FROM ${tableName} WHERE ${seqName} = #{seqNum}
+	</delete>
+	
+	<select id="myBlockCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0)
+		FROM blockedUser p
+		JOIN member m ON p.target_id = m.userId
+		<where>
+			p.userId = #{userId}
+			<if test="keyword != null and keyword != '' ">
+				AND
+				INSTR(m.userNickName, #{keyword}) > 0
+			</if>
+		</where>
+	</select>
+	
+	<select id="listMyBlockedUser" parameterType="map" resultType="com.sp.mango.mypage.BlockedUser">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (	
+				SELECT blockNum, p.userId, p.target_id, m.userNickName, p.regDate
+				FROM blockedUser p
+				JOIN member m ON p.target_id = m.userId
+				<where>
+					p.userId = #{userId}
+					<if test="keyword != null and keyword != '' ">
+						AND
+						INSTR(m.userNickName, #{keyword}) > 0
+					</if>
+				</where>
+				ORDER BY p.regDate DESC	
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<insert id="insertBlockedUser" parameterType="map">
+		INSERT INTO blockedUser
+		(blockNum, userId, target_id, regDate)
+		VALUES
+		(blockedUser_seq.NEXTVAL, #{userId}, #{target_id}, SYSDATE)
+	</insert>
+	
+	<select id="myKeywordCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0)
+		FROM keyword
+		<where>
+			userId = #{userId}
+			<if test="keyword != null and keyword != '' ">
+				AND
+				INSTR(keyword, #{keyword}) > 0
+			</if>
+		</where>
+	</select>
+	
+	<select id="listMyKeyword" parameterType="map" resultType="com.sp.mango.mypage.Keyword">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (	
+				SELECT keywordNum, userId, keyword, regDate
+				FROM keyword
+				<where>
+					userId = #{userId}
+					<if test="keyword != null and keyword != '' ">
+						AND
+						INSTR(keyword, #{keyword}) > 0
+					</if>
+				</where>
+				ORDER BY regDate DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<insert id="insertKeyword" parameterType="map">
+		INSERT INTO keyword
+		(keywordNum, userId, keyword, regDate)
+		VALUES
+		(keyword_seq.NEXTVAL, #{userId}, #{keyword}, SYSDATE)
+	</insert>
 </mapper>

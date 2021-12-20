@@ -83,4 +83,168 @@ public class MypageServiceImpl implements MypageService {
 		return dto;
 	}
 
+	@Override
+	public List<PickedUser> listPickedUser(String userId) throws Exception {
+		List<PickedUser> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listPickedUser",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<BlockedUser> listBlockedUser(String userId) throws Exception {
+		List<BlockedUser> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listBlockedUser",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<Keyword> listKeyword(String userId) throws Exception {
+		List<Keyword> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listKeyword",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public int myPickCount(Map<String, Object> map) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.myPickCount", map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<PickedUser> listMyPickedUser(Map<String, Object> map) throws Exception {
+		List<PickedUser> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listMyPickedUser",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public void deleteMySelection(Map<String, Object> map) throws Exception {
+		try {
+			dao.deleteData("mypage.deleteMySelection",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public String readUserIdByNickName(String userNickName) throws Exception {
+		String userId = null;
+		
+		try {
+			userId = dao.selectOne("mypage.readUserIdByNickName",userNickName);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return userId;
+	}
+
+	@Override
+	public void insertPickedUser(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("mypage.insertPickedUser",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public int myBlockCount(Map<String, Object> map) throws Exception {
+		int result = 0;
+		try {
+			result = dao.selectOne("mypage.myBlockCount",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		return result;
+	}
+
+	@Override
+	public List<BlockedUser> listMyBlockedUser(Map<String, Object> map) throws Exception {
+		List<BlockedUser> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listMyBlockedUser",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public void insertBlockedUser(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("mypage.insertBlockedUser",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public int myKeywordCount(Map<String, Object> map) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.myKeywordCount",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<Keyword> listMyKeyword(Map<String, Object> map) throws Exception {
+		List<Keyword> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listMyKeyword",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public void insertKeyword(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("mypage.insertKeyword",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
 }

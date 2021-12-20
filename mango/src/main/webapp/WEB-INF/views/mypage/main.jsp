@@ -249,13 +249,50 @@ $(function() {
 				</div>
 				
 			</div>
+			
 			<div class="row mb-3">
-				<h4>
-					<a href="#">
-						<i class="icofont-read-book-alt"></i> 관심유저, 차단유저, 관심키워드 (분리?)
-					</a>
-				</h4>
+				<div class="col-md-4">
+					<h4>
+						<i class="icofont-read-book-alt"></i> 관심 유저
+					</h4>
+				</div>
+				<div class="col-md-4">
+					<h4>
+						<a href="${pageContext.request.contextPath}/mypage/mypick">
+							${countPick}&nbsp;명
+						</a>
+					</h4>
+				</div>
 			</div>
+			<div class="row mb-3">
+				<div class="col-md-4">
+					<h4>
+						<i class="icofont-not-allowed"></i> 차단 유저
+					</h4>
+				</div>
+				<div class="col-md-4">
+					<h4>
+						<a href="${pageContext.request.contextPath}/mypage/myblock">
+							${countBlock}&nbsp;명
+						</a>
+					</h4>
+				</div>
+			</div>
+			<div class="row mb-3">
+				<div class="col-md-4">
+					<h4>
+						<i class="icofont-like"></i> 관심 키워드
+					</h4>
+				</div>
+				<div class="col-md-4">
+					<h4>
+						<a href="${pageContext.request.contextPath}/mypage/mykeyword">
+							${countKeyword}&nbsp;개
+						</a>
+					</h4>
+				</div>
+			</div>
+			
 			<div class="row mb-3">
 				<h4>
 					<a href="#">
@@ -263,6 +300,7 @@ $(function() {
 					</a>
 				</h4>
 			</div>
+			
 			<div class="row mb-3">
 				<h4>
 					<a href="#">
@@ -270,13 +308,13 @@ $(function() {
 					</a>
 				</h4>
 			</div>
+			
 			<div class="row mb-3">
 				<h4>
-					<a href="#">
-						<i class="icofont-ui-rating"></i> 내 평가
-					</a>
+					<i class="icofont-ui-rating"></i> 내 평가
 				</h4>
 			</div>
+			
 			<div class="row mb-3">
 				<h4>
 					<a href="#">
@@ -284,6 +322,7 @@ $(function() {
 					</a>
 				</h4>
 			</div>
+			
 		</div>
 	</div>
 </div>
