@@ -585,7 +585,8 @@ public class MypageController {
 			iuList.add(idxIUdto);				
 		}
 		
-		// Collections.sort(iuList, new IUComparator());
+		Collections.sort(iuList, new IUComparator()); // 닉네임대로 정렬 먼저 한 이후 아래에서 시간순서대로 정렬함.
+			// 초 단위의 같은시간대에 여러 데이터 입력 시에 이 부분이 없으면 오류 (*버그) 발생.
 		
 		for (int i=0; i<iuList.size(); i++) {
 			NoteIU iuDto = iuList.get(i);
