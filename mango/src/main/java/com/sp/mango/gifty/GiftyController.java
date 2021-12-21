@@ -35,13 +35,13 @@ public class GiftyController {
 	@RequestMapping(value = "list")
 	public String list(
 			@RequestParam(value = "page", defaultValue = "1") int current_page,
-			@RequestParam(defaultValue = "1") int group,
+			@RequestParam(defaultValue = "0") int group,
 			HttpServletRequest req,
 			Model model
 			) throws Exception {
 		
 		List<Gifty> listGcategory = service.listGcategory();
-		//ㄱㄱㄱㄱㄱ
+		
 		int dataCount;
 		int rows = 6;
 		int total_page = 0;
@@ -89,9 +89,11 @@ public class GiftyController {
 	
 	@RequestMapping(value = "morelist")
 	@ResponseBody
-	public Map<String, Object> moreList (@RequestParam(value = "pageNo", defaultValue = "2") int current_page) throws Exception {
+	public Map<String, Object> moreList (@RequestParam(value = "page", defaultValue = "2") int current_page,
+		@RequestParam(defaultValue = "0") int group
+		) throws Exception {
 		
-		int rows = 10;
+		int rows = 6;
 		int dataCount;
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -99,20 +101,21 @@ public class GiftyController {
 		int end = current_page * rows;
 		map.put("start", start);
 		map.put("end", end);
+		map.put("group", group);
 		
 		dataCount = service.dataCount(map);
-		List<Gifty> list = service.listGifty(map);
 		int total_page = myUtil.pageCount(rows, dataCount);
 		if (current_page > total_page) {
 			current_page = total_page;
 		}
+		List<Gifty> list = service.listGifty(map);
 		
 		Map<String, Object> model = new HashMap<>();
 		
 		model.put("dataCount", dataCount);
 		model.put("total_page", total_page);
 		model.put("page", current_page);
-		
+		model.put("group", group);
 		model.put("list", list);
 		
 		return model;
@@ -151,12 +154,13 @@ public class GiftyController {
 			@RequestParam String page,
 			@RequestParam(defaultValue = "all") String condition,
 			@RequestParam(defaultValue = "") String keyword,
-			
+			@RequestParam(defaultValue = "0") int group,
+			HttpSession session,
 			Model model) throws Exception {
 		
 		keyword = URLDecoder.decode(keyword, "utf-8");
 
-		String query = "page=" + page;
+		String query = "page=" + page + "&group=" + group;
 		if (keyword.length() != 0) {
 			query += "&condition=" + condition + 
 					"&keyword=" + URLEncoder.encode(keyword, "UTF-8");
@@ -168,11 +172,27 @@ public class GiftyController {
 			return "redirect:/gifty/list?" + query;
 		}
 		
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("gNum", gNum);
+		
+		boolean userGwished = false;
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		if(info != null) {
+			map.put("userId", info.getUserId());
+			userGwished = service.userGwished(map);
+		}
+		
+		int giftyWishCount = service.giftyWishCount(gNum);
+		
 		// dto.setgContent(myUtil.htmlSymbols(dto.getgContent()));
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
+		model.addAttribute("group", group);
+		model.addAttribute("userGwished", userGwished);
+		model.addAttribute("giftyWishCount", giftyWishCount);
 		
 		model.addAttribute("condition", condition);
 		model.addAttribute("keyword", keyword);
@@ -212,7 +232,13 @@ public class GiftyController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			service.updateGifty(dto);
+			
+			if(dto.getgStatus() == "거래완료") {
+				service.updateSdate(dto);
+			} else {
+				service.updateGifty(dto);
+			}
+			
 		} catch (Exception e) {
 		}
 		
@@ -260,7 +286,7 @@ public class GiftyController {
 				service.insertGwish(paramMap);
 			}
 		} catch (DuplicateKeyException e) {
-			state = "liked";
+			state = "wished";
 		} catch (Exception e) {
 			state = "false";
 		}

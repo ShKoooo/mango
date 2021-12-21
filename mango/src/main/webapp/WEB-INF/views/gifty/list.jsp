@@ -39,9 +39,9 @@ function ajaxFun(url, method, query, dataType, fn) {
 
 var current_page = 2;
 
-function listPage(page) {
+function listPage(page, group) {
 	var url = "${pageContext.request.contextPath}/gifty/morelist";
-	var query = "pageNo=" + page;
+	var query = "page=" + page + "&group=" + group;
 	
 	var fn = function(data) {
 		
@@ -120,13 +120,20 @@ function printGifty(data) {
 */
 	
 }
-//ㅗ허허헣
+
 function printGifty2(data) {
 	var dataCount = data.dataCount;
-	var pageNo = data.pageNo;
+	var page = data.page;
 	var total_page = data.total_page;
+	var group = data.group;
+	var startNum = data.list.length;
+	//console.log("startNum", startNum);
+	//console.log("total_page", total_page);
+	//console.log("dataCount", dataCount);
+	var list = data.list;
+	console.log("list", list);
 	
-	$("#listGifty").show();
+	//$("#listGifty").show();
 	// $(".gifty-count").html("게시물" + dataCount + "개");
 	
 	$(".load-more").hide();
@@ -135,7 +142,7 @@ function printGifty2(data) {
 		return;
 	}
 	
-	if(pageNo < total_page) {
+	if(page < total_page) {
 		$(".load-more").show();
 	}
 	
@@ -155,7 +162,7 @@ function printGifty2(data) {
 	
 	out += "<div class='col-lg-4 mb-5'>";
 	out += "	<div class='card h-100 shadow border-0'>";
-	out += "		<img class='card-img-top' src='' alt='' />";
+	out += "		<img class='card-img-top' src='https://dummyimage.com/600x350/ced4da/6c757d' alt='' />";
 	out += "		<div class='card-body p-4'>";
 	out += "			<a class='text-decoration-none link-dark stretched-link' href='${pageContext.request.contextPath}/gifty/article?page="+current_page+"&gNum="+gnum+"'>";
 	out += "			<div class='h5 card-title mb-3'>"+gSubject+"</div></a>";
@@ -183,17 +190,31 @@ function printGifty2(data) {
 $(function(){
 	$(".load-more .more").click(function(){
 		
-		listPage(2);
+		//listPage(page++, group);
+		
+		
+		var page = ${page};
+		var total_page = ${total_page};
+		var group = ${group};
+		var dataCount = ${dataCount};
+		
+		
+		if(page < total_page) {
+			page++;
+			listPage(page, group);
+		}
+		
+		console.log("page", page);
+		console.log("total_page", total_page);
+		console.log("group", group);
+		console.log("dataCount", dataCount);
 		/*
-		var pageNo = $(".gifty-count").attr("data-pageNo");
 		var total_page = $(".gifty-count").attr("data-totalPage");
-		*/
 		
-		/*
 		
-		if(pageNo < total_page) {
-			pageNo++;
-			listPage(pageNo);
+		if(page < total_page) {
+			page++;
+			listPage(page);
 		}
 		*/
 	});
@@ -241,6 +262,9 @@ $(function(){
 				</ul>
 				  -->
 				 <ul class="nav nav-tabs" id="myTab" role="tablist">
+				 		<li class="nav-item" role="presentation">
+							<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">all</button>
+						</li>
 					<c:forEach var="vo" items="${listGcategory}" varStatus="status">
 						<li class="nav-item" role="presentation">
 							<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="${status.count}" aria-selected="true" data-tab="${vo.gcNum}">${vo.gcName}</button>
