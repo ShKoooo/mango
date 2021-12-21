@@ -31,4 +31,8 @@ public interface MypageService {
 	public int myKeywordCount(Map<String, Object> map) throws Exception;
 	public List<Keyword> listMyKeyword(Map<String,Object> map) throws Exception;
 	public void insertKeyword(Map<String,Object> map) throws Exception;
+	
+	public List<Note> listNoteSender(Map<String,Object> map) throws Exception;
+	public List<Note> listNoteReceiver(Map<String,Object> map) throws Exception;
+	public Note readNoteLastTime(Map<String,Object> map) throws Exception;
 }

@@ -1,6 +1,9 @@
 package com.sp.mango.mypage;
 
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -533,4 +536,171 @@ public class MypageController {
 		reAttr.addFlashAttribute("message","등록 성공");
 		return "redirect:/mypage/mykeyword";
 	}
+	
+	@RequestMapping(value="note")
+	public String note(
+			HttpSession session,
+			Model model,
+			@RequestParam(defaultValue="") String condition,
+			@RequestParam(defaultValue="") String keyword
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		if (memberInfo == null) {
+			return "redirect:/member/login";
+		}
+		String userId = memberInfo.getUserId();
+		
+		Map<String, Object> listMap1 = new HashMap<String, Object>();
+		listMap1.put("userId", userId);
+		listMap1.put("condition", condition);
+		listMap1.put("keyword", keyword);
+		
+		List<Note> senderList = service.listNoteSender(listMap1);
+		List<Note> receiverList = service.listNoteReceiver(listMap1);
+		
+		List<NoteIU> iuList = new ArrayList<NoteIU>();
+		List<Note> rawList = new ArrayList<Note>();
+		
+		// senderList 나에게 보낸 사람 : sender=You, receiver=Me
+		for (int i=0; i<senderList.size(); i++) {
+			NoteIU idxIUdto = new NoteIU();
+			
+			idxIUdto.setMeId(userId);
+			idxIUdto.setMeNick(memberInfo.getUserNickName());
+			idxIUdto.setYouId(senderList.get(i).getSendId());
+			idxIUdto.setYouNick(senderList.get(i).getUserNickName());
+			
+			iuList.add(idxIUdto);
+		}
+		
+		// receiverList 나로부터 받은 사람 : sender=Me, receiver=You
+		for (int i=0; i<receiverList.size(); i++) {
+			NoteIU idxIUdto = new NoteIU();
+			
+			idxIUdto.setMeId(userId);
+			idxIUdto.setMeNick(memberInfo.getUserNickName());
+			idxIUdto.setYouId(receiverList.get(i).getReceiveId());
+			idxIUdto.setYouNick(receiverList.get(i).getUserNickName());
+			
+			iuList.add(idxIUdto);				
+		}
+		
+		// Collections.sort(iuList, new IUComparator());
+		
+		for (int i=0; i<iuList.size(); i++) {
+			NoteIU iuDto = iuList.get(i);
+			
+			Map<String, Object> listMap2 = new HashMap<String, Object>();
+			listMap2.put("meId", iuDto.getMeId());
+			listMap2.put("youId", iuDto.getYouId());
+			listMap2.put("condition", condition);
+			listMap2.put("keyword", keyword);
+			
+			Note noteDto = service.readNoteLastTime(listMap2);
+			noteDto.setMeId(iuDto.getMeId());
+			noteDto.setMeNick(iuDto.getMeNick());
+			noteDto.setYouId(iuDto.getYouId());
+			noteDto.setYouNick(iuDto.getYouNick());
+			
+			double hourPassed = noteDto.getRecentDPlus();
+			int timePassed = 0;
+			String timeMsg = "";
+			
+			if (hourPassed < 1) {	// 1일보다 적을 때
+				hourPassed = hourPassed * 24;	// 일 -> 시간
+				if (hourPassed < 1) {	// 1시간보다 작을 때
+					hourPassed = hourPassed * 60;	// 시간 -> 분
+					if (hourPassed < 1) {	// 1분보다 작을 때
+						timePassed = (int)(hourPassed * 60);
+						timeMsg = timePassed+" 초 전";
+					} else {
+						timePassed = (int)hourPassed;
+						timeMsg = timePassed+" 분 전";
+					}					
+				} else {
+					timePassed = (int)hourPassed;
+					timeMsg = timePassed+" 시간 전";
+				}
+				
+			} else {				// 하루 이상
+				if (hourPassed/7 >= 1) {	// 1주보다 많을 때
+					if (hourPassed/362.25 >= 1) {	// 1년보다 많을 때
+						timePassed = (int) (hourPassed/365.25);
+						timeMsg = timePassed+" 년 전";
+					} else {	// 주 단위
+						timePassed = (int) (hourPassed/7);
+						timeMsg = timePassed+" 주 전";					}
+				} else {	// 일 단위
+					timePassed = (int)hourPassed;
+					timeMsg = timePassed+" 일 전";
+				}
+			}
+			
+			noteDto.setTimeMsg(timeMsg);
+			
+			if (noteDto.getNoteContent().length() >= 15) {
+				noteDto.setNoteContent(noteDto.getNoteContent().substring(1,16)+"...");
+			}
+			
+			rawList.add(noteDto);
+		}
+		
+		Collections.sort(rawList, new NoteTimeComparator());
+		
+		for (int i=1; i<rawList.size(); i++) {
+			if (rawList.get(i).getYouId().equals(rawList.get(i-1).getYouId())) {
+				rawList.remove(i);
+			}
+		}
+		
+		// Collections.sort(rawList, new NoteTimeComparator());
+		
+		model.addAttribute("noteFriendList",rawList);
+		
+		return ".mypage.note";
+	}
+}
+
+class IUComparator implements Comparator<NoteIU> {
+
+	@Override
+	public int compare(NoteIU o1, NoteIU o2) {
+		if (o1.getYouNick().compareTo(o2.getYouNick())>0) return 1;
+		if (o1.getYouNick().compareTo(o2.getYouNick())<0) return -1;
+		return 0;
+	}
+	
+}
+
+class NoteTimeComparator implements Comparator<Note> {
+
+	@Override
+	public int compare(Note o1, Note o2) {
+		if (o1.getRecentDPlus() > o2.getRecentDPlus()) return 1;
+		if (o1.getRecentDPlus() < o2.getRecentDPlus()) return -1;
+		return 0;
+	}
+	
+}
+
+class NoteTimeRevComparator implements Comparator<Note> {
+
+	@Override
+	public int compare(Note o1, Note o2) {
+		if (o1.getRecentDPlus() > o2.getRecentDPlus()) return 1;
+		if (o1.getRecentDPlus() < o2.getRecentDPlus()) return -1;
+		return 0;
+	}
+	
+}
+
+class NoteNickComparator implements Comparator<Note> {
+
+	@Override
+	public int compare(Note o1, Note o2) {
+		if (o1.getYouNick().compareTo(o2.getYouNick())>0) return 1;
+		if (o1.getYouNick().compareTo(o2.getYouNick())<0) return -1;
+		return 0;
+	}
+	
 }

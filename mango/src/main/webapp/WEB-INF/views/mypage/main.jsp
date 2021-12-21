@@ -317,7 +317,7 @@ $(function() {
 			
 			<div class="row mb-3">
 				<h4>
-					<a href="#">
+					<a href="${pageContext.request.contextPath}/mypage/note">
 						<i class="icofont-chat"></i> 쪽지
 					</a>
 				</h4>

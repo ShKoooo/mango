@@ -247,4 +247,43 @@ public class MypageServiceImpl implements MypageService {
 		}
 	}
 
+	@Override
+	public List<Note> listNoteSender(Map<String,Object> map) throws Exception {
+		List<Note> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listNoteSender",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<Note> listNoteReceiver(Map<String,Object> map) throws Exception {
+		List<Note> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listNoteReceiver",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public Note readNoteLastTime(Map<String,Object> map) throws Exception {
+		Note returnDto = null;
+		
+		try {
+			returnDto = dao.selectOne("mypage.readNoteLastTime",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return returnDto;
+	}
+
 }

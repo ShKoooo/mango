@@ -163,4 +163,80 @@
 		VALUES
 		(keyword_seq.NEXTVAL, #{userId}, #{keyword}, SYSDATE)
 	</insert>
+	
+	<sql id="note-where-list">
+		<choose>
+			<when test="condition=='all'">
+				( INSTR(userNickName,#{keyword}) &gt; 0 
+					OR INSTR(noteContent, #{keyword}) &gt; 0 )
+			</when>
+			<when test="condition=='userNickName'">
+				INSTR(userNickName,#{keyword}) &gt; 0
+			</when>
+			<when test="condition=='noteContent'">
+				INSTR(noteContent, #{keyword}) &gt; 0
+			</when>
+		</choose>
+	</sql>
+	
+	<select id="listNoteSender" parameterType="map" resultType="com.sp.mango.mypage.Note">
+		SELECT DISTINCT n.sendId, userNickName
+		FROM note n
+		JOIN member m ON n.sendId = m.userId
+		<where>
+			<if test="keyword != null and keyword != '' ">
+				<include refid="note-where-list"/>
+			</if>
+			AND
+			receiveId = #{userId}
+			AND (
+			    (isSendDelete != 'T' AND noteReadDate IS NULL)
+			    OR (isRecDelete != 'T')
+			)
+		</where>
+		ORDER BY userNickName
+	</select>
+	
+	<select id="listNoteReceiver" parameterType="map" resultType="com.sp.mango.mypage.Note">
+		SELECT DISTINCT n.receiveId, userNickName
+		FROM note n
+		JOIN member m ON n.receiveId = m.userId
+		<where>
+			<if test="keyword != null and keyword != '' ">
+				<include refid="note-where-list"/>
+			</if>
+			AND
+			sendId = #{userId}
+			AND (
+			    (isSendDelete != 'T' AND noteReadDate IS NULL)
+			    OR (isRecDelete != 'T')
+			)
+		</where>
+		ORDER BY userNickName
+	</select>
+	
+	<select id="readNoteLastTime" parameterType="map" resultType="com.sp.mango.mypage.Note">
+		SELECT noteNum, sendId, receiveId, userNickName, recentDPlus, noteContent FROM (
+		    SELECT ROWNUM AS rnum2, noteNum, sendId, receiveId, userNickName, recentDPlus, noteContent FROM (
+		        SELECT ROWNUM AS rnum, noteNum, sendId, userNickName, receiveId, noteRegDate, noteContent, SYSDATE-noteRegDate recentDPlus
+		        FROM note n
+		        JOIN member m ON n.receiveId = m.userId
+		        <where>
+					<if test="keyword != null and keyword != '' ">
+						<include refid="note-where-list"/>
+					</if>
+					AND
+					(
+			            (receiveId = #{meId} AND sendId = #{youId})
+			            OR
+			            (receiveId = #{youId} AND sendId = #{meId})
+			       	) AND (
+					    (isSendDelete != 'T' AND noteReadDate IS NULL)
+					    OR (isRecDelete != 'T')
+					)
+				</where>	
+		        ORDER BY noteRegDate DESC
+		    )
+		) WHERE rnum2 = 1
+	</select>
 </mapper>
