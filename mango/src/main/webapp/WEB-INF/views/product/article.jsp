@@ -117,9 +117,29 @@ $(function(){
                                 	
                                 </li>
                                 <li><i class="fa fa-envelope-o"></i><a href="">거래 쪽지 보내기</a></li>
-                            	
                             </ul>
                         </div>
+                        
+                        <div class="box-content">
+                        	<c:choose>
+								<c:when test="${sessionScope.member.userId==dto.userId}">
+									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/update?pNum=${dto.pNum}&group=${dto.pcNum}&page=${page}';">수정</button>
+								</c:when>
+								<c:otherwise>
+									<button type="button" class="btn btn-light" disabled="disabled">수정</button>
+								</c:otherwise>
+							</c:choose>
+					    	
+							<c:choose>
+					    		<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.membership>50}">
+					    			<button type="button" class="btn btn-light" onclick="deleteProduct();">삭제</button>
+					    		</c:when>
+					    		<c:otherwise>
+					    			<button type="button" class="btn btn-light" disabled="disabled">삭제</button>
+					    		</c:otherwise>
+				    		</c:choose>
+                        </div>
+                        
                         
                     </div>
                 </div>

@@ -8,8 +8,11 @@
 	</select>
 	
 	<!-- 글 개수 -->
-	<select id="dataCount" resultType="Integer">
+	<select id="dataCount" resultType="Integer" parameterType="map">
 		SELECT NVL(COUNT(*), 0) FROM product
+		<if test="pcNum != 0 ">
+			WHERE pcNum = #{pcNum}
+		</if>
 	</select>
 	
 	<!-- 중고거래 글 작성 -->
@@ -22,19 +25,23 @@
          #{pIsProposable}, #{pLat, jdbcType=INTEGER}, #{pLon, jdbcType=INTEGER},
          #{userId}, #{areaNum}, #{pcNum})
 	</insert>
-
-	<!-- 중고거래 이미지 업로드 -->
-	<insert id="insertImgFile" parameterType="com.sp.mango.product.Product">
-		INSERT INTO productImg(pImgNum, pImgSaveFileName, pNum)
-		VALUES(productImg_seq.NEXTVAL, #{pImgSaveFileName}, #{pNum})
-	</insert>
-
-	<!-- 이미지 리스트 검색 -->
-	<select id="listImgFile" parameterType="Integer" resultType="com.sp.mango.product.Product">
-		SELECT pImgNum, pImgSaveFileName, pNum
-		FROM productImg
+	
+	<!-- 중고거래 글 수정 -->
+	<update id="updateProduct" parameterType="com.sp.mango.product.Product">
+		UPDATE product SET 
+			pSubject=#{pSubject}, pStatus=#{pStatus}, pContent=#{pContent},
+			pPrice=#{pPrice}, pUpdate_date=#{pUpdate_date}, pSoldDate=#{pSoldDate},
+			pIsProposable=#{pIsProposable}, pLat=#{pLat}, pLon=#{pLon}, 
+			areaNum=#{areaNum}, pcNum=#{pcNum}			
 		WHERE pNum = #{pNum}
-	</select>
+	</update>
+	
+	<!-- 중고거래 글 삭제 -->
+	<delete id="deleteProduct" parameterType="Integer">
+		DELETE FROM product WHERE pNum = #{pNum}
+	</delete>
+
+	
 	
 	<!-- 상품 카테고리 리스트 검색 -->
 	<select id="listCategory" resultType="com.sp.mango.product.Product">
@@ -51,76 +58,40 @@
 	</select>
 
 
-	<!-- 상품 리스트 : 전체보기 -->
-	<select id="listProduct" parameterType="map" resultType="com.sp.mango.product.Product">
-		<!--  
-		SELECT * FROM (
-    		SELECT ROWNUM rnum, tb.* FROM (
-        		SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
-                		TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
-                		NVL(pWishCount, 0) pWishCount, pc.pcNum
-        		FROM product p
-        		JOIN area a ON p.areaNum = a.areaNum
-        		JOIN pCategory pc ON p.pcNum = pc.pcNum
-        		LEFT OUTER JOIN (
-            		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
-            		GROUP BY pNum
-        		) c ON p.pNum = c.pNum
-        		ORDER BY pNum DESC
-    		) tb WHERE ROWNUM &lt;= #{end}
-		) WHERE rnum &gt;= #{start}
-		-->
-		
-		SELECT * FROM (
-		    SELECT ROWNUM rnum, tb.* FROM (
-		        SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
-		                TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
-		                NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName
-		        FROM product p
-		        JOIN area a ON p.areaNum = a.areaNum
-		        JOIN pCategory pc ON p.pcNum = pc.pcNum
-		        JOIN member m ON p.userId = m.userId
-		        LEFT OUTER JOIN (
-		            SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
-		            GROUP BY pNum
-		        ) c ON p.pNum = c.pNum
-		        <where>		        
-		        	<if test="pcNum != 0">
-		        		WHERE pc.pcNum = #{pcNum}
-		        	</if>
-		        </where>
-		        ORDER BY pNum DESC
-		    ) tb WHERE ROWNUM &lt;= 10
-		) WHERE rnum &gt;= 1
-	</select>
+
 	
-	
-	<!-- 상품 리스트(회원) : 회원 지정 위치 기준 반경 5km내의 판매글  -->
+	<!-- 상품 리스트 (회원일시 지정 위치 기준 반경 5km내의 판매글) -->
 	<select id="memberListProduct" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT * FROM (
     		SELECT ROWNUM rnum, tb.* FROM (
-        		SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
-                TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
-                NVL(pWishCount, 0) pWishCount, pc.pcNum
+        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
+		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName
         		FROM product p
         		JOIN area a ON p.areaNum = a.areaNum
         		JOIN pCategory pc ON p.pcNum = pc.pcNum
+        		JOIN member m ON p.userId = m.userId
         		LEFT OUTER JOIN (
             		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
             		GROUP BY pNum
         		) c ON p.pNum = c.pNum
-        		WHERE p.areaNum IN (
-            		SELECT areaNum
-            		FROM (
-                    	SELECT * FROM (
-                        	SELECT areaNum,
-                        		(6371*acos(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180)))
-                        		AS distance
-                        		FROM area ar
-                    		) WHERE distance &lt;= 5    
-                		)
-            		)
+        		WHERE CASE WHEN #{maLat} = 0 AND #{maLon} = 0 THEN 1
+		                   WHEN p.areaNum IN (
+		                       SELECT areaNum
+		                       FROM (
+		                           SELECT * FROM (
+		                               SELECT areaNum,
+		                                   (6371*acos(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+                        					-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180)))
+		                                   AS distance
+		                                   FROM area ar
+		                               ) WHERE distance &lt;= 5    
+		                           )
+		                       ) THEN 1
+		              ELSE 0 END = 1
+            	AND	CASE WHEN #{pcNum} = 0 THEN 1
+		                 WHEN pc.pcNum = #{pcNum} THEN 1
+		            ELSE 0 END = 1
         		ORDER BY pNum DESC
     		) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
@@ -145,34 +116,13 @@
 	</select>
 
 	
-<!-- 
-	회원이 선택한 동네의 위도, 경도 구하기 
-	<select id="pickMemberAddr" parameterType="Integer" resultType="com.sp.mango.product.MemberAddr">
-		SELECT maLat, maLon
-		FROM (
-        	SELECT userId, maLat, maLon, maAddr1, maAddr2, areaNum 
-        	FROM memberAddr 
-        	WHERE maNum = #{maNum}
-     	)
-	</select>
-	
-	 회원의 동네 기준 반경 거리 구하기 
-	<select id="radius" parameterType="map" resultType="com.sp.mango.product.MemberAddr">
-		SELECT * FROM (
-	    	SELECT areaNum, area1, area2, area3,
-	        	(6371*acos(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-	        	-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180)))
-	        	AS distance
-	    FROM area
-		) WHERE distance &lt;= 5
-	</select>
--->
+
 
 	<!-- 글보기 -->
 	<select id="readProduct" parameterType="Integer" resultType="com.sp.mango.product.Product">
 		SELECT p.pNum, pSubject, pStatus, pContent, pPrice, pHitCount, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
 		        TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, pSoldDate, pIsProposable, area1, area2, area3,
-		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, 
+		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, p.userId,
 		        (36.5 + (0.1* NVL(manner.mannerStar, 0)) + (0.1* NVL(manner.productStar, 0)) - NVL(manner.minusDeg, 0)) AS manner
 		FROM product p
 		JOIN area a ON p.areaNum = a.areaNum

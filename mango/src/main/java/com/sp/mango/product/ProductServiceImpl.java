@@ -16,7 +16,7 @@ public class ProductServiceImpl implements ProductService{
 //	private FileManager fileManager;
 	
 	@Override
-	public void insertProduct(Product dto, String pathname) throws Exception {
+	public void insertProduct(Product dto) throws Exception {
 		try {
 			// 글 업로드
 			int seq = dao.selectOne("product.seq");
@@ -45,15 +45,25 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public void updateProduct(Product dto, String pathname) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void updateProduct(Product dto) throws Exception {
+		// 게시글 수정
+		try {
+			dao.updateData("product.updateProduct", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
-	public void deleteProduct(Product dto, String pathname) throws Exception {
-		// TODO Auto-generated method stub
-		
+	public void deleteProduct(Product dto) throws Exception {
+		// 게시글 삭제
+		try {
+			dao.deleteData("product.deleteProduct", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
@@ -145,11 +155,11 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public int dataCount() {
+	public int dataCount(Map<String, Object> map) {
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("product.dataCount");
+			result = dao.selectOne("product.dataCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
