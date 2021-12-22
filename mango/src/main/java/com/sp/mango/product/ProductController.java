@@ -46,9 +46,25 @@ public class ProductController {
 		String cp = req.getContextPath();
 		
 		int rows = 6; // 한 화면에 보여주는 게시물 수
+	
 		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("info", info!=null);
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
+		
+		List<MemberAddr> listMemberAddr = null;
+		int memAddrCount = 0;
+		
+		if (info != null) {
+			map.put("membership", info.getMembership());
+			listMemberAddr = service.listMemberAddr(info.getUserId());
+			
+			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) { 
+				map.put("maLat", listMemberAddr.get(0).getaLat());
+				map.put("maLon", listMemberAddr.get(0).getaLon());
+				memAddrCount = service.memAddrCount(info.getUserId());
+			}
+		}		
 		map.put("pcNum", pcNum);
 		
 		int dataCount = service.dataCount(map);
@@ -71,22 +87,13 @@ public class ProductController {
 		
 		
 		// 리스트
-		List<Product> list = null;
+		List<Product> list = service.memberListProduct(map);
 		
-		List<MemberAddr> listMemberAddr = null;
-		int memAddrCount = 0;
-		list = service.memberListProduct(map);
 		if(info != null) { 
-			listMemberAddr = service.listMemberAddr(info.getUserId());	
-			memAddrCount = service.memAddrCount(info.getUserId());
-			// 회원 주소 선택 창에서.
-			// opt가 0(디폴트값)이고, listMemberAddr(주소리스트)가 있으면 
-			// listMemberAddr에 값은 있는데 opt 값이 없으면 주소리스트의 가장 위에 있는 값을 선택한다.
 			if(opt == 0 && listMemberAddr.size() > 0) {
 				opt = listMemberAddr.get(0).getAreaNum();
 			}
 		}
-		
 
 		// String listUrl = cp + "/product/list";
 		String articleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page;
@@ -133,12 +140,15 @@ public class ProductController {
 		int dataCount;
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		int start = (current_page - 1) * rows + 1;
-		int end = current_page * rows;
-		map.put("start", start);
-		map.put("end", end);
+		List<MemberAddr> listMemberAddr = null;
+		
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
+		
+		if (info != null) {
+			map.put("membership", info.getMembership());
+			listMemberAddr = service.listMemberAddr(info.getUserId());
+		}		
 		map.put("pcNum", pcNum);
 
 		dataCount = service.dataCount(map);
@@ -148,22 +158,17 @@ public class ProductController {
 		}
 		
 		// 리스트
-		List<Product> list = null;
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
 				
-		List<MemberAddr> listMemberAddr = null;
-//		int memAddrCount = 0;
-		list = service.memberListProduct(map);
+		List<Product> list = service.memberListProduct(map);
 		if(info != null) { 
-			listMemberAddr = service.listMemberAddr(info.getUserId());	
-//			memAddrCount = service.memAddrCount(info.getUserId());
-			// 회원 주소 선택 창에서.
-			// opt가 0(디폴트값)이고, listMemberAddr(주소리스트)가 있으면 
-			// listMemberAddr에 값은 있는데 opt 값이 없으면 주소리스트의 가장 위에 있는 값을 선택한다.
 			if(opt == 0 && listMemberAddr.size() > 0) {
 				opt = listMemberAddr.get(0).getAreaNum();
 			}
 		}
-		
 		
 		Map<String, Object> model = new HashMap<>();
 		
@@ -175,8 +180,6 @@ public class ProductController {
 		
 		return model;
 	}
-	
-	
 	
 	// 게시글 수정
 	@RequestMapping(value = "write", method = RequestMethod.GET)
@@ -267,6 +270,7 @@ public class ProductController {
 		model.addAttribute("query", query);
 		model.addAttribute("productWishCount", productWishCount);
 		model.addAttribute("listPreport", listPreport);
+		model.addAttribute("pcNum", pcNum);
 		
 		return ".product.article";
 	}
@@ -312,7 +316,7 @@ public class ProductController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			if(soldDateTF == "거래완료") {
+			if(soldDateTF.equals("거래완료")) {
 				service.updateSoldDate(dto);
 			}
 			
@@ -380,5 +384,24 @@ public class ProductController {
 		service.deleteProduct(pNum);
 		
 		return "redirect:/product/list?" + query;
+	}
+	
+	// 게시글 신고
+	@RequestMapping(value = "report")
+	public String reportSubmit(ProductReport dto,
+			@RequestParam int pNum,
+			@RequestParam String page,
+			@RequestParam int pcNum,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			
+			service.insertPreport(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
 	}
 }

@@ -32,4 +32,5 @@ public interface ProductService {
 	public void updateSoldDate(Product dto) throws Exception; // 판매일자 업데이트
 	
 	public List<ProductReport> listPreport(); // 신고항목 리스트
+	public void insertPreport(ProductReport dto) throws Exception; // 신고 등록 
 }

@@ -292,6 +292,17 @@ public class ProductServiceImpl implements ProductService{
 		return listPreport;
 	}
 
+	@Override
+	public void insertPreport(ProductReport dto) throws Exception {
+		// 신고 등록
+		try {
+			dao.insertData("product.insertPreport", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
 
 
 }

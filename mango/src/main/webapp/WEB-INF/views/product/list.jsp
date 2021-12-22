@@ -62,41 +62,17 @@ $(function(){
 
 // 주소선택 상자 선택 부분
 $(function(){
-	if($("#selectArea").val()) {
-		selectAreaList();
-	}
-	
 	$("#selectArea").change( function() {
-		// 주소 바꿨을때 좌측 좌표 영역에 값 셋팅
-		if($(this).val()=="0") {
-			$("#maLat").val("0");
-			$("#maLon").val("0");
-			return false;
-		}
-		selectAreaList();
+		// 주소 바꿨을 때 좌표 영역에 값 세팅
+		var maLat = $("#selectArea option:selected").attr("data-maLat");
+		var maLon = $("#selectArea option:selected").attr("data-maLon");
+		var areaNum = $(this).val();
 		
-	});
-	
-	function selectAreaList() {
-		var opt = $("#selectArea option:selected");
-		
-		$("#maLat").val(opt.attr("data-maLat"));
-		$("#maLon").val(opt.attr("data-maLon"));
-		// 주소 바꿨을때 좌측 좌표 영역에 값 셋팅
-		
-		/*
-		var url = "${pageContext.request.contextPath}/product/list2"
-		var query = {maLat: $("#maLat").val(), maLon: $("#maLon").val()};
-		
-		console.log(query);
-		
-		var fn = function(data){
-			printJson2(data);
-			console.log("성공..?");
-		};
-		ajaxFun(url, "get", query, "json", fn);
-		*/
-	}
+		var query = "maLat="+maLat+"&maLon="+maLon+"&opt="+areaNum;
+		var url="${pageContext.request.contextPath}/product/list?"+query;
+		location.href=url;
+	});	
+
 });
 
 
@@ -163,8 +139,6 @@ function printProduct(data) {
 	
 	var out = "";
 	
-	//console.log("data>> ", data);
-	
 	for(var i=0; i<data.list.length; i++) {
 		var pcNum = data.list[i].pcNum;
 		var pNum = data.list[i].pNum;
@@ -176,7 +150,7 @@ function printProduct(data) {
 		
 		out += "<div class='col-lg-4 mb-5'>";
 		out += "    <div class='card h-100 shadow border-0'>";
-		out += "    	<img class='card-img-top' src='https://dummyimage.com/600x350/ced4da/6c757d' alt='' />";
+		out += "    	<img class='card-img-top' src='' alt='' />";
 		out += "		<div class='card-body p-4'>";
 		out += "			<a class='text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
 		out += "			<p class='card-text mb-0'>"+area3+"</p>";	
@@ -184,7 +158,7 @@ function printProduct(data) {
 		out += "		<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
 		out += "			<div class='d-flex align-items-end justify-content-between'>";
 		out += "				<div class='d-flex align-items-center'>";
-		out += "					<img class='rounded-circle me-3' src='https://dummyimage.com/40x40/ced4da/6c757d' alt='' />";
+		out += "					<img class='rounded-circle me-3' src='' alt='' />";
 		out += "					<div class='small'>";
 		out += "						<div class='fw-bold'>"+userNickName+"</div>";
 		out += "						<div class='text-muted'>"+pRegDate+" &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>";
@@ -213,131 +187,101 @@ $(function(){
 			page++;
 			listPage(page, pcNum);
 		}
-		
 	});
 });
 
 </script>
 
 
-		<div class="content-wrapper">
-            <div class="inner-container container">
-                <div class="row">
-                    <div class="section-header col-md-12">
-                        <h2>중고거래</h2>
-                        <span>망설이지 말고 고! 이웃과 거래를 시작해보세요!</span>
-                    </div>
-                
-                </div>
-                <c:if test="${! empty sessionScope.member}">
-	                <div style="width: 120px; float: right;">
-	                
-					  	<c:if test="${! empty listMemberAddr || memAddrCount == 2}">
-							<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01"> 
-						  		<c:forEach var="vo" items="${listMemberAddr}">
-						    			<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>
-						    	</c:forEach>
-							<!-- 
-						    	<c:if test="${empty listMemberAddr || memAddrCount < 2}">
-						    		<option value="${pageContext.request.contextPath}/member/address">내 동네 설정하기</option>
-						    	</c:if>
-						    -->
-						  	</select>                
-						</c:if>
+<div class="content-wrapper">
+	<div class="inner-container container">
+    	<div class="row">
+        	<div class="section-header col-md-12">
+            	<h2>중고거래</h2>
+                <span>망설이지 말고 고! 이웃과 거래를 시작해보세요!</span>
+            </div>
+        </div>
+        <c:if test="${! empty sessionScope.member}">
+	    	<div style="width: 120px; float: right;">
+				<c:if test="${! empty listMemberAddr || memAddrCount == 2}">
+					<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01"> 
+						<c:forEach var="vo" items="${listMemberAddr}">
+							<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>
+						</c:forEach>
+					</select>                
+				</c:if>
 	                	
-	                	<c:if test="${empty listMemberAddr || memAddrCount < 2}">
-					    	<a href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium;">내 동네 설정하기</a>
-					    </c:if>
-	                </div>
-	                <div>
-						<input type="hidden" name="maLat" id="maLat" value="${vo.maLat}">
-						<input type="hidden" name="maLon" id="maLon" value="${vo.maLon}">
-					</div>
-                </c:if>
+	            <c:if test="${empty listMemberAddr || memAddrCount < 2}">
+					<a href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium;">내 동네 설정하기</a>
+				</c:if>
+	        </div>
+	        <div>
+				<input type="hidden" name="maLat" id="maLat" value="${vo.maLat}">
+				<input type="hidden" name="maLon" id="maLon" value="${vo.maLon}">
+			</div>
+       	</c:if>
               	
-              
-              
-                <div class="tab-content pt-2" id="nav-tabContent">
-			                <div class="container px-5">
-			                	<!-- 탭 영역 -->
-			                	<!--
-				                <ul class="nav nav-tabs" id="myTab" role="tablist" style="clear: both;">
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">전체</button>
-									</li>
-									<li class="nav-item" role="presentation">
-										<button class="nav-link" id="tab-1" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="1" aria-selected="true" data-tab="1">인기매물</button>
-									</li>
-								</ul>
-								-->
-								 
-			                    <div class="container">
-								    <div class="d-flex justify-content-center py-3">
-										<ul class="nav nav-tabs" id="myTab" role="tablist">
-											
-											<li class="nav-item" role="presentation">
-												<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">ALL</button>
-											</li>
-											<c:forEach var="vo" items="${listCategory}" varStatus="status">
-												<li class="nav-item" role="presentation">
-													<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="${status.count}" aria-selected="true" data-tab="${vo.pcNum}">${vo.pcName}</button>
-												</li>
-											</c:forEach>
-										</ul>
-								    </div>
+              	
+        <div class="tab-content pt-2" id="nav-tabContent">
+			<div class="container px-5">
+				<div class="container">
+					<div class="d-flex justify-content-center py-3">
+						<ul class="nav nav-tabs" id="myTab" role="tablist">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">ALL</button>
+							</li>
+							<c:forEach var="vo" items="${listCategory}" varStatus="status">
+								<li class="nav-item" role="presentation">
+									<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="${status.count}" aria-selected="true" data-tab="${vo.pcNum}">${vo.pcName}</button>
+								</li>
+							</c:forEach>
+						</ul>
+					</div>
 								    								    
 								    
-				              	<div class="tab-content pt-2" id="nav-tabContent">
-									<div class="tab-pane fade show active mt-3" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content">      
-				                    
-				                    <div class="row gx-5 more-list">
-					                    <!-- list div 반복 영역 -->
-					                    <c:forEach var="dto" items="${list}">
-					                        <div class="col-lg-4 mb-5">
-					                            <div class="card h-100 shadow border-0">
-					                                <img class="card-img-top" src="https://dummyimage.com/600x350/ced4da/6c757d" alt="" />
-					                                <div class="card-body p-4">
-					                                    <a class="text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
-					                                    <p class="card-text mb-0">${dto.area3}</p>
-					                                </div>
-					                                <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
-					                                    <div class="d-flex align-items-end justify-content-between">
-					                                        <div class="d-flex align-items-center">
-					                                            <img class="rounded-circle me-3" src="https://dummyimage.com/40x40/ced4da/6c757d" alt="..." />
-					                                            <div class="small">
-					                                                <div class="fw-bold">${dto.userNickName}</div>
-					                                                <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>
-					                                            </div>
+				    <div class="tab-content pt-2" id="nav-tabContent">
+						<div class="tab-pane fade show active mt-3" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content">
+				        	<div class="row gx-5 more-list">
+					        	<!-- list div 반복 영역 -->
+					            <c:forEach var="dto" items="${list}">
+					            	<div class="col-lg-4 mb-5">
+					                	<div class="card h-100 shadow border-0">
+					                    	<img class="card-img-top" src="" alt="" />
+					                        	<div class="card-body p-4">
+					                            	<a class="text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
+					                                	<p class="card-text mb-0">${dto.area3}</p>
+					                            </div>
+					                            <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
+					                            	<div class="d-flex align-items-end justify-content-between">
+					                                	<div class="d-flex align-items-center">
+					                                    	<img class="rounded-circle me-3" src="" alt="..." />
+					                                        <div class="small">
+					                                        	<div class="fw-bold">${dto.userNickName}</div>
+					                                            <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>
 					                                        </div>
 					                                    </div>
 					                                </div>
 					                            </div>
-					                        </div>
-					                    </c:forEach>
-					                    <!-- list div 반복 영역 -->
+					                   	</div>
 					                </div>
-			                	</div>
-			                </div>
+					           	</c:forEach>
+					            <!-- list div 반복 영역 -->
+					        </div>
+			            </div>
+			       	</div>
                         
-                        <!-- 글쓰기 버튼 -->
-                        <div class="writeBtnTop">
-                    		<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
-                    	</div>
-                        
-                        <!-- 
-                        <div class="page-box">
-							${dataCount == 0 ? "등록된 매물이 없습니다." : paging}
-						</div>
-                         -->
-                         
-						
-							
-						<div class="more-box load-more">
+	                <!-- 글쓰기 버튼 -->
+	                <div class="writeBtnTop">
+	                	<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
+	                </div>
+								
+					<div class="more-box load-more">
+						<c:if test="${dataCount != 0}">
 							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
-						</div>
-						
-                    </div>
-                </div>
-                </div>
-            </div>
+						</c:if>
+					</div>
+				</div>
+			</div>
 		</div>
+	</div>
+</div>

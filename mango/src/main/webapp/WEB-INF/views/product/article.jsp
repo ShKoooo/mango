@@ -35,11 +35,6 @@ $(function(){
 	$(".btnSendProductLike").click(function(){
 		var $i = $(this).find("i");
 		var userWished = $i.hasClass("bi-heart-fill");
-//		var msg = userWished ? "관심 상품 등록이 취소되었습니다. " : "관심 상품으로 등록됐습니다! ";
-		
-//		if(! confirm( msg )) {
-//			return false;
-//		}
 		
 		var url="${pageContext.request.contextPath}/product/insertProductWish";
 		var pNum="${dto.pNum}";
@@ -77,7 +72,18 @@ function deleteProduct() {
 }
 </c:if>
 
-//$(".repbtn")
+
+function sendReport() {
+	if(confirm("한 번 신고한 상품/게시물은 신고를 철회할 수 없습니다.\n정말 신고하시겠습니까?")) {
+		var f = document.pReportForm;
+		var query = "pNum=${dto.pNum}&page=${page}&pcNum=${pcNum}"
+		
+		f.action = "${pageContext.request.contextPath}/product/report?" + query;
+	    f.submit();
+	    
+	    alert("신고가 접수되었습니다.");
+	}
+}
 
 
 </script>
@@ -91,16 +97,16 @@ function deleteProduct() {
                     </div>
                 </div>
                 <div class="project-detail row">
+                	<!-- /.project-slider -->
                     <div class="project-slider col-md-12">
                         <img src="" alt="Slide 1">
                         <img src="" alt="Slide 2">
                         <img src="" alt="Slide 1">
                         <a href="#" class="slidesjs-previous slidesjs-navigation">&lt;</a> 
                         <a href="#" class="slidesjs-next slidesjs-navigation">&gt;</a>
-                    </div> <!-- /.project-slider -->
+                    </div>
                     
-                    <div class="project-infos col-md-12">
-                    
+                    <div class="project-infos col-md-12">                    
                         <div class="box-content">
                             <h2 class="project-title">${dto.pSubject}</h2>
                             <span class="project-subtitle">${dto.userNickName}</span>
@@ -138,7 +144,7 @@ function deleteProduct() {
                                 		<i class="bi bi-calendar-check-fill"></i><a href="">거래가 예약된 매물입니다</a>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='거래완료'}">
-                                		<i class="bi bi-check2-circle"></i><p>판매완료</p>
+                                		<i class="bi bi-check2-circle"></i><span>판매완료</span>
                                 	</c:if>
                                 </li>
                             </ul>
@@ -160,8 +166,8 @@ function deleteProduct() {
 									        <h5 class="modal-title" id="exampleModalLabel">신고하기</h5>
 									        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									      </div>
+									      <form name="pReportForm" method="post">
 									      <div class="modal-body">
-									        <form>
 									          <div class="mb-3">
 									            <label for="recipient-name" class="col-form-label">신고 항목</label><br>
 									            <!--  
@@ -175,16 +181,15 @@ function deleteProduct() {
 									            <label for="message-text" class="col-form-label">자세한 사유</label>
 									            <textarea class="form-control" id="message-text" name="repPrdContent"></textarea>
 									          </div>
-									        </form>
 									      </div>
 									      <div class="modal-footer">
 									        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-									        <button type="button" class="repbtn btn btn-primary">Send</button>
+									        <button type="button" class="repbtn btn btn-primary" onclick="sendReport();">Send</button>
 									      </div>
+									      </form>
 									    </div>
 									  </div>
 									</div>
-	
 								</c:when>
 							</c:choose>
 					    	
@@ -198,12 +203,7 @@ function deleteProduct() {
 	                        </span>
                         </div>
                     </div>
-                    
-                    
-                    
-                    
-                    
-                    
+                  
                 </div>
             </div>
 	</div>

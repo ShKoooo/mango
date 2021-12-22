@@ -9,10 +9,29 @@
 	
 	<!-- 글 개수 -->
 	<select id="dataCount" resultType="Integer" parameterType="map">
-		SELECT NVL(COUNT(*), 0) FROM product
+		SELECT NVL(COUNT(*), 0)
+		FROM product p
+		JOIN area a ON p.areaNum = a.areaNum
+		JOIN member m ON p.userId = m.userId		
 		<if test="pcNum != 0 ">
-			WHERE pcNum = #{pcNum}
+			WHERE p.pcNum = #{pcNum}
 		</if>
+		<if test="info == true">
+			<if test="membership &lt; 51">
+				AND p.areaNum IN (
+					SELECT areaNum
+					FROM (
+						SELECT * FROM (
+							SELECT areaNum,
+								(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+                              -#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+		                        AS distance
+		                        FROM area ar
+		                    ) WHERE distance &lt;= 5   
+						)
+					)
+			</if>
+		</if>			
 	</select>
 	
 	<!-- 중고거래 글 작성 -->
@@ -21,7 +40,7 @@
          pRegDate, pUpdate_date, pSoldDate, pIsProposable, pLat, pLon, userId,
          areaNum, pcNum)
       	VALUES(#{pNum}, #{pSubject}, #{pStatus, jdbcType=VARCHAR}, #{pContent, jdbcType=VARCHAR}, #{pPrice},
-         0, SYSDATE, #{pUpdate_date, jdbcType=VARCHAR}, #{pSoldDate, jdbcType=VARCHAR},
+         0, SYSDATE, SYSDATE, #{pSoldDate, jdbcType=VARCHAR},
          #{pIsProposable}, #{pLat, jdbcType=INTEGER}, #{pLon, jdbcType=INTEGER},
          #{userId}, #{areaNum}, #{pcNum})
 	</insert>
@@ -45,8 +64,6 @@
 	<delete id="deleteProduct" parameterType="Integer">
 		DELETE FROM product WHERE pNum = #{pNum}
 	</delete>
-
-	
 	
 	<!-- 상품 카테고리 리스트 검색 -->
 	<select id="listCategory" resultType="com.sp.mango.product.Product">
@@ -62,9 +79,6 @@
 		WHERE userId = #{userId}
 	</select>
 
-
-
-	
 	<!-- 상품 리스트 (회원일시 지정 위치 기준 반경 5km내의 판매글) -->
 	<select id="memberListProduct" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT * FROM (
@@ -86,8 +100,8 @@
 		                       FROM (
 		                           SELECT * FROM (
 		                               SELECT areaNum,
-		                                   (6371*acos(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-                        					-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180)))
+		                                   (6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+                              -#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
 		                                   AS distance
 		                                   FROM area ar
 		                               ) WHERE distance &lt;= 5    
@@ -97,7 +111,7 @@
             	AND	CASE WHEN #{pcNum} = 0 THEN 1
 		                 WHEN pc.pcNum = #{pcNum} THEN 1
 		            ELSE 0 END = 1
-        		ORDER BY pNum DESC
+        		ORDER BY pUpdate_date DESC
     		) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
 	</select>
@@ -169,6 +183,18 @@
 	<select id="listPreport" resultType="com.sp.mango.product.ProductReport">
 		SELECT * FROM reportProduct_Reason
 	</select>
+
+	<!-- 신고 등록 -->
+	<insert id="insertPreport" parameterType="com.sp.mango.product.ProductReport">
+		INSERT INTO reportProduct(repPrdNum, rpReasonNum, repPrdContent, repPrdRegDate, 
+									repPrdChecked, userId, pNum)
+		VALUES(reportProduct_seq.NEXTVAL, #{rpReasonNum}, #{repPrdContent, jdbcType=VARCHAR},
+				 SYSDATE, 'F', #{userId}, #{pNum})
+	</insert>
+
+
+
+
 
 	<!-- 관리자 : 카테고리 추가 -->
 	<insert id="insertPcategory" parameterType="map">
