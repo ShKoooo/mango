@@ -35,4 +35,8 @@ public interface MypageService {
 	public List<Note> listNoteSender(Map<String,Object> map) throws Exception;
 	public List<Note> listNoteReceiver(Map<String,Object> map) throws Exception;
 	public Note readNoteLastTime(Map<String,Object> map) throws Exception;
+	public List<Note> listNoteNote(Map<String, Object> map) throws Exception;
+	public void insertNote(Map<String, Object> map) throws Exception;
+	public int getBlockCount(String userId) throws Exception;
+	public void updateNoteReadDate(Map<String, Object> map) throws Exception;
 }

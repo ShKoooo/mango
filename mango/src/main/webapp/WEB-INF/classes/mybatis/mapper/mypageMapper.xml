@@ -30,13 +30,13 @@
 		WHERE userId = #{userId}
 	</select>
 	
-	<select id="listBlockedUser" parameterType="String" resultType="com.sp.mango.mypage.PickedUser">
+	<select id="listBlockedUser" parameterType="String" resultType="com.sp.mango.mypage.BlockedUser">
 		SELECT blockNum, target_id, TO_CHAR(regDate,'YYYY-MM-DD') regDate
 		FROM blockedUser
 		WHERE userId = #{userId}
 	</select>
 	
-	<select id="listKeyword" parameterType="String" resultType="com.sp.mango.mypage.PickedUser">
+	<select id="listKeyword" parameterType="String" resultType="com.sp.mango.mypage.Keyword">
 		SELECT keywordNum, keyword, TO_CHAR(regDate,'YYYY-MM-DD') regDate
 		FROM keyword
 		WHERE userId = #{userId}
@@ -179,6 +179,12 @@
 		</choose>
 	</sql>
 	
+	<select id="getBlockCount" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0)
+		FROM blockedUser
+		WHERE userId = #{userId}
+	</select>
+	
 	<select id="listNoteSender" parameterType="map" resultType="com.sp.mango.mypage.Note">
 		SELECT DISTINCT n.sendId, userNickName
 		FROM note n
@@ -186,6 +192,12 @@
 		<where>
 			<if test="keyword != null and keyword != '' ">
 				<include refid="note-where-list"/>
+			</if>
+			<if test="blockNum &gt; 0">
+				AND m.userId NOT IN (
+		            SELECT target_ID FROM blockeduser
+		            WHERE userId = #{userId}
+		        )
 			</if>
 			AND
 			receiveId = #{userId}
@@ -204,6 +216,12 @@
 		<where>
 			<if test="keyword != null and keyword != '' ">
 				<include refid="note-where-list"/>
+			</if>
+			<if test="blockNum &gt; 0">
+				AND m.userId NOT IN (
+		            SELECT target_ID FROM blockeduser
+		            WHERE userId = #{userId}
+		        )
 			</if>
 			AND
 			sendId = #{userId}
@@ -239,4 +257,34 @@
 		    )
 		) WHERE rnum2 = 1
 	</select>
+	
+	<select id="listNoteNote" parameterType="map" resultType="com.sp.mango.mypage.Note">
+		SELECT noteNum, sendId, userNickName, receiveId, noteRegDate, noteContent, SYSDATE-noteRegDate recentDPlus, noteReadDate
+		FROM note n
+		JOIN member m ON n.receiveId = m.userId
+		WHERE
+		    (
+		        (receiveId = #{meId} AND sendId = #{youId})
+		        OR
+		        (receiveId = #{youId} AND sendId = #{meId})
+		    ) AND (
+		        (isSendDelete != 'T' AND noteReadDate IS NULL)
+		        OR (isRecDelete != 'T')
+		    )
+		ORDER BY noteRegDate DESC
+	</select>
+	
+	<insert id="insertNote" parameterType="map">
+		INSERT INTO note (noteNum, sendId, receiveId, noteContent, noteRegdate, isSendDelete, isRecDelete)
+			VALUES (note_seq.NEXTVAL, #{sendId},#{receiveId},#{noteContent},SYSDATE, 'F','F')
+	</insert>
+	
+	<update id="updateNoteReadDate" parameterType="map">
+	UPDATE note SET noteReadDate = SYSDATE
+	WHERE
+		receiveId = #{meId}
+	    AND sendId = #{youId}
+	    AND noteReadDate IS NULL
+	    AND isSendDelete != 'T'
+	</update>
 </mapper>

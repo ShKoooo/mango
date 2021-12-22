@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -549,11 +550,13 @@ public class MypageController {
 			return "redirect:/member/login";
 		}
 		String userId = memberInfo.getUserId();
+		int blockNum = service.getBlockCount(userId);
 		
 		Map<String, Object> listMap1 = new HashMap<String, Object>();
 		listMap1.put("userId", userId);
 		listMap1.put("condition", condition);
 		listMap1.put("keyword", keyword);
+		listMap1.put("blockNum", blockNum);
 		
 		List<Note> senderList = service.listNoteSender(listMap1);
 		List<Note> receiverList = service.listNoteReceiver(listMap1);
@@ -640,7 +643,7 @@ public class MypageController {
 			noteDto.setTimeMsg(timeMsg);
 			
 			if (noteDto.getNoteContent().length() >= 15) {
-				noteDto.setNoteContent(noteDto.getNoteContent().substring(1,16)+"...");
+				noteDto.setNoteContent(noteDto.getNoteContent().substring(0,15)+"...");
 			}
 			
 			rawList.add(noteDto);
@@ -659,6 +662,148 @@ public class MypageController {
 		model.addAttribute("noteFriendList",rawList);
 		
 		return ".mypage.note";
+	}
+	
+	@RequestMapping(value="notenote")
+	public String notenote (
+			HttpSession session,
+			Model model,
+		 	@RequestParam String youNick,
+		 	HttpServletRequest req,
+		 	final RedirectAttributes reAttr
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		if (memberInfo == null) {
+			return "redirect:/member/login";
+		}
+		
+		// GET방식일 경우
+		if (req.getMethod().equalsIgnoreCase("get")) {
+			youNick = URLDecoder.decode(youNick,"utf-8");
+		}
+		
+		String userId = memberInfo.getUserId();
+		String youId = service.readUserIdByNickName(youNick);
+		
+		List<BlockedUser> blockList = service.listBlockedUser(userId);
+		for (BlockedUser dto : blockList) {
+			if (dto.getTarget_id().equals(youId)) {
+				String msg = "닉네임 ["+youNick+"] 에 해당하는 유저가 이미 차단 목록에 있습니다. <br>";
+				msg += "쪽지를 보내려면 먼저 차단을 해제해 주세요. <br>";
+				String goBack = "/mypage/note";
+				
+				reAttr.addFlashAttribute("title","전송 오류");
+				reAttr.addFlashAttribute("message",msg);
+				reAttr.addFlashAttribute("goBack",goBack);
+				
+				return "redirect:/member/complete";
+			}
+		}
+		
+		// 상대방이 보낸 메시지를 읽음으로 표시
+		Map<String, Object> readMap = new HashMap<String, Object>();
+		readMap.put("meId", userId);
+		readMap.put("youId", youId);
+		service.updateNoteReadDate(readMap);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("meId", userId);
+		map.put("youId", youId);
+		
+		List<Note> list = service.listNoteNote(map);
+		
+		for (Note dto:list) {
+			// 엔터 br태그로 교체
+			dto.setNoteContent(dto.getNoteContent().replaceAll("\n", "<br>"));
+			
+			// timeMsg 세팅
+			double hourPassed = dto.getRecentDPlus();
+			int timePassed = 0;
+			String timeMsg = "";
+			
+			if (hourPassed < 1) {	// 1일보다 적을 때
+				hourPassed = hourPassed * 24;	// 일 -> 시간
+				if (hourPassed < 1) {	// 1시간보다 작을 때
+					hourPassed = hourPassed * 60;	// 시간 -> 분
+					if (hourPassed < 1) {	// 1분보다 작을 때
+						timePassed = (int)(hourPassed * 60);
+						timeMsg = timePassed+" 초 전";
+					} else {
+						timePassed = (int)hourPassed;
+						timeMsg = timePassed+" 분 전";
+					}					
+				} else {
+					timePassed = (int)hourPassed;
+					timeMsg = timePassed+" 시간 전";
+				}
+				
+			} else {				// 하루 이상
+				if (hourPassed/7 >= 1) {	// 1주보다 많을 때
+					if (hourPassed/362.25 >= 1) {	// 1년보다 많을 때
+						timePassed = (int) (hourPassed/365.25);
+						timeMsg = timePassed+" 년 전";
+					} else {	// 주 단위
+						timePassed = (int) (hourPassed/7);
+						timeMsg = timePassed+" 주 전";					}
+				} else {	// 일 단위
+					timePassed = (int)hourPassed;
+					timeMsg = timePassed+" 일 전";
+				}
+			}
+			
+			dto.setTimeMsg(timeMsg);
+		}
+		
+		model.addAttribute("youNick",youNick);
+		model.addAttribute("list",list);
+		model.addAttribute("youId",youId);
+		
+		return ".mypage.notenote";
+	}
+	
+	@RequestMapping(value="sendNote", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> sendNote (
+			@RequestParam String sendId,
+			@RequestParam String receiveId,
+			@RequestParam String content,
+			HttpSession session
+			) throws Exception {
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userId = memberInfo.getUserId();
+		
+		if (!sendId.equals(userId)) {
+			model.put("state", "false");
+			model.put("message", "올바르지 않은 접근입니다.");
+			return model;
+		}
+		
+		List<BlockedUser> blockList = service.listBlockedUser(userId);
+		for (BlockedUser dto:blockList) {
+			if (dto.getTarget_id().equals(receiveId)) {
+				model.put("state", "false");
+				model.put("message", "차단한 유저에게는 전송할 수 없습니다.");
+				return model;
+			}
+		}
+		
+		try {
+			Map<String, Object> mapperMap = new HashMap<String, Object>();
+			mapperMap.put("sendId", sendId);
+			mapperMap.put("receiveId", receiveId);
+			mapperMap.put("noteContent", content);
+			
+			service.insertNote(mapperMap);
+			
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		model.put("state","true");
+		model.put("message", "메시지 전송 성공");
+		return model;
 	}
 }
 

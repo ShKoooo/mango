@@ -23,15 +23,35 @@
 			</c:if>
 			
 			<c:if test="${not empty noteFriendList}">
-				<h6>임시 목록 (테이블로 변경..)</h6>
-				<hr>
-				<c:forEach var="dto" items="${noteFriendList}">
-					<div class="row mb-3">
-						<div class="col-md-4">${dto.youNick}</div>
-						<div class="col-md-5">${dto.noteContent}</div>
-						<div class="col-md-3">${dto.timeMsg}</div>
-					</div>
-				</c:forEach>
+				<div class="row mb-3 mx-3">
+					<table class="table">
+						<thead class="table-light">
+							<tr>
+								<th class="col-3">닉네임</th>
+								<th class="col-5">내용</th>
+								<th class="col-2">최근채팅시간</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach var="dto" items="${noteFriendList}">
+								<tr>
+									<td class="col-3">${dto.youNick}</td>
+									<td class="col-5">
+										<a href="${pageContext.request.contextPath}/mypage/notenote?youNick=${dto.youNick}">
+											<c:if test="${dto.youId==dto.sendId}">
+												<i class="icofont-inbox"></i>&nbsp;${dto.noteContent}
+											</c:if>
+											<c:if test="${dto.youId==dto.receiveId}">
+												<i class="icofont-paper-plane"></i>&nbsp;${dto.noteContent}
+											</c:if>
+										</a>
+									</td>
+									<td class="col-2">${dto.timeMsg}</td>
+								</tr>
+							</c:forEach>
+						</tbody>
+					</table>
+				</div>
 			</c:if>
 			
 			<div class="row">

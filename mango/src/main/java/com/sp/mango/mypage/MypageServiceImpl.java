@@ -286,4 +286,48 @@ public class MypageServiceImpl implements MypageService {
 		return returnDto;
 	}
 
+	@Override
+	public List<Note> listNoteNote(Map<String, Object> map) throws Exception {
+		List<Note> list = null;
+				
+		try {
+			list = dao.selectList("mypage.listNoteNote",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}		
+		
+		return list;
+	}
+
+	@Override
+	public void insertNote(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("mypage.insertNote",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public int getBlockCount(String userId) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.getBlockCount",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void updateNoteReadDate(Map<String, Object> map) throws Exception {
+		try {
+			dao.updateData("mypage.updateNoteReadDate",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
 }
