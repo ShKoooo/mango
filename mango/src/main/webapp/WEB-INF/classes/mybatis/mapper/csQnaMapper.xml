@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="faq">
+	<insert id="insertQna" parameterType="com.sp.mango.csQna.Qna">
+		INSERT INTO faq(faqNum, faqSubject, faqContent, userId, faqReg_date, categoryNum) 
+		VALUES (faq_seq.NEXTVAL, #{faqSubject}, #{faqContent}, #{userId}, SYSDATE, #{categoryNum})
+	</insert>
+	
+	<select id="listCategory" parameterType="map" resultType="com.sp.mango.csQna.Qna">
+	SELECT categoryNum, category 
+		FROM faqCategory 
+		ORDER BY categoryNum
+	</select>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) 
+		FROM faq f 
+		JOIN member m ON f.userId=m.userId 
+		JOIN faqCategory c ON f.categoryNum = c.categoryNum 
+		<where>
+			<if test="categoryNum != 0">
+				( c.categoryNum = #{categoryNum} )
+			</if>
+		</where> 
+	</select>
+	
+	<select id="listFaq" parameterType="map" resultType="com.sp.mango.csQna.Qna"> 
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT f.faqNum, f.userId, faqSubject, 
+					TO_CHAR(f.faqReg_date, 'YYYY-MM-DD') faqReg_date, faqContent,
+					c.categoryNum, category
+				FROM faq f
+				JOIN member m ON f.userId=m.userId
+				JOIN faqCategory c ON f.categoryNum = c.categoryNum
+				<where>
+					<if test="categoryNum!=0">
+						( c.categoryNum = #{categoryNum} )
+					</if>
+				</where>
+				ORDER BY faqNum DESC 
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="readFaq" parameterType="Integer" resultType="com.sp.mango.csQna.Qna">
+		SELECT f.faqNum, f.userId, faqSubject, faqContent, 
+			 f.faqReg_date,  
+			 f.categoryNum, c.category 
+		FROM faq f
+		JOIN member m ON f.userId=m.userId 
+		JOIN faqCategory c ON f.categoryNum = c.categoryNum 
+		WHERE f.faqNum = #{faqNum}
+	</select>
+	
+	<update id="updateFaq" parameterType="com.sp.mango.csQna.Qna">
+		UPDATE faq SET categoryNum=#{categoryNum}, faqSubject=#{faqSubject}, 
+			faqContent=#{faqContent} 
+		WHERE faqNum = #{faqNum}
+	</update>
+
+	<delete id="deleteFaq" parameterType="map">
+		DELETE FROM faq WHERE faqNum = #{faqNum}
+	</delete>
+
+</mapper>

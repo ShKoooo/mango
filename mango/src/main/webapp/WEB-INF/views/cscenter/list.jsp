@@ -252,7 +252,7 @@ $(function(){
 	        <div class="col-md-6 service-item service-right">
 	            <div class="box-content">
 	                <div class="service-icon">
-	                    <a href="${pageContext.request.contextPath}/cscenter/csNotice" style="text-decoration-line: none;"><i class="li_study"></i></a>
+	                    <a href="${pageContext.request.contextPath}/csQna/qna" style="text-decoration-line: none;"><i class="li_study"></i></a>
 	                </div>
 	                <div class="service-content">
 	                    <h4 id="sub-title">자주 물어보는 질문들</h4>

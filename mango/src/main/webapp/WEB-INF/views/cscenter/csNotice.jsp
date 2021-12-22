@@ -87,7 +87,7 @@ table tbody tr {
 		</div>
 		
 		<div style="float: right;">
-			<c:if test="${sessionScope.member.userId == 'admin' }">
+			<c:if test="${sessionScope.member.membership > 50}">
 				<button class="twobtn" type="button" onclick="location.href='${pageContext.request.contextPath}/cscenter/write'; ">글 올리기</button>
 			</c:if>
 		</div>

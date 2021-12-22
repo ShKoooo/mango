@@ -70,6 +70,7 @@
 			<exclude-mapping path="/member/complete"/>
             <exclude-mapping path="/member/idFind"/>
 			<exclude-mapping path="/member/pwdFind"/>
+			
 			<exclude-mapping path="/product/list"/>
 			<exclude-mapping path="/product/morelist"/>
 			<exclude-mapping path="/product/article"/>
@@ -77,7 +78,10 @@
 			<exclude-mapping path="/cscenter/csNotice"/>
 			<exclude-mapping path="/cscenter/article"/>
 			<exclude-mapping path="/cscenter/download"/>
+			<exclude-mapping path="/csQna/qna"/>
+			<exclude-mapping path="/csQna/list"/>	
 			<exclude-mapping path="/image/upload"/>
+			
 			<exclude-mapping path="/gifty/list"/>
 			<exclude-mapping path="/gifty/article"/>
 			<exclude-mapping path="/village/list"/>
