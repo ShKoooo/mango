@@ -67,7 +67,7 @@
 						AND <include refid="where-list"/>
 					</if>
 				</where> 
-				ORDER BY gNum DESC  
+				ORDER BY gUpdate_date DESC  
 			) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
 	</select>
@@ -127,7 +127,8 @@
 	</select>
 	
 	<update id="updateSdate" parameterType="com.sp.mango.gifty.Gifty">
-		UPDATE giftycon SET gSubject=#{gSubject}, gExpdate=#{gExpdate, jdbcType=VARCHAR}, gPrice=#{gPrice, jdbcType=VARCHAR}, gContent=#{gContent, jdbcType=VARCHAR}, gStatus=#{gStatus, jdbcType=VARCHAR}, gcNum=#{gcNum}, gIsProposable=#{gIsProposable, jdbcType=VARCHAR}, gSoldDate = {SYSDATE,jdbcType=VARCHAR}
+		UPDATE giftycon SET gSubject=#{gSubject}, gExpdate=#{gExpdate, jdbcType=VARCHAR}, gPrice=#{gPrice, jdbcType=VARCHAR}, gContent=#{gContent, jdbcType=VARCHAR}, gStatus=#{gStatus, jdbcType=VARCHAR}, gcNum=#{gcNum}, gIsProposable=#{gIsProposable, jdbcType=VARCHAR},
+			gSoldDate = TO_DATE(SYSDATE, 'YYYY/MM/DD HH:MI:SS'  )
 			WHERE gNum = #{gNum} AND userId = #{userId}
 	</update>
 	

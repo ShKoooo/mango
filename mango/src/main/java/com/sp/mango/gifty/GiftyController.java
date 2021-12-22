@@ -89,8 +89,9 @@ public class GiftyController {
 	
 	@RequestMapping(value = "morelist")
 	@ResponseBody
-	public Map<String, Object> moreList (@RequestParam(value = "page", defaultValue = "2") int current_page,
-		@RequestParam(defaultValue = "0") int group
+	public Map<String, Object> moreList (
+			@RequestParam(value = "page", defaultValue = "2") int current_page,
+			@RequestParam(defaultValue = "0") int group
 		) throws Exception {
 		
 		int rows = 6;
@@ -115,6 +116,7 @@ public class GiftyController {
 		model.put("dataCount", dataCount);
 		model.put("total_page", total_page);
 		model.put("page", current_page);
+		// model.put("morepage", current_page);
 		model.put("group", group);
 		model.put("list", list);
 		
@@ -233,7 +235,9 @@ public class GiftyController {
 		try {
 			dto.setUserId(info.getUserId());
 			
-			if(dto.getgStatus() == "거래완료") {
+			System.out.println(":::: "+dto.getgStatus());
+			
+			if(dto.getgStatus().equals("거래완료")) {
 				service.updateSdate(dto);
 			} else {
 				service.updateGifty(dto);

@@ -81,7 +81,7 @@
 			<exclude-mapping path="/csQna/qna"/>
 			<exclude-mapping path="/csQna/list"/>	
 			<exclude-mapping path="/image/upload"/>
-			
+			<exclude-mapping path="/gifty/morelist"/>
 			<exclude-mapping path="/gifty/list"/>
 			<exclude-mapping path="/gifty/article"/>
 			<exclude-mapping path="/village/list"/>

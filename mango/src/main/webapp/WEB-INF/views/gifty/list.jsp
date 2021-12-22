@@ -11,6 +11,10 @@
 
 </style>
 <script type="text/javascript">
+function login() {
+	
+}
+
 function ajaxFun(url, method, query, dataType, fn) {
 	$.ajax({
 		type:method,
@@ -37,117 +41,38 @@ function ajaxFun(url, method, query, dataType, fn) {
 	});
 }
 
-var current_page = 2;
+var current_page = "${page}";
+var total_page = "${total_page}";
 
 function listPage(page, group) {
 	var url = "${pageContext.request.contextPath}/gifty/morelist";
 	var query = "page=" + page + "&group=" + group;
 	
 	var fn = function(data) {
-		
 		printGifty2(data);
-		// console.log(data);
 	};
 	ajaxFun(url, "get", query, "json", fn);
 }
 
-
-function printGifty(data) {
-	/*
-	var start = $("#listGifty h2").length;
-	
-	if(data.list.length < 6) {
-		$(".load-more").remove();
-	} else {
-		
-	}
-	*/
-	/*
-	var dataCount = data.dataCount;
-	var pageNo = data.pageNo;
-	var total_page = data.total_page;
-	
-	*/
-	/*
-	$(".gifty-count").attr("data-pageNo", pageNo);
-	$(".gifty-count").attr("data-totalPage", total_page);
-	
-	$("#listGifty").show();
-	// $(".gifty-count").html("게시물" + dataCount + "개");
-	
-	$(".load-more").hide();
-	if(dataCount == 0) {
-		$(".morelist").empty();
-		return;
-	}
-	
-	if(pageNo < total_page) {
-		$(".load-more").show();
-	}
-	*/
-	/*
-	var out = "";
-	
-	for(var idx = 0; idx < data.list.length; idx++) {
-		var gnum = data.list[idx].gNum;
-		var userId = data.list[idx].userId;
-		var userNickName = data.list[idx].userNickName;
-		var gSubject = data.list[idx].gSubject;
-		var gContent = data.list[idx].gContent;
-		var gRegdate = data.list[idx].gRegdate;
-		var gExpdate = data.list[idx].gExpdate;
-		var gcNum = data.list[idx].gcNum;
-		
-	}
-	
-		out += "<div class='col-md-4 project-item mix" + gcNum + "'>";
-		out += "	<div class='project-thumb'>";
-		out += "    	<img src='images/projects/project_1.jpg' alt=''>";
-		out += "		<div class='overlay-b'>";
-		out += "		<div class='overlay-inner'>";
-		out += "			<a href='images/projects/project_1.jpg' class='fancybox fa fa-expand' title='Project Title Here'></a>";
-		out += "    	</div>";
-		out += "		</div>";
-		out += "	</div>";
-		out += "    <div class='box-content project-detail'>"; 
-		out += "		<h2><a href='${pageContext.request.contextPath}/gifty/article?page="+current_page+"&gNum="+gnum+"'>"+gSubject+"</a></h2>";
-		out += "		<p>" +gContent+ "</p>";
-		out += "	</div>";
-		out += "</div>";
-		
-	
-	$(".morelist").append(out);
-*/
-	
-}
-
 function printGifty2(data) {
 	var dataCount = data.dataCount;
-	var page = data.page;
-	var total_page = data.total_page;
+	current_page = data.page;
+	total_page = data.total_page;
 	var group = data.group;
-	var startNum = data.list.length;
-	//console.log("startNum", startNum);
-	//console.log("total_page", total_page);
-	//console.log("dataCount", dataCount);
 	var list = data.list;
-	console.log("list", list);
-	
-	//$("#listGifty").show();
-	// $(".gifty-count").html("게시물" + dataCount + "개");
-	
-	$(".load-more").hide();
+
 	if(dataCount == 0) {
 		$(".morelist").empty();
-		return;
+		$(".load-more .more").hide();
+		return false;
 	}
 	
-	if(page < total_page) {
-		$(".load-more").show();
+	$(".load-more .more").show();
+	if(parseInt(total_page) <= parseInt(current_page)) {
+		$(".load-more .more").hide();
 	}
 	
 	var out = "";
-	
 	for(var idx = 0; idx < data.list.length; idx++) {
 		var gnum = data.list[idx].gNum;
 		var userId = data.list[idx].userId;
@@ -157,66 +82,47 @@ function printGifty2(data) {
 		var gRegdate = data.list[idx].gRegdate;
 		var gExpdate = data.list[idx].gExpdate;
 		var gcNum = data.list[idx].gcNum;
-		
 	
-	
-	out += "<div class='col-lg-4 mb-5'>";
-	out += "	<div class='card h-100 shadow border-0'>";
-	out += "		<img class='card-img-top' src='https://dummyimage.com/600x350/ced4da/6c757d' alt='' />";
-	out += "		<div class='card-body p-4'>";
-	out += "			<a class='text-decoration-none link-dark stretched-link' href='${pageContext.request.contextPath}/gifty/article?page="+current_page+"&gNum="+gnum+"'>";
-	out += "			<div class='h5 card-title mb-3'>"+gSubject+"</div></a>";
-	out += "		</div>";
-	out += "	<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
-	out += "		<div class='d-flex align-items-end justify-content-between'>";
-	out += "			<div class='d-flex align-items-center'>";
-	out += "				<img class='rounded-circle me-3' src='' alt='...' />";
-	out += "			<div class='small'>";
-	out += "				<div class='fw-bold'>"+userNickName+"</div>";
-	out += "			<div class='text-muted'>"+gRegdate+"&middot; 만약끌올하면 끌올 몇분전이나 몇회나 표시</div>";
-	out += "			</div>";
-	out += "			</div>";
-	out += "			</div>";
-	out += "		</div>";
-	out += "	</div>";
-	out += "</div>";
+		out += "<div class='col-lg-4 mb-5'>";
+		out += "	<div class='card h-100 shadow border-0'>";
+		out += "		<img class='card-img-top' src='https://dummyimage.com/600x350/ced4da/6c757d' alt='' />";
+		out += "		<div class='card-body p-4'>";
+		out += "			<a class='text-decoration-none link-dark stretched-link' href='${pageContext.request.contextPath}/gifty/article?page="+current_page+"&gNum="+gnum+"'>";
+		out += "			<div class='h5 card-title mb-3'>"+gSubject+"</div></a>";
+		out += "		</div>";
+		out += "	<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
+		out += "		<div class='d-flex align-items-end justify-content-between'>";
+		out += "			<div class='d-flex align-items-center'>";
+		out += "				<img class='rounded-circle me-3' src='' alt='...' />";
+		out += "			<div class='small'>";
+		out += "				<div class='fw-bold'>"+userNickName+"</div>";
+		out += "			<div class='text-muted'>"+gRegdate+"&middot; 만약끌올하면 끌올 몇분전이나 몇회나 표시</div>";
+		out += "			</div>";
+		out += "			</div>";
+		out += "			</div>";
+		out += "		</div>";
+		out += "	</div>";
+		out += "</div>";
 	
 	}
 	
 	$(".morelist").append(out);
-
 }
 
 $(function(){
 	$(".load-more .more").click(function(){
+		if(current_page == "") return false;
+		if(total_page == "") return false;
 		
-		//listPage(page++, group);
-		
-		
-		var page = ${page};
-		var total_page = ${total_page};
-		var group = ${group};
-		var dataCount = ${dataCount};
-		
-		
-		if(page < total_page) {
-			page++;
-			listPage(page, group);
+		current_page = parseInt(current_page);
+		total_page = parseInt(total_page);
+		if(total_page <= current_page) {
+			return false;
 		}
 		
-		console.log("page", page);
-		console.log("total_page", total_page);
-		console.log("group", group);
-		console.log("dataCount", dataCount);
-		/*
-		var total_page = $(".gifty-count").attr("data-totalPage");
-		
-		
-		if(page < total_page) {
-			page++;
-			listPage(page);
-		}
-		*/
+		current_page++;
+		var group = "${group}";
+		listPage(current_page, group);
 	});
 });
 
