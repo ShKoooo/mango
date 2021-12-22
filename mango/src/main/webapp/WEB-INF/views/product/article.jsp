@@ -85,6 +85,15 @@ function sendReport() {
 	}
 }
 
+$(document).ready(function(){
+	// 신고 모달의 close를 눌렀을 시, 내용 초기화
+	$("#closeBtn").click(function(){
+		$("#pReportF").each(function(){
+			this.reset();
+		});
+	});
+});
+
 
 </script>
     
@@ -166,7 +175,7 @@ function sendReport() {
 									        <h5 class="modal-title" id="exampleModalLabel">신고하기</h5>
 									        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									      </div>
-									      <form name="pReportForm" method="post">
+									      <form name="pReportForm" id="pReportF" method="post">
 									      <div class="modal-body">
 									          <div class="mb-3">
 									            <label for="recipient-name" class="col-form-label">신고 항목</label><br>
@@ -183,7 +192,7 @@ function sendReport() {
 									          </div>
 									      </div>
 									      <div class="modal-footer">
-									        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 									        <button type="button" class="repbtn btn btn-primary" onclick="sendReport();">Send</button>
 									      </div>
 									      </form>
