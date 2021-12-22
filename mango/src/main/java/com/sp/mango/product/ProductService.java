@@ -6,7 +6,7 @@ import java.util.Map;
 public interface ProductService {
 	public void insertProduct(Product dto) throws Exception;
 	public void updateProduct(Product dto) throws Exception;
-	public void deleteProduct(Product dto) throws Exception;
+	public void deleteProduct(int pNum) throws Exception;
 	public List<Product> listProduct(Map<String, Object> map); // 전체 리스트 (비회원 및 주소 미등록 회원)
 	public List<Product> memberListProduct(Map<String, Object> map); // 회원 지정 위치 기준 반경 5km내의 판매글
 	public void updateHitCount(int pNum) throws Exception;
@@ -28,4 +28,8 @@ public interface ProductService {
 	public Product readImgFile(int pImgNum);
 	public void deleteImgFile(Map<String, Object> map) throws Exception;
 	public List<Product> listImgFile(int pNum);
+
+	public void updateSoldDate(Product dto) throws Exception; // 판매일자 업데이트
+	
+	public List<ProductReport> listPreport(); // 신고항목 리스트
 }

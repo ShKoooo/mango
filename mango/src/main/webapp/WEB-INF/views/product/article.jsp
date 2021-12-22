@@ -66,6 +66,20 @@ $(function(){
 		ajaxFun(url, "post", query, "json", fn);
 	});
 });
+
+<c:if test="${sessionScope.member.userId==dto.userId||sessionScope.member.membership>50}">
+function deleteProduct() {
+    if(confirm("게시글을 삭제 하시 겠습니까 ? ")) {
+	    var query = "pNum=${dto.pNum}&${query}";
+	    var url = "${pageContext.request.contextPath}/product/delete?" + query;
+    	location.href = url;
+    }
+}
+</c:if>
+
+//$(".repbtn")
+
+
 </script>
     
     <div class="content-wrapper">
@@ -94,13 +108,13 @@ $(function(){
                             <p>${dto.pContent}</p>
                             <ul class="project-meta">
                                 
-                                <c:if test="${! empty sessionScope.member}">
+                                <c:if test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
 	                                <li>
 	                                	<button type="button" class="btn btn-outline-danger btnSendProductLike" title="좋아요" style="width: 43px;"><i class="bi ${userProductWished ? 'bi-heart-fill':'bi-heart'}"></i></button>
 	                             	</li>
                              	</c:if>
                              	
-                             	<c:if test="${empty sessionScope.member}">
+                             	<c:if test="${empty sessionScope.member || sessionScope.member.userId==dto.userId}">
 	                                <li>
 	                                	<button type="button" class="btn btn-outline-danger btnSendProductLike" title="좋아요" style="width: 70px; color: red;" disabled="disabled"><i class="bi bi-heart-fill"></i>&nbsp;<span id="productWishCount">${productWishCount}</span></button>
 	                             	</li>
@@ -109,39 +123,87 @@ $(function(){
                                 <li>
                                 	${dto.pPrice}원 /
                                 	<c:if test="${dto.pIsProposable=='T'}">
-                                		<a href="">가격 제안하기</a>
+                                		<a href="">가격 제안 가능</a>
                                 	</c:if>
                                 	<c:if test="${dto.pIsProposable=='F'}">
                                 		가격 제안 불가
                                 	</c:if>
                                 	
                                 </li>
-                                <li><i class="fa fa-envelope-o"></i><a href="">거래 쪽지 보내기</a></li>
+                                <li>
+                                	<c:if test="${dto.pStatus=='판매중'}">
+                                		<i class="fa fa-envelope-o"></i><a href="">거래 쪽지 보내기</a>
+                                	</c:if>
+                                	<c:if test="${dto.pStatus=='예약중'}">
+                                		<i class="bi bi-calendar-check-fill"></i><a href="">거래가 예약된 매물입니다</a>
+                                	</c:if>
+                                	<c:if test="${dto.pStatus=='거래완료'}">
+                                		<i class="bi bi-check2-circle"></i><p>판매완료</p>
+                                	</c:if>
+                                </li>
                             </ul>
                         </div>
                         
                         <div class="box-content">
                         	<c:choose>
 								<c:when test="${sessionScope.member.userId==dto.userId}">
-									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/update?pNum=${dto.pNum}&group=${dto.pcNum}&page=${page}';">수정</button>
+									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/update?pNum=${dto.pNum}&pcNum=${dto.pcNum}&page=${page}';">수정</button>
 								</c:when>
-								<c:otherwise>
-									<button type="button" class="btn btn-light" disabled="disabled">수정</button>
-								</c:otherwise>
+								<c:when test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
+									
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">신고</button>
+					
+									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <h5 class="modal-title" id="exampleModalLabel">신고하기</h5>
+									        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									      </div>
+									      <div class="modal-body">
+									        <form>
+									          <div class="mb-3">
+									            <label for="recipient-name" class="col-form-label">신고 항목</label><br>
+									            <!--  
+									            <input type="text" class="form-control" id="recipient-name">
+									            -->
+									            <c:forEach var="vo" items="${listPreport}">							
+													<input type="radio" name="rpReasonNum" value="${vo.rpReasonNum}">${vo.rpReasonName}<br>
+												</c:forEach>
+									          </div>
+									          <div class="mb-3">
+									            <label for="message-text" class="col-form-label">자세한 사유</label>
+									            <textarea class="form-control" id="message-text" name="repPrdContent"></textarea>
+									          </div>
+									        </form>
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									        <button type="button" class="repbtn btn btn-primary">Send</button>
+									      </div>
+									    </div>
+									  </div>
+									</div>
+	
+								</c:when>
 							</c:choose>
 					    	
 							<c:choose>
 					    		<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.membership>50}">
 					    			<button type="button" class="btn btn-light" onclick="deleteProduct();">삭제</button>
 					    		</c:when>
-					    		<c:otherwise>
-					    			<button type="button" class="btn btn-light" disabled="disabled">삭제</button>
-					    		</c:otherwise>
 				    		</c:choose>
+	                        <span style="float: right;">
+	                        	<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/list?${query}';">리스트</button>
+	                        </span>
                         </div>
-                        
-                        
                     </div>
+                    
+                    
+                    
+                    
+                    
+                    
                 </div>
             </div>
 	</div>

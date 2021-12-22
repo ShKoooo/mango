@@ -44,6 +44,8 @@ $(function(){
 		
 		var maLat = $("#maLat").val() || 0;
 		var maLon = $("#maLon").val() || 0;
+		
+		// opt : 지역번호
 		var opt = $("#selectArea option:selected").val() || 0;
 		
 		var url = "${pageContext.request.contextPath}/product/list?pcNum="+tab+"&maLat="+maLat+"&maLon="+maLon+"&opt="+opt;
@@ -120,42 +122,50 @@ function ajaxFun(url, method, query, dataType, fn) {
 				alert("요청 처리가 실패 했습니다.");
 				return false;
 			}
+			
+			console.log(jqXHR.responseText);
 		}
 	});
 }
 
-/*
+
 // 더보기
 var current_page = 2;
-function listPage(page) {
+
+function listPage(page, pcNum) {
 	var url = "${pageContext.request.contextPath}/product/morelist";
-	var query = "page=" + page;
+	var query = "page=" + page + "&pcNum=" + pcNum;
 	
 	var fn = function(data) {
-		printGuest(data);
+		printProduct(data);
+		//console.log(data);
 	};
 	ajaxFun(url, "get", query, "json", fn);
 }
 
-function printGuest(data) {
+function printProduct(data) {
 	var dataCount = data.dataCount;
 	var page = data.page;
 	var total_page = data.total_page;
+	var pcNum = data.pcNum;
 	
-	$(".more-list").show();
+//	$(".more-list").show();
 	
-	$(".more-box").hide();
+	$(".load-more").hide();
 	if(dataCount == 0) {
 		$(".more-list").empty();
 		return;
 	}
 	
 	if(page < total_page) {
-		$(".more-box").show();
+		$(".load-more").show();
 	}
 	
 	var out = "";
-	for(var i = 0; i<data.list.length; i++) {
+	
+	//console.log("data>> ", data);
+	
+	for(var i=0; i<data.list.length; i++) {
 		var pcNum = data.list[i].pcNum;
 		var pNum = data.list[i].pNum;
 		var pSubject = data.list[i].pSubject;
@@ -184,86 +194,29 @@ function printGuest(data) {
 		out += "		</div>"
 		out += "	</div>"
 		out += "</div>"
+	}	
 	
-	 $(".more-list").append(out);
+	$(".more-list").append(out);
 		
 }
 
 $(function(){
-	$(".load-more").click(function(){
+	$(".load-more .more").click(function(){
 		// listPage(2);
+		
+		var page = ${page};
+		var total_page = ${total_page};
+		var pcNum = ${pcNum};
+		var dataCount = ${dataCount};
+		
+		if(page < total_page) {
+			page++;
+			listPage(page, pcNum);
+		}
+		
 	});
 });
-*/
 
-
-
-
-/*
-function printJson2(data) {
-	var out = "";
-	
-	console.log("data>> ", data);
-	
-	for(var i = 0; i<data.list.length; i++) {
-		var pcNum = data.list[i].pcNum;
-		var pNum = data.list[i].pNum;
-		var pSubject = data.list[i].pSubject;
-		var pRegDate = data.list[i].pRegDate;
-		var area3 = data.list[i].area3 || '주소';
-		var pWishCount = data.list[i].pWishCount;
-		var userNickName = data.list[i].userNickName;
-		
-		out += "<div class='col-lg-4 mb-5'>";
-		out += "    <div class='card h-100 shadow border-0'>";
-		out += "    	<img class='card-img-top' src='https://dummyimage.com/600x350/ced4da/6c757d' alt='' />";
-		out += "		<div class='card-body p-4'>";
-		out += "			<a class='text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
-		out += "			<p class='card-text mb-0'>"+area3+"</p>";	
-		out += "		</div>";
-		out += "		<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
-		out += "			<div class='d-flex align-items-end justify-content-between'>";
-		out += "				<div class='d-flex align-items-center'>";
-		out += "					<img class='rounded-circle me-3' src='https://dummyimage.com/40x40/ced4da/6c757d' alt='' />";
-		out += "					<div class='small'>";
-		out += "						<div class='fw-bold'>"+userNickName+"</div>";
-		out += "						<div class='text-muted'>"+pRegDate+" &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>";
-		out += "					</div>";
-		out += "				</div>"
-		out += "			</div>"
-		out += "		</div>"
-		out += "	</div>"
-		out += "</div>"
-	}
-	
-	$(".more-list").html(out);
-}
-*/
-
-/*
-$(function(){
-	$(".categoryBtn").click(function(){
-		// alert($(this).attr('value'));
-		var pcNum = $(this).attr('value');
-		
-		sendPcNum(pcNum);
-	});
-
-	function sendPcNum(pcNum){
-		//console.log(pcNum);
-		
-		var url = "${pageContext.request.contextPath}/product/list"
-		var query = "pcNum=" + pcNum;
-		
-		console.log(query);
-		
-		var fn = function(data){
-			console.log("성공...");
-		};
-		ajaxFun(url, "POST", query, "json", fn);
-	};
-});
-*/
 </script>
 
 
@@ -371,21 +324,18 @@ $(function(){
                     		<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
                     	</div>
                         
+                        <!-- 
                         <div class="page-box">
 							${dataCount == 0 ? "등록된 매물이 없습니다." : paging}
 						</div>
-                        
-						<!--
-						<c:if test="${dataCount > 6}">	
-							<div class="more-box load-more">
-								<a class="more load-more">매물 더보기</a>
-							</div>
-						</c:if>	
-						 
-                        <div class="load-more">
-                            <a href="javascript:void(0)" class="load-more">매물 더보기</a>
-                        </div>
                          -->
+                         
+						
+							
+						<div class="more-box load-more">
+							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
+						</div>
+						
                     </div>
                 </div>
                 </div>

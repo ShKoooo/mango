@@ -127,6 +127,15 @@ $(function(){
 	});
 });
 
+$(function(){
+	$("#selectStatus").change(function(){
+		var state = $("#selectStatus option:selected").val();
+		if(state == '거래완료') {
+			// console.log(state);
+			$(".soldDate").attr("value", "거래완료");
+		}
+	});
+});
 
 </script>
 
@@ -145,15 +154,13 @@ $(function(){
 							<td class="table-light" scope="row">거래상태</td>
 							<td>
 								<div class="row">
-								
-								<select name="pStatus" class="form-select" id="inputGroupSelect01" style="width: 500px; margin-left: 10px;">
-					    			<option selected value="판매중" ${dto.pStatus=="판매중" ? "selected='selected'" : ""}>판매중</option>
-					    			
-						    			<option value="예약중" ${dto.pStatus=="예약중" ? "selected='selected'" : ""}>예약중</option>
-						    			<option value="거래완료" ${dto.pStatus=="거래완료" ? "selected='selected'" : ""}>거래완료</option>
-					    			
-					  			</select>
+									<select name="pStatus" class="form-select" id="selectStatus" style="width: 500px; margin-left: 10px;">
+						    			<option selected value="판매중" ${dto.pStatus=="판매중" ? "selected='selected'" : ""}>판매중</option>
+							    		<option value="예약중" ${dto.pStatus=="예약중" ? "selected='selected'" : ""}>예약중</option>
+							    		<option value="거래완료" ${dto.pStatus=="거래완료" ? "selected='selected'" : ""}>거래완료</option>
+						  			</select>
 								</div>
+								<input type="text" name="soldDateTF" class="soldDate">
 							</td>
 						</tr>
 					</c:if>
@@ -166,7 +173,7 @@ $(function(){
 				  			<select name="pcNum" class="form-select" id="inputGroupSelect01" style="width: 500px; margin-left: 10px;">
 							  	<option selected value="0">선택</option>
 							  	<c:forEach var="vo" items="${listCategory}">
-							    	<option value="${vo.pcNum}">${vo.pcName}</option>				    
+							    	<option value="${vo.pcNum}" ${dto.pcNum==vo.pcNum?"selected='selected'":""}>${vo.pcName}</option>				    
 								</c:forEach>
 							</select>
 								
@@ -189,7 +196,6 @@ $(function(){
 							</td>
 						</tr>
 					</c:if>
-					
 					
 					
 					<tr>
@@ -236,7 +242,7 @@ $(function(){
 					<tr>
 						<td class="table-light" scope="row">내 용</td>
 						<td>
-							<div class="editor">${dto.content}</div>
+							<div class="editor">${dto.pContent}</div>
 							<input type="hidden" name="pContent">
 						</td>
 					</tr>
@@ -249,7 +255,10 @@ $(function(){
 							<button type="button" class="btn btn-dark" onclick="sendOk();">${mode=='update'? "수정완료" : "등록하기"}&nbsp;<i class="bi bi-check2"></i></button>
 							<button type="reset" class="btn btn-light">다시입력</button>
 							<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/list';">${mode=='update'? "수정취소" : "등록취소"}&nbsp;<i class="bi bi-x"></i></button>
-							
+							<c:if test="${mode=='update'}">
+								<input type="hidden" name="pNum" value="${dto.pNum}">
+								<input type="hidden" name="page" value="${page}">
+							</c:if>	
 						</td>
 					</tr>
 				</table>

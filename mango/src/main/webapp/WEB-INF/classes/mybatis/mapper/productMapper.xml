@@ -29,11 +29,16 @@
 	<!-- 중고거래 글 수정 -->
 	<update id="updateProduct" parameterType="com.sp.mango.product.Product">
 		UPDATE product SET 
-			pSubject=#{pSubject}, pStatus=#{pStatus}, pContent=#{pContent},
-			pPrice=#{pPrice}, pUpdate_date=#{pUpdate_date}, pSoldDate=#{pSoldDate},
+			pSubject=#{pSubject}, pStatus=#{pStatus}, pContent=#{pContent, jdbcType=VARCHAR},
+			pPrice=#{pPrice}, pUpdate_date=#{pUpdate_date, jdbcType=VARCHAR},
 			pIsProposable=#{pIsProposable}, pLat=#{pLat}, pLon=#{pLon}, 
 			areaNum=#{areaNum}, pcNum=#{pcNum}			
 		WHERE pNum = #{pNum}
+	</update>
+	
+	<!-- 중고거래 판매날짜 업데이트 -->
+	<update id="updateSoldDate" parameterType="com.sp.mango.product.Product">
+		UPDATE product SET pSoldDate = SYSDATE WHERE pNum=#{pNum}
 	</update>
 	
 	<!-- 중고거래 글 삭제 -->
@@ -160,6 +165,10 @@
 	</select>
 
 
+	<!-- 신고항목 리스트 -->
+	<select id="listPreport" resultType="com.sp.mango.product.ProductReport">
+		SELECT * FROM reportProduct_Reason
+	</select>
 
 	<!-- 관리자 : 카테고리 추가 -->
 	<insert id="insertPcategory" parameterType="map">

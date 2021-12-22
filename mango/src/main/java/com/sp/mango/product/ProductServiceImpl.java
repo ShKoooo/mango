@@ -56,10 +56,10 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public void deleteProduct(Product dto) throws Exception {
+	public void deleteProduct(int pNum) throws Exception {
 		// 게시글 삭제
 		try {
-			dao.deleteData("product.deleteProduct", dto);
+			dao.deleteData("product.deleteProduct", pNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -265,6 +265,31 @@ public class ProductServiceImpl implements ProductService{
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void updateSoldDate(Product dto) throws Exception {
+		try {
+			dao.updateData("product.updateSoldDate", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public List<ProductReport> listPreport() {
+		// 신고항목 리스트
+		List<ProductReport> listPreport = null;
+		
+		try {
+			listPreport = dao.selectList("product.listPreport");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return listPreport;
 	}
 
 

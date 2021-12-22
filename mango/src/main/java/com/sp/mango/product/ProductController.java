@@ -1,6 +1,5 @@
 package com.sp.mango.product;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ public class ProductController {
 	@Autowired
 	private MyUtil myUtil;	
 	
+	// 게시글 리스트
 	@RequestMapping(value = "list")
 	public String list(
 			@RequestParam(value = "page", defaultValue = "1") int current_page,
@@ -88,10 +88,10 @@ public class ProductController {
 		}
 		
 
-		String listUrl = cp + "/product/list";
-		String articleUrl = cp + "/product/article?group="+pcNum+"&page="+current_page;
+		// String listUrl = cp + "/product/list";
+		String articleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page;
 				
-		String paging = myUtil.paging(current_page, total_page, listUrl);
+		// String paging = myUtil.paging(current_page, total_page, listUrl);
 		
 		
 		model.addAttribute("listMemberAddr", listMemberAddr);
@@ -103,7 +103,7 @@ public class ProductController {
 		model.addAttribute("list", list);
 		model.addAttribute("pcNum", pcNum);
 		
-		model.addAttribute("paging", paging);
+		// model.addAttribute("paging", paging);
 		model.addAttribute("articleUrl", articleUrl);
 		
 		List<Product> listCategory = service.listCategory();
@@ -114,51 +114,71 @@ public class ProductController {
 		return ".product.list";
 	}
 	
-/*	
+	
 	// AJAX - Map을 JSON으로 변환 반환
 	@RequestMapping(value = "morelist")
 	@ResponseBody
-	public Map<String, Object> list(
+	public Map<String, Object> morelist(
 			@RequestParam(value = "page", defaultValue = "2") int current_page,
 			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
 			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
 			@RequestParam(value = "pcNum", defaultValue = "0") int pcNum,
-			@RequestParam(value = "opt", defaultValue = "0") int opt
+			@RequestParam(value = "opt", defaultValue = "0") int opt,
+			HttpSession session
 			) throws Exception {
 		
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
 		int rows = 6;
+		int dataCount;
+		
 		Map<String, Object> map = new HashMap<String, Object>();
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
 		map.put("pcNum", pcNum);
 
-		int dataCount = service.dataCount(map);
+		dataCount = service.dataCount(map);
 		int total_page = myUtil.pageCount(rows, dataCount);
 		if (current_page > total_page) {
 			current_page = total_page;
 		}
 		
-		int start = (current_page - 1) * rows + 1;
-		int end = current_page * rows;
-		map.put("start", start);
-		map.put("end", end);
+		// 리스트
+		List<Product> list = null;
+				
+		List<MemberAddr> listMemberAddr = null;
+//		int memAddrCount = 0;
+		list = service.memberListProduct(map);
+		if(info != null) { 
+			listMemberAddr = service.listMemberAddr(info.getUserId());	
+//			memAddrCount = service.memAddrCount(info.getUserId());
+			// 회원 주소 선택 창에서.
+			// opt가 0(디폴트값)이고, listMemberAddr(주소리스트)가 있으면 
+			// listMemberAddr에 값은 있는데 opt 값이 없으면 주소리스트의 가장 위에 있는 값을 선택한다.
+			if(opt == 0 && listMemberAddr.size() > 0) {
+				opt = listMemberAddr.get(0).getAreaNum();
+			}
+		}
 		
-		List<Product> list = service.memberListProduct(map);		
 		
 		Map<String, Object> model = new HashMap<>();
 		
 		model.put("dataCount", dataCount);
 		model.put("total_page", total_page);
 		model.put("page", current_page);
-
+		model.put("pcNum", pcNum);
 		model.put("list", list);
 		
 		return model;
 	}
-*/	
 	
 	
 	
+	// 게시글 수정
 	@RequestMapping(value = "write", method = RequestMethod.GET)
 	public String writeForm(Model model, HttpSession session) throws Exception {
 		List<Product> listCategory = service.listCategory();
@@ -192,16 +212,20 @@ public class ProductController {
 		return "redirect:/product/list";
 	}
 	
-	
+	// 게시글 보기
 	@RequestMapping(value = "article")
 	public String article(
 			@RequestParam int pNum,
 			@RequestParam String page,
+			@RequestParam int pcNum,
+			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
+			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
+			@RequestParam(value = "opt", defaultValue = "0") int opt,
 			HttpSession session,
 			Model model
 			) throws Exception {
 		
-		String query = "page=" + page;
+		String query = "page=" + page + "&pcNum=" + pcNum;
 		
 		service.updateHitCount(pNum);
 		
@@ -211,15 +235,27 @@ public class ProductController {
 			return "redirect:/product/list?" + query;
 		}
 		
-		// 게시글 관심 여부
+		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("pNum", pNum);
+		map.put("maLat", maLat);
+		map.put("maLon", maLon);
 		
+		// 게시글 관심 여부
 		boolean userProductWished = false;
+		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		List<ProductReport> listPreport = null;
+		
 		if(info != null) {
 			map.put("userId", info.getUserId());
 			userProductWished = service.userProductWished(map);
+			
+			listPreport = service.listPreport();
+			
+			query = "page=" + page + "&pcNum=" + pcNum 
+						+ "&maLat=" + maLat + "&maLon=" + maLon + "&opt=" + opt;
 		}
 		
 		int productWishCount = service.productWishCount(pNum);
@@ -230,6 +266,7 @@ public class ProductController {
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
 		model.addAttribute("productWishCount", productWishCount);
+		model.addAttribute("listPreport", listPreport);
 		
 		return ".product.article";
 	}
@@ -245,32 +282,45 @@ public class ProductController {
 		
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
+		List<Product> listCategory = service.listCategory();
+		List<MemberAddr> listMemberAddr = service.listMemberAddr(info.getUserId());
+		
 		Product dto = service.readProduct(pNum);
-		if(dto == null || ! info.getUserId().equals(dto.getUserId())) {
-			return "redirect:/product/list?page=" + page + "&group=" + pcNum;
+		if(dto == null || !info.getUserId().equals(dto.getUserId())) {
+			return "redirect:/product/list?pcNum=" + pcNum + "&page=" + page;
 		}
 		
 		model.addAttribute("dto", dto);
+		model.addAttribute("listCategory", listCategory);
+		model.addAttribute("listMemberAddr", listMemberAddr);
 		model.addAttribute("mode", "update");
 		model.addAttribute("page", page);
-		model.addAttribute("group", pcNum);
+		model.addAttribute("pcNum", pcNum);
 		
 		return ".product.write";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String updateSubmit(Product dto,
-			@RequestParam int pcNum,
 			@RequestParam String page,
+			@RequestParam int pcNum,
+			@RequestParam String soldDateTF,
 			HttpSession session
 			) throws Exception {
 
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
 		try {
+			dto.setUserId(info.getUserId());
+			if(soldDateTF == "거래완료") {
+				service.updateSoldDate(dto);
+			}
+			
 			service.updateProduct(dto);
 		} catch (Exception e) {
 		}
 
-		return "redirect:/product/list?page=" + page + "&group=" + pcNum;
+		return "redirect:/product/list?pcNum="+ pcNum + "&page=" + page;
 	}
 	
 	
@@ -311,5 +361,24 @@ public class ProductController {
 		model.put("productWishCount", productWishCount);
 
 		return model;
+	}
+	
+	//게시글 삭제
+	@RequestMapping(value = "delete")
+	public String delete(@RequestParam int pNum,
+			@RequestParam int pcNum,
+			@RequestParam String page,
+			HttpSession session) throws Exception {
+	
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		String query = "pcNum=" + pcNum + "&page=" + page;
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("pNum", pNum);
+		map.put("userId", info.getUserId());
+	
+		service.deleteProduct(pNum);
+		
+		return "redirect:/product/list?" + query;
 	}
 }
