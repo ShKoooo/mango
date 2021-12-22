@@ -21,4 +21,5 @@ public interface GiftyService {
 	public void deleteGwish(Map<String, Object> map) throws Exception;
 	public boolean userGwished(Map<String, Object> map);
 	
+	public void updateSdate(Gifty dto) throws Exception;
 }

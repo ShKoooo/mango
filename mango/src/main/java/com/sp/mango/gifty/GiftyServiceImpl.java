@@ -148,7 +148,7 @@ public class GiftyServiceImpl implements GiftyService {
 		
 		return result;
 	}
-	//가각가
+	
 	public int giftyWishCount(int gNum) {
 		int result = 0;
 		
@@ -182,6 +182,17 @@ public class GiftyServiceImpl implements GiftyService {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void updateSdate(Gifty dto) throws Exception {
+		try {
+			dao.updateData("gifty.updateSdate", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
 	}
 
 }

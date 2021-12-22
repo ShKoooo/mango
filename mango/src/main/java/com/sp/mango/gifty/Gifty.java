@@ -23,11 +23,15 @@ public class Gifty {
 	
 	private int giftyWishNum;
 	private String gwRegDate;
-	
+	private int gWishCount;
 	
 	private int gImgNum;
 	private String gImgSaveFileName;
 	private MultipartFile selectFile;
+	
+	private double manner;
+	
+	
 	public int getgNum() {
 		return gNum;
 	}
@@ -153,6 +157,18 @@ public class Gifty {
 	}
 	public void setGwRegDate(String gwRegDate) {
 		this.gwRegDate = gwRegDate;
+	}
+	public int getgWishCount() {
+		return gWishCount;
+	}
+	public void setgWishCount(int gWishCount) {
+		this.gWishCount = gWishCount;
+	}
+	public double getManner() {
+		return manner;
+	}
+	public void setManner(double manner) {
+		this.manner = manner;
 	}
 	
 	
