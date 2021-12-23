@@ -116,7 +116,6 @@ public class GiftyController {
 		model.put("dataCount", dataCount);
 		model.put("total_page", total_page);
 		model.put("page", current_page);
-		// model.put("morepage", current_page);
 		model.put("group", group);
 		model.put("list", list);
 		
@@ -180,9 +179,13 @@ public class GiftyController {
 		
 		boolean userGwished = false;
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		List<GiftyReport> listGreport = null;
+		
 		if(info != null) {
 			map.put("userId", info.getUserId());
 			userGwished = service.userGwished(map);
+			
+			listGreport = service.listGreport();
 		}
 		
 		int giftyWishCount = service.giftyWishCount(gNum);
@@ -195,7 +198,7 @@ public class GiftyController {
 		model.addAttribute("group", group);
 		model.addAttribute("userGwished", userGwished);
 		model.addAttribute("giftyWishCount", giftyWishCount);
-		
+		model.addAttribute("listGreport", listGreport);
 		model.addAttribute("condition", condition);
 		model.addAttribute("keyword", keyword);
 		
@@ -205,13 +208,14 @@ public class GiftyController {
 	@RequestMapping(value = "update", method = RequestMethod.GET)
 	public String updateForm(@RequestParam int gNum,
 			@RequestParam String page,
+			@RequestParam int group,
 			HttpSession session,
 			Model model) throws Exception {
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
 		Gifty dto = service.readGifty(gNum);
 		if(dto==null || !info.getUserId().equals(dto.getUserId())) {
-			return "redirect:/gifty/list?page=" + page;
+			return "redirect:/gifty/list?group="+ group+ "&page=" + page;
 		}
 		
 		List<Gifty> listGcategory = service.listGcategory();
@@ -228,15 +232,13 @@ public class GiftyController {
 	@RequestMapping(value = "update", method = RequestMethod.POST)
 	public String updateSubmit(Gifty dto,
 			@RequestParam String page,
+			@RequestParam int group,
 			HttpSession session) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
 		try {
 			dto.setUserId(info.getUserId());
-			
-			System.out.println(":::: "+dto.getgStatus());
-			
 			if(dto.getgStatus().equals("거래완료")) {
 				service.updateSdate(dto);
 			} else {
@@ -246,12 +248,13 @@ public class GiftyController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/gifty/list?page=" + page;
+		return "redirect:/gifty/list?group= "+ group +"&page=" + page;
 	}
 	
 	@RequestMapping(value = "delete")
 	public String deleteGifty(@RequestParam int gNum,
 			@RequestParam String page,
+			@RequestParam int group,
 			@RequestParam(defaultValue = "all") String condition,
 			@RequestParam(defaultValue = "") String keyword,
 			HttpSession session
@@ -260,10 +263,11 @@ public class GiftyController {
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
 		keyword = URLDecoder.decode(keyword, "utf-8");
-		String query = "page=" + page;
+		String query = "page=" + page + "&group=" + group;
 		if (keyword.length() != 0) {
 			query += "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "UTF-8");
 		}
+		
 		
 		service.deleteGifty(gNum, info.getUserId());
 		
@@ -303,6 +307,44 @@ public class GiftyController {
 		
 		return model;
 		
+	}
+	
+	@RequestMapping(value = "report")
+	public String reportSubmit(
+			GiftyReport dto,
+			@RequestParam int gNum,
+			@RequestParam String page,
+			@RequestParam int group,
+			HttpSession session
+			) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			
+			service.insertGreport(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/gifty/article?group=" + group +"&page=" + page + "&gNum=" + gNum; 
+	}
+	
+	@RequestMapping("updateDate")
+	public String updateDate(
+			@RequestParam int gNum,
+			HttpSession session
+			) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		try {
+			
+			
+			service.updateDate(gNum, info.getUserId());
+			
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/gifty/list"; 
 	}
 	
 }

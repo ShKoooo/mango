@@ -195,4 +195,48 @@ public class GiftyServiceImpl implements GiftyService {
 		
 	}
 
+	@Override
+	public List<GiftyReport> listGreport() {
+		// 기프티 신고리스트
+		List<GiftyReport> listGreport = null;
+		
+		try {
+			listGreport = dao.selectList("gifty.listGreport");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listGreport;
+	}
+
+	@Override
+	public void insertGreport(GiftyReport dto) throws Exception {
+		// 기프티 신고 인서트
+		try {
+			dao.insertData("gifty.insertGreport", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public void updateDate(int gnum, String userId) throws Exception {
+		// 끌어올리기 기능
+		
+		try {
+			Gifty dto = readGifty(gnum);
+			if(dto == null || (! dto.getUserId().equals(userId))) {
+				return;
+			}
+			
+			
+			dao.updateData("gifty.updateDate", gnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
 }

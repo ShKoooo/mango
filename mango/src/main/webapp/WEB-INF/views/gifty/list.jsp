@@ -49,25 +49,25 @@ function listPage(page, group) {
 	var query = "page=" + page + "&group=" + group;
 	
 	var fn = function(data) {
-		printGifty2(data);
+		printGifty(data);
 	};
 	ajaxFun(url, "get", query, "json", fn);
 }
 
-function printGifty2(data) {
+function printGifty(data) {
 	var dataCount = data.dataCount;
 	current_page = data.page;
 	total_page = data.total_page;
 	var group = data.group;
 	var list = data.list;
 
+	$(".load-more .more").hide();
 	if(dataCount == 0) {
 		$(".morelist").empty();
-		$(".load-more .more").hide();
-		return false;
+		return;
 	}
 	
-	$(".load-more .more").show();
+		$(".load-more .more").show();
 	if(parseInt(total_page) <= parseInt(current_page)) {
 		$(".load-more .more").hide();
 	}

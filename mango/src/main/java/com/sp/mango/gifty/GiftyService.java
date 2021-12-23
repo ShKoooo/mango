@@ -22,4 +22,12 @@ public interface GiftyService {
 	public boolean userGwished(Map<String, Object> map);
 	
 	public void updateSdate(Gifty dto) throws Exception;
+	
+	// 기프티콘 신고
+	public List<GiftyReport> listGreport();
+	public void insertGreport(GiftyReport dto) throws Exception;
+	
+	// 끌어올리기
+	public void updateDate(int gnum, String userId) throws Exception;
+	
 }

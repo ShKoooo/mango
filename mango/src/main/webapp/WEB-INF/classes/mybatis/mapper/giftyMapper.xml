@@ -8,7 +8,7 @@
     
     <insert id="insertGifty" parameterType="com.sp.mango.gifty.Gifty">
     	INSERT INTO giftycon (gNum, userId, gSubject, gRegdate, gExpdate, gHitCount, gPrice, gContent, gStatus, gUpdate_date, gSoldDate, gcNum, gIsProposable)
-					VALUES (#{gNum}, #{userId}, #{gSubject}, SYSDATE, #{gExpdate, jdbcType=VARCHAR}, 0, #{gPrice, jdbcType=VARCHAR}, #{gContent, jdbcType=VARCHAR}, #{gStatus, jdbcType=VARCHAR}, #{gUpdate_date, jdbcType=VARCHAR}, #{gSoldDate, jdbcType=VARCHAR}, #{gcNum}, #{gIsProposable, jdbcType=VARCHAR})
+					VALUES (#{gNum}, #{userId}, #{gSubject}, SYSDATE, #{gExpdate, jdbcType=VARCHAR}, 0, #{gPrice, jdbcType=VARCHAR}, #{gContent, jdbcType=VARCHAR}, #{gStatus, jdbcType=VARCHAR}, SYSDATE, #{gSoldDate, jdbcType=VARCHAR}, #{gcNum}, #{gIsProposable, jdbcType=VARCHAR})
     </insert>
     
     <insert id="insertGiftyImg" parameterType="com.sp.mango.gifty.Gifty">
@@ -54,8 +54,8 @@
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
-					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate
+					 TO_DATE(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
+					 gHitCount, TO_DATE(g.gExpdate, 'YYYY-MM-DD') gExpdate, gUpdate_date
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId
 				JOIN giftyCategory gc ON g.gcNum = gc.gcNum
@@ -74,8 +74,8 @@
 	
 	<select id="readGifty" parameterType="Integer" resultType="com.sp.mango.gifty.Gifty">
 		SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-			TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, gc.gcNum, gc.gcName,
-			gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate, TO_CHAR(gUpdate_date, 'YYYY-MM-DD') gUpdate_date, 
+			TO_DATE(g.gRegdate, 'YYYY-MM-DD') gRegdate, gc.gcNum, gc.gcName,
+			gHitCount, TO_DATE(g.gExpdate, 'YYYY-MM-DD') gExpdate, TO_DATE(gUpdate_date, 'YYYY-MM-DD') gUpdate_date, 
 			gSoldDate, gIsProposable, NVL(gWishCount, 0) gWishCount,
 			(36.5 + (0.1* NVL(man.mannerStar, 0)) + (0.1* NVL(man.productStar, 0)) - NVL(man.minusDeg, 0)) AS manner
 		FROM giftycon g
@@ -128,9 +128,22 @@
 	
 	<update id="updateSdate" parameterType="com.sp.mango.gifty.Gifty">
 		UPDATE giftycon SET gSubject=#{gSubject}, gExpdate=#{gExpdate, jdbcType=VARCHAR}, gPrice=#{gPrice, jdbcType=VARCHAR}, gContent=#{gContent, jdbcType=VARCHAR}, gStatus=#{gStatus, jdbcType=VARCHAR}, gcNum=#{gcNum}, gIsProposable=#{gIsProposable, jdbcType=VARCHAR},
-			gSoldDate = TO_DATE(SYSDATE, 'YYYY/MM/DD HH:MI:SS'  )
+			gSoldDate = TO_DATE(SYSDATE, 'YYYY-MM-DD HH:MI:SS')
 			WHERE gNum = #{gNum} AND userId = #{userId}
 	</update>
 	
+	<select id="listGreport" parameterType="com.sp.mango.gifty.Gifty">
+		SELECT * FROM reportGifty_Reason
+	</select>
+	
+	<insert id="insertGreport" parameterType="com.sp.mango.gifty.Gifty">
+		INSERT INTO reportGifty(repGiftyNum, rgReasonNum, reqGiftyContent, reqGiftyRegDate, reqGiftyChecked, gNum, userId)
+			VALUES(reportGifty_seq.NEXTVAL, #{rgReasonNum}, #{reqGiftyContent, jdbcType=VARCHAR}, SYSDATE, 'F', #{gNum}, #{userId})
+	</insert>
+	
+	<update id="updateDate" parameterType="com.sp.mango.gifty.Gifty">
+		UPDATE giftycon SET gUpdate_date = TO_DATE(SYSDATE, 'YYYY/MM/DD HH:MI:SS') 
+		WHERE gNum = #{gNum}
+	</update>
 
 </mapper>

@@ -107,22 +107,6 @@ function sendOk() {
 	f.submit();
 }
 
-/*
-$(function(){
-	$("#selectArea").change(function(){
-		if($(this).val()=="0") {
-			$("#pLat").val("0");
-			$("#pLon").val("0");
-			return false;
-		}
-		
-		var opt = $("#selectArea option:selected");
-	
-		$("#pLat").val(opt.attr("data-maLat"));
-		$("#pLon").val(opt.attr("data-maLon"));
-	});
-});
-*/
 
 $(function(){
 	$("#prop").change(function(){
@@ -174,7 +158,7 @@ $(function(){
 				  			<select name="gcNum" class="form-select" id="inputGroupSelect01" style="width: 500px; margin-left: 10px;">
 							  	<option selected value="0">선택</option>
 							  	<c:forEach var="vo" items="${listGcategory}">
-							    	<option value="${vo.gcNum}">${vo.gcName}</option>				    
+							    	<option value="${vo.gcNum}" ${dto.gcNum==vo.gcNum ? "selected='selected'" : ""}>${vo.gcName}</option>				    
 								</c:forEach>
 							</select>
 								
@@ -246,7 +230,11 @@ $(function(){
 							<button type="button" class="btn btn-dark" onclick="sendOk();">${mode=='update'? "수정완료" : "등록하기"}&nbsp;<i class="bi bi-check2"></i></button>
 							<button type="reset" class="btn btn-light">다시입력</button>
 							<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/gifty/list';">${mode=='update'? "수정취소" : "등록취소"}&nbsp;<i class="bi bi-x"></i></button>
-							
+							<c:if test="${mode=='update'}">
+								<input type="hidden" name="gNum" value="${dto.gNum}">
+								<input type="hidden" name="page" value="${page}">
+								<input type="hidden" name="group" value="${group}">
+							</c:if>
 						</td>
 					</tr>
 				</table>
