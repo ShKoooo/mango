@@ -303,6 +303,16 @@ public class ProductServiceImpl implements ProductService{
 		}
 	}
 
+	@Override
+	public void updateDate(Product dto) throws Exception {
+		try {
+			dao.updateData("product.updateDate", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
 
 
 }

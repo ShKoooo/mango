@@ -106,7 +106,8 @@ function ajaxFun(url, method, query, dataType, fn) {
 
 
 // 더보기
-var current_page = 2;
+var current_page = "${page}";
+var total_page = "${total_page}";
 
 function listPage(page, pcNum) {
 	var url = "${pageContext.request.contextPath}/product/morelist";
@@ -127,15 +128,22 @@ function printProduct(data) {
 	
 //	$(".more-list").show();
 	
-	$(".load-more").hide();
+//	$(".load-more").hide();
 	if(dataCount == 0) {
 		$(".more-list").empty();
-		return;
+		$(".load-more .more").hide();
+		return false;
 	}
-	
+/*	
 	if(page < total_page) {
 		$(".load-more").show();
 	}
+*/
+	$(".load-more .more").show();
+	if(parseInt(total_page) <= parseInt(current_page)) {
+		$(".load-more .more").hide();
+	}	
+
 	
 	var out = "";
 	
@@ -176,17 +184,18 @@ function printProduct(data) {
 
 $(function(){
 	$(".load-more .more").click(function(){
-		// listPage(2);
+		if(current_page == "") return false;
+		if(total_page == "") return false;
 		
-		var page = ${page};
-		var total_page = ${total_page};
-		var pcNum = ${pcNum};
-		var dataCount = ${dataCount};
-		
-		if(page < total_page) {
-			page++;
-			listPage(page, pcNum);
+		current_page = parseInt(current_page);
+		total_page = parseInt(total_page);
+		if(total_page <= current_page) {
+			return false;
 		}
+		
+		current_page++;
+		var pcNum = "${pcNum}";
+		listPage(current_page, pcNum);
 	});
 });
 
@@ -276,9 +285,7 @@ $(function(){
 	                </div>
 								
 					<div class="more-box load-more">
-						<c:if test="${dataCount != 0}">
-							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
-						</c:if>
+						<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
 					</div>
 				</div>
 			</div>

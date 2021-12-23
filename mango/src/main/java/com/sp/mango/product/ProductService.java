@@ -30,6 +30,7 @@ public interface ProductService {
 	public List<Product> listImgFile(int pNum);
 
 	public void updateSoldDate(Product dto) throws Exception; // 판매일자 업데이트
+	public void updateDate(Product dto) throws Exception; // 게시글 끌어올리기
 	
 	public List<ProductReport> listPreport(); // 신고항목 리스트
 	public void insertPreport(ProductReport dto) throws Exception; // 신고 등록 

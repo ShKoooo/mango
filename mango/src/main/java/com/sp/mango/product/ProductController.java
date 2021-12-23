@@ -309,6 +309,7 @@ public class ProductController {
 			@RequestParam String page,
 			@RequestParam int pcNum,
 			@RequestParam String soldDateTF,
+			@RequestParam(value = "pUpdatedate", defaultValue = "") String pUpdatedate,
 			HttpSession session
 			) throws Exception {
 
@@ -318,6 +319,9 @@ public class ProductController {
 			dto.setUserId(info.getUserId());
 			if(soldDateTF.equals("거래완료")) {
 				service.updateSoldDate(dto);
+			}
+			if(pUpdatedate.equals("끌어올리기")) {
+				service.updateDate(dto);
 			}
 			
 			service.updateProduct(dto);

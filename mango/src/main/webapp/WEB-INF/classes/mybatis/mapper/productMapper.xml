@@ -49,8 +49,7 @@
 	<update id="updateProduct" parameterType="com.sp.mango.product.Product">
 		UPDATE product SET 
 			pSubject=#{pSubject}, pStatus=#{pStatus}, pContent=#{pContent, jdbcType=VARCHAR},
-			pPrice=#{pPrice}, pUpdate_date=#{pUpdate_date, jdbcType=VARCHAR},
-			pIsProposable=#{pIsProposable}, pLat=#{pLat}, pLon=#{pLon}, 
+			pPrice=#{pPrice}, pIsProposable=#{pIsProposable}, pLat=#{pLat}, pLon=#{pLon}, 
 			areaNum=#{areaNum}, pcNum=#{pcNum}			
 		WHERE pNum = #{pNum}
 	</update>
@@ -58,6 +57,11 @@
 	<!-- 중고거래 판매날짜 업데이트 -->
 	<update id="updateSoldDate" parameterType="com.sp.mango.product.Product">
 		UPDATE product SET pSoldDate = SYSDATE WHERE pNum=#{pNum}
+	</update>
+	
+	<!-- 중고거래 글 끌어올리기 : 날짜가 업데이트 됨 -->
+	<update id="updateDate" parameterType="com.sp.mango.product.Product">
+		UPDATE product SET pUpdate_date = SYSDATE WHERE pNum=#{pNum}
 	</update>
 	
 	<!-- 중고거래 글 삭제 -->
@@ -83,8 +87,8 @@
 	<select id="memberListProduct" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT * FROM (
     		SELECT ROWNUM rnum, tb.* FROM (
-        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
-		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
+        	   SELECT p.pNum, pSubject, pPrice, TO_DATE(pRegDate, 'YYYY-MM-DD') pRegDate,
+		              TO_DATE(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
 		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName
         		FROM product p
         		JOIN area a ON p.areaNum = a.areaNum

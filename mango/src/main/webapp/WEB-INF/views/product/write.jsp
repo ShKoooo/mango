@@ -153,13 +153,14 @@ $(function(){
 						<tr>	
 							<td class="table-light" scope="row">거래상태</td>
 							<td>
-								<div class="row">
+								<div class="row" style="float: left;">
 									<select name="pStatus" class="form-select" id="selectStatus" style="width: 500px; margin-left: 10px;">
 						    			<option selected value="판매중" ${dto.pStatus=="판매중" ? "selected='selected'" : ""}>판매중</option>
 							    		<option value="예약중" ${dto.pStatus=="예약중" ? "selected='selected'" : ""}>예약중</option>
 							    		<option value="거래완료" ${dto.pStatus=="거래완료" ? "selected='selected'" : ""}>거래완료</option>
 						  			</select>
 								</div>
+								<span><input type="checkbox" name="pUpdatedate" value="끌어올리기" id="pUpdateD" style="clear: both; margin-left:33px; margin-top:12px; margin-right:5px;"/>게시글 끌어올리기</span>
 								<input type="text" name="soldDateTF" class="soldDate">
 							</td>
 						</tr>
