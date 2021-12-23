@@ -87,6 +87,7 @@ $(function() {
 								<td>${dto.listNum}</td>
 								<td style="text-align: left;">
 									<a href="${articleUrl}&vNum=${dto.vNum}" class="text-reset">${dto.subject}</a>
+									<c:if test="${dto.replyCount!=0}">(${dto.replyCount})</c:if>
 								</td>
 								<td> ${dto.userNickName} </td>
 								<td> ${dto.reg_date} </td>
@@ -102,7 +103,7 @@ $(function() {
 				
 				<div class="row board-list-footer">
 					<div class="col">
-						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/qna/list';">새로고침</button>
+						<button type="button" class="btn btn-light" onclick="history.back(-1)">새로고침</button>
 					</div>
 					
 					<div class="col-6 text-center">

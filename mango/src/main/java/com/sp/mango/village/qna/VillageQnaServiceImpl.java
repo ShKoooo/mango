@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
 import com.sp.mango.village.MemberAddr;
+import com.sp.mango.village.ReplyReport;
+import com.sp.mango.village.VillageReport;
 
 @Service("village.qna.villageQnaService")
 public class VillageQnaServiceImpl implements VillageQnaService {
@@ -74,6 +76,18 @@ public class VillageQnaServiceImpl implements VillageQnaService {
 		
 		try {
 			result = dao.selectOne("qna.dataCount", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	@Override
+	public int memberDataCount(Map<String, Object> map) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("qna.memberDataCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -241,45 +255,131 @@ public class VillageQnaServiceImpl implements VillageQnaService {
 
 	@Override
 	public List<Reply> listReply(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Reply> list = null;
+		
+		try {
+			list = dao.selectList("qna.listReply", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override
 	public int replyCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("qna.replyCount", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public void deleteReply(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			dao.deleteData("qna.deleteReply", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public List<Reply> listReplyAnswer(int vrAnswer) {
+		List<Reply> list = null;
 		
+		try {
+			list = dao.selectList("qna.listReplyAnswer", vrAnswer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override
-	public List<Reply> listReplyAnswer(int answer) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int replyAnswerCount(int answer) {
-		// TODO Auto-generated method stub
-		return 0;
+	public int replyAnswerCount(int vrAnswer) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("qna.replyAnswerCount", vrAnswer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public void insertReplyLike(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
+		try {
+			dao.insertData("qna.insertReplyLike", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
 	public Map<String, Object> replyLikeCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> countMap = null;
+		
+		try {
+			countMap = dao.selectOne("qna.replyLikeCount", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return countMap;
 	}
+
+	@Override
+	public List<VillageReport> listVreport() {
+		List<VillageReport> listVreport = null;
+		
+		try {
+			listVreport = dao.selectList("qna.listVreport");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listVreport;
+	}
+
+	@Override
+	public void insertVreport(VillageReport dto) throws Exception {
+		try {
+			dao.insertData("qna.insertVreport", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public List<ReplyReport> listVRreport() {
+		List<ReplyReport> listVRreport = null;
+		
+		try {
+			listVRreport = dao.selectList("qna.listVRreport");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listVRreport;
+	}
+
+	@Override
+	public void insertVRreport(ReplyReport dto) throws Exception {
+		try {
+			dao.insertData("qna.insertVRreport", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+	
+
+
 
 
 

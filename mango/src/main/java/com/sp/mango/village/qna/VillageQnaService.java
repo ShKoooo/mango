@@ -4,12 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.sp.mango.village.MemberAddr;
+import com.sp.mango.village.ReplyReport;
+import com.sp.mango.village.VillageReport;
 
 public interface VillageQnaService {
 	public void insertBoard(VillageQna dto, String pathname) throws Exception;
 	public List<VillageQna> listBoard(Map<String, Object> map); // 비회원, 주소 1개등록 회원 게시판 전체 리스트
 	public List<VillageQna> memberListBoard(Map<String, Object> map); // 회원 지정 위치 5km 게시판 리스트
 	public int dataCount(Map<String, Object> map);
+	public int memberDataCount(Map<String, Object> map);
 	public VillageQna readBoard(int vNum);
 	public void updateHitCount(int vNum) throws Exception;
 	public VillageQna preReadBoard(Map<String, Object> map);
@@ -30,10 +33,14 @@ public interface VillageQnaService {
 	public int replyCount(Map<String, Object> map);
 	public void deleteReply(Map<String, Object> map) throws Exception;
 	
-	public List<Reply> listReplyAnswer(int answer);
-	public int replyAnswerCount(int answer);
+	public List<Reply> listReplyAnswer(int vrAnswer);
+	public int replyAnswerCount(int vrAnswer);
 	
 	public void insertReplyLike(Map<String, Object> map) throws Exception;
 	public Map<String, Object> replyLikeCount(Map<String, Object> map);
-	
+
+	public List<VillageReport> listVreport();
+	public void insertVreport(VillageReport dto) throws Exception;
+	public List<ReplyReport> listVRreport();
+	public void insertVRreport(ReplyReport dto) throws Exception;
 }

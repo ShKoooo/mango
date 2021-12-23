@@ -1,6 +1,7 @@
 package com.sp.mango.village.qna;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.MemberAddr;
+import com.sp.mango.village.ReplyReport;
+import com.sp.mango.village.VillageReport;
 
 @Controller("village.qna.VillageQnaController")
 @RequestMapping("/village/qna/*")
@@ -49,6 +52,7 @@ public class VillageQnaController {
 		int rows = 10;
 		int total_page = 0;
 		int dataCount = 0;
+		int memberDataCount = 0;
 		
 		if(req.getMethod().equalsIgnoreCase("GET")) {
 			keyword = URLDecoder.decode(keyword, "utf-8");
@@ -58,6 +62,26 @@ public class VillageQnaController {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("condition", condition);
 		map.put("keyword", keyword);
+		map.put("info", info!=null);
+		// 회원이 선택한 주소의 위도, 경도
+		
+		List<MemberAddr> listMemberAddr = null;
+		int memAddrCount = 0;
+		
+		map.put("maLat", maLat);
+		map.put("maLon", maLon);
+		
+		if (info != null) {
+			map.put("membership", info.getMembership());
+			listMemberAddr = service.listMemberAddr(info.getUserId());
+			
+			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) { 
+				map.put("maLat", listMemberAddr.get(0).getaLat());
+				map.put("maLon", listMemberAddr.get(0).getaLon());
+				memAddrCount = service.memAddrCount(info.getUserId());
+				
+			}
+		}
 		
 		dataCount = service.dataCount(map);
 		if (dataCount != 0) {
@@ -75,36 +99,35 @@ public class VillageQnaController {
 		map.put("start", start);
 		map.put("end", end);
 		
-		// 회원이 선택한 주소의 위도, 경도
-		map.put("maLat", maLat);
-		map.put("maLon", maLon);
 		
 		// 글 리스트
 		List<VillageQna> list = null;
 		
-		List<MemberAddr> listMemberAddr = null;
-		int memAddrCount = 0;
+		
 		if (info != null) {
-			listMemberAddr = service.listMemberAddr(info.getUserId());
-			
-			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) {
-				map.put("maLat", listMemberAddr.get(0).getaLat());
-				map.put("maLon", listMemberAddr.get(0).getaLon());
+			if (info.getMembership()<51) {		// 일반회원
+				list = service.memberListBoard(map);
+			} else {							// 관리자
+				list = service.listBoard(map);
 			}
-			
-			memAddrCount = service.memAddrCount(info.getUserId());
-			list = service.memberListBoard(map);
 		} else if(info == null || maLat==0 && maLon==0) {
 			list = service.listBoard(map);
 		}
 		
 		// 리스트 번호
+		
 		int listNum, n = 0;
 		for (VillageQna dto : list) {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
 			n++;
+			
+			// 리플 갯수 불러오기
+			Map<String, Object> rplyMap = new HashMap<String, Object>();
+			rplyMap.put("vNum", dto.getvNum());
+			dto.setReplyCount(service.replyCount(rplyMap));
 		}
+		
 		
 		String query = "";
 		String listUrl = cp + "/village/qna/list";
@@ -127,6 +150,7 @@ public class VillageQnaController {
 		model.addAttribute("articleUrl", articleUrl);
 		model.addAttribute("page", current_page);
 		model.addAttribute("dataCount", dataCount);
+		model.addAttribute("memberDataCount", memberDataCount);
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
@@ -195,21 +219,36 @@ public class VillageQnaController {
 		map.put("keyword", keyword);
 		map.put("vNum", vNum);
 		
-		VillageQna preReadDto = service.preReadBoard(map);
-		VillageQna nextReadDto = service.nextReadBoard(map);
+		// VillageQna preReadDto = service.preReadBoard(map);
+		// VillageQna nextReadDto = service.nextReadBoard(map);
 		
 		// 게시글 좋아요
 		map.put("userId", info.getUserId());
 		boolean userBoardLiked = service.userBoardLiked(map);
 		
-		model.addAttribute("dto", dto);
-		model.addAttribute("preReadDto", preReadDto);
-		model.addAttribute("nextReadDto", nextReadDto);
+		List<VillageReport> listVreport = null;
+		List<ReplyReport> listVRreport = null;
 		
+		if(info != null) {
+			map.put("userId", info.getUserId());
+			
+			listVreport = service.listVreport();
+		}
+		
+		if(info != null) {
+			map.put("userId", info.getUserId());
+			
+			listVRreport = service.listVRreport();
+		}
+		
+		model.addAttribute("dto", dto);
 		model.addAttribute("userBoardLiked", userBoardLiked);
 		
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
+		
+		model.addAttribute("listVreport", listVreport);
+		model.addAttribute("listVRreport", listVRreport);
 		
 		return ".village.qna.article";
 	}
@@ -270,22 +309,21 @@ public class VillageQnaController {
 		
 		return "redirect:/village/qna/list?"+query;
 	}
-	
-	// 게시글 좋아요 추가, 삭제
+
+	// 게시글 좋아요 추가/삭제
 	@RequestMapping(value = "insertBoardLike", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> insertBoardLike(@RequestParam int vNum,
+	public Map<String, Object> insertBoardLike(@RequestParam int vNum, 
 			@RequestParam boolean userLiked,
 			HttpSession session) {
 		String state = "true";
-		int boardLikeCount = 0; 
-		
+		int boardLikeCount = 0;
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-		
+
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("vNum", vNum);
 		paramMap.put("userId", info.getUserId());
-		
+
 		try {
 			if(userLiked) {
 				service.deleteBoardLike(paramMap);
@@ -297,14 +335,195 @@ public class VillageQnaController {
 		} catch (Exception e) {
 			state = "false";
 		}
-		
+
 		boardLikeCount = service.boardLikeCount(vNum);
-		
+
 		Map<String, Object> model = new HashMap<>();
 		model.put("state", state);
 		model.put("boardLikeCount", boardLikeCount);
+
+		return model;
+	}
+	
+	// 댓글 리스트
+	@RequestMapping(value = "listReply")
+	public String listReply(@RequestParam int vNum,
+			@RequestParam(value="pageNo", defaultValue="1") int current_page,
+			Model model) throws Exception {
+		
+		int rows = 5;
+		int total_page = 0;
+		int dataCount = 0;
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("vNum", vNum);
+		
+		dataCount = service.replyCount(map);
+		total_page = myUtil.pageCount(rows, dataCount);
+		if(current_page > total_page) {
+			current_page = total_page;
+		}
+		
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
+		
+		List<Reply> listReply = service.listReply(map);
+		
+		for(Reply dto : listReply) {
+			dto.setVrContent(dto.getVrContent().replaceAll("\n", "<br>"));
+		}
+		
+		String paging = myUtil.pagingMethod(current_page, total_page, "listPage");
+		
+		model.addAttribute("listReply", listReply);
+		model.addAttribute("pageNo", current_page);
+		model.addAttribute("replyCount", dataCount);
+		model.addAttribute("total_page", total_page);
+		model.addAttribute("paging", paging);
+		
+		return "village/qna/listReply";
+	}
+	
+	
+	// 댓글 및 답글 등록
+	@RequestMapping(value = "insertReply", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> insertReply(Reply dto, HttpSession session) {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		String state = "true";
+		
+		try {
+			dto.setUserId(info.getUserId());
+			service.insertReply(dto);
+		} catch (Exception e) {
+			state = "false";
+		}
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("state", state);
+		return model;
+	}
+	
+	// 댓글 및 댓글의 답글 삭제
+	@RequestMapping(value = "deleteReply", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteReply(@RequestParam Map<String, Object> paramMap) {
+		String state = "true";
+		
+		try {
+			service.deleteReply(paramMap);
+		} catch (Exception e) {
+			state = "false";
+		}
+		
+		Map<String, Object> map = new HashMap<>();
+		map.put("state", state);
+		return map;
+	}
+	
+	// 댓글의 답글 리스트
+	@RequestMapping(value="listReplyAnswer")
+	public String listReplyAnswer(@RequestParam int vrAnswer, Model model) throws Exception {
+		List<Reply> listReplyAnswer = service.listReplyAnswer(vrAnswer);
+		
+		for(Reply dto : listReplyAnswer) {
+			dto.setVrContent(dto.getVrContent().replaceAll("\n", "<br>"));
+		}
+		
+		model.addAttribute("listReplyAnswer", listReplyAnswer);
+		return "village/qna/listReplyAnswer";
+	}
+	
+	// 댓글의 답글 개수
+	@RequestMapping(value = "countReplyAnswer")
+	@ResponseBody
+	public Map<String, Object> countReplyAnswer(@RequestParam(value="vrAnswer") int vrAnswer) {
+		int count = service.replyAnswerCount(vrAnswer);
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("count", count);
+		return model;
+	}
+	
+	// 댓글의 좋아요/싫어요 추가 : AJAX-JSON
+	@RequestMapping(value = "insertReplyLike", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> insertReplyLike(@RequestParam Map<String, Object> paramMap,
+			HttpSession session) {
+		String state = "true";
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		Map<String, Object> model = new HashMap<>();
+		
+		try {
+			paramMap.put("userId", info.getUserId());
+			service.insertReplyLike(paramMap);
+		} catch (DuplicateKeyException e) {
+			state = "liked";
+		} catch (Exception e) {
+			state = "false";
+		}
+		
+		Map<String, Object> countMap = service.replyLikeCount(paramMap);
+		
+		int likeCount = ((BigDecimal) countMap.get("LIKECOUNT")).intValue();
+		int disLikeCount = ((BigDecimal) countMap.get("DISLIKECOUNT")).intValue();
+		
+		model.put("likeCount", likeCount);
+		model.put("dislikeCount", disLikeCount);
+		model.put("state", state);
+		return model;
+	}
+	
+	// 댓글 좋아요/싫어요 개수
+	@RequestMapping(value = "countReplyLike", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> countReplyLike(@RequestParam Map<String, Object> paramMap,
+			HttpSession session) {
+
+		Map<String, Object> countMap = service.replyLikeCount(paramMap);
+		int likeCount = ((BigDecimal) countMap.get("LIKECOUNT")).intValue();
+		int disLikeCount = ((BigDecimal) countMap.get("DISLIKECOUNT")).intValue();
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("likeCount", likeCount);
+		model.put("disLikeCount", disLikeCount);
 		
 		return model;
 	}
 	
+	// 게시글 신고
+	@RequestMapping(value = "report")
+	public String insertVreport(VillageReport dto, 
+			@RequestParam int vNum,
+			@RequestParam String page,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			service.insertVreport(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/village/qna/article?page="+page+"&vNum="+vNum;
+	}
+	
+	// 댓글 신고
+	@RequestMapping(value = "reportReply")
+	public String insertVRreport(ReplyReport dto,
+			@RequestParam int vreplyNum,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			service.insertVRreport(dto);
+		} catch (Exception e) {
+		}
+		
+		return "village/qna/listReply";
+	}
 }
