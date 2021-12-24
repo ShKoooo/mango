@@ -160,8 +160,7 @@ $(function(){
 							    		<option value="거래완료" ${dto.pStatus=="거래완료" ? "selected='selected'" : ""}>거래완료</option>
 						  			</select>
 								</div>
-								<span><input type="checkbox" name="pUpdatedate" value="끌어올리기" id="pUpdateD" style="clear: both; margin-left:33px; margin-top:12px; margin-right:5px;"/>게시글 끌어올리기</span>
-								<input type="text" name="soldDateTF" class="soldDate">
+								<input type="hidden" name="soldDateTF" class="soldDate">
 							</td>
 						</tr>
 					</c:if>
@@ -220,7 +219,7 @@ $(function(){
 				  				<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01">
 				  					<option selected value="0">선택</option>
 				  					<c:forEach var="vo" items="${listMemberAddr}">
-				    					<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>	<!-- 기존 : ${vo.maAddr1} -->				    
+				    					<option value="${vo.areaNum}" ${dto.areaNum==vo.areaNum?"selected='selected'":""} data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>	<!-- 기존 : ${vo.maAddr1} -->				    
 				    				</c:forEach>
 				  				</select>
 							</div>

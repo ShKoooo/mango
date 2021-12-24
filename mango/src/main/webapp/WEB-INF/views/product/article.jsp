@@ -94,6 +94,32 @@ $(document).ready(function(){
 	});
 });
 
+function updateDate() {
+	if(confirm("게시글을 끌어올리겠습니까? ")) {
+	    var query = "pNum=${dto.pNum}";
+	    var url = "${pageContext.request.contextPath}/product/updateDate?" + query;
+    	location.href = url;
+    }
+}
+
+// 글을 작성한지 3일 후에 끌올 가능하게 만들기
+$(function(){
+	var today = new Date();
+	var year = today.getFullYear();
+	var month = ('0' + (today.getMonth()+1)).slice(-2);
+	var day = ('0' + today.getDate()).slice(-2);
+	
+	var today2 = year + "-" + month + "-" + day;
+	
+	var afterday = "${pUpOkDate}";
+	
+	var target = document.getElementById('pUpOkBtn');
+	target.disabled = true;
+	
+	if(today2 >= afterday) {
+		target.disabled = false;
+	}
+});
 
 </script>
     
@@ -120,6 +146,7 @@ $(document).ready(function(){
                             <h2 class="project-title">${dto.pSubject}</h2>
                             <span class="project-subtitle">${dto.userNickName}</span>
                             <span>${dto.manner} ℃</span>
+                            <span>조회수 : ${dto.pHitCount}</span>
                             <p>${dto.pContent}</p>
                             <ul class="project-meta">
                                 
@@ -160,6 +187,7 @@ $(document).ready(function(){
                         </div>
                         
                         <div class="box-content">
+                        <c:if test="${dto.pStatus !='거래완료'}">
                         	<c:choose>
 								<c:when test="${sessionScope.member.userId==dto.userId}">
 									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/update?pNum=${dto.pNum}&pcNum=${dto.pcNum}&page=${page}';">수정</button>
@@ -205,10 +233,15 @@ $(document).ready(function(){
 							<c:choose>
 					    		<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.membership>50}">
 					    			<button type="button" class="btn btn-light" onclick="deleteProduct();">삭제</button>
+					    			
+					    			<c:if test="${dto.pUp < 3}">
+					    				<button type="button" id="pUpOkBtn" class="btn btn-light" onclick="updateDate();">끌어올리기</button>
+					    			</c:if>
 					    		</c:when>
 				    		</c:choose>
+				    	</c:if>
 	                        <span style="float: right;">
-	                        	<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/product/list?${query}';">리스트</button>
+	                        	<button type="button" class="btn btn-light" name="upButton" onclick="location.href='${pageContext.request.contextPath}/product/list?${query}';">리스트</button>
 	                        </span>
                         </div>
                     </div>

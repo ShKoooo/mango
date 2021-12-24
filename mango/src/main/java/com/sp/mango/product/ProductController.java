@@ -58,11 +58,11 @@ public class ProductController {
 		if (info != null) {
 			map.put("membership", info.getMembership());
 			listMemberAddr = service.listMemberAddr(info.getUserId());
+			memAddrCount = service.memAddrCount(info.getUserId());
 			
-			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) { 
+			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) { 
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
-				memAddrCount = service.memAddrCount(info.getUserId());
 			}
 		}		
 		map.put("pcNum", pcNum);
@@ -262,7 +262,7 @@ public class ProductController {
 		}
 		
 		int productWishCount = service.productWishCount(pNum);
-		
+		String pUpOkDate = service.pUpOkDate(pNum);
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("userProductWished", userProductWished);
@@ -271,6 +271,7 @@ public class ProductController {
 		model.addAttribute("productWishCount", productWishCount);
 		model.addAttribute("listPreport", listPreport);
 		model.addAttribute("pcNum", pcNum);
+		model.addAttribute("pUpOkDate", pUpOkDate);
 		
 		return ".product.article";
 	}
@@ -309,7 +310,6 @@ public class ProductController {
 			@RequestParam String page,
 			@RequestParam int pcNum,
 			@RequestParam String soldDateTF,
-			@RequestParam(value = "pUpdatedate", defaultValue = "") String pUpdatedate,
 			HttpSession session
 			) throws Exception {
 
@@ -319,9 +319,6 @@ public class ProductController {
 			dto.setUserId(info.getUserId());
 			if(soldDateTF.equals("거래완료")) {
 				service.updateSoldDate(dto);
-			}
-			if(pUpdatedate.equals("끌어올리기")) {
-				service.updateDate(dto);
 			}
 			
 			service.updateProduct(dto);
@@ -407,5 +404,20 @@ public class ProductController {
 		}
 		
 		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
+	}
+	
+	@RequestMapping("updateDate")
+	public String updateDate(
+			@RequestParam int pNum,
+			HttpSession session
+			) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		try {
+			service.updateDate(pNum, info.getUserId());
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/product/list"; 
 	}
 }

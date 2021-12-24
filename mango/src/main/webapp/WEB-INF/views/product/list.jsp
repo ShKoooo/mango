@@ -220,8 +220,8 @@ $(function(){
 					</select>                
 				</c:if>
 	                	
-	            <c:if test="${empty listMemberAddr || memAddrCount < 2}">
-					<a href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium;">내 동네 설정하기</a>
+	            <c:if test="${(empty listMemberAddr) || (memAddrCount < 2)}">
+				<a class="btn btn-outline-dark" href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium; text-decoration: none; margin-top: 10px; margin-left: 2.5px;">내 동네 설정</a>
 				</c:if>
 	        </div>
 	        <div>
@@ -283,10 +283,12 @@ $(function(){
 	                <div class="writeBtnTop">
 	                	<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
 	                </div>
-								
-					<div class="more-box load-more">
-						<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
-					</div>
+					
+					<c:if test="${total_page > 1}">			
+						<div class="more-box load-more">
+							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
+						</div>
+					</c:if>
 				</div>
 			</div>
 		</div>

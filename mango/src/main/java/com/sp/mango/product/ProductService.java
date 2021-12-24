@@ -11,7 +11,7 @@ public interface ProductService {
 	public List<Product> memberListProduct(Map<String, Object> map); // 회원 지정 위치 기준 반경 5km내의 판매글
 	public void updateHitCount(int pNum) throws Exception;
 	
-	public int pWishCount(int pNum); // 특정 개시글이 받은 관심 개수
+	public int pWishCount(int pNum); // 특정 게시글이 받은 관심 개수
 	
 	public void insertProductWish(Map<String, Object> map) throws Exception; // 관심 등록
 	public void deleteProductWish(Map<String, Object> map) throws Exception; // 관심 취소
@@ -30,8 +30,10 @@ public interface ProductService {
 	public List<Product> listImgFile(int pNum);
 
 	public void updateSoldDate(Product dto) throws Exception; // 판매일자 업데이트
-	public void updateDate(Product dto) throws Exception; // 게시글 끌어올리기
+	public void updateDate(int pNum, String userId) throws Exception; // 게시글 끌어올리기
 	
 	public List<ProductReport> listPreport(); // 신고항목 리스트
-	public void insertPreport(ProductReport dto) throws Exception; // 신고 등록 
+	public void insertPreport(ProductReport dto) throws Exception; // 신고 등록
+	
+	public String pUpOkDate(int pNum); // 끌올 가능한 날짜
 }

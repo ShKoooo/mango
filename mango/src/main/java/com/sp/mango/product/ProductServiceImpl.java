@@ -304,13 +304,32 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public void updateDate(Product dto) throws Exception {
+	public void updateDate(int pNum, String userId) throws Exception {
+		// 끌어올리기 기능
 		try {
-			dao.updateData("product.updateDate", dto);
+			Product dto = readProduct(pNum);
+			if(dto == null || (! dto.getUserId().equals(userId))) {
+				return;
+			}	
+					
+			dao.updateData("product.updateDate", pNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	@Override
+	public String pUpOkDate(int pNum) {
+		String result = "";
+		
+		try {
+			result = dao.selectOne("product.pUpOkDate", pNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 
 

@@ -43,6 +43,7 @@ public class Product {
 	private String area3;
 	
 	private double manner; // 글쓴이의 매너온도
+	private int pUp; // 끌올 횟수
 	
 	
 	public int getpNum() {
@@ -223,6 +224,10 @@ public class Product {
 	public void setManner(double manner) {
 		this.manner = manner;
 	}
-	
-	
+	public int getpUp() {
+		return pUp;
+	}
+	public void setpUp(int pUp) {
+		this.pUp = pUp;
+	}	
 }

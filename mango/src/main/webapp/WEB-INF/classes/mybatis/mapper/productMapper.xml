@@ -61,7 +61,8 @@
 	
 	<!-- 중고거래 글 끌어올리기 : 날짜가 업데이트 됨 -->
 	<update id="updateDate" parameterType="com.sp.mango.product.Product">
-		UPDATE product SET pUpdate_date = SYSDATE WHERE pNum=#{pNum}
+		UPDATE product SET pUpdate_date = SYSDATE, pUp = pUp+1
+		WHERE pNum=#{pNum}
 	</update>
 	
 	<!-- 중고거래 글 삭제 -->
@@ -87,8 +88,8 @@
 	<select id="memberListProduct" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT * FROM (
     		SELECT ROWNUM rnum, tb.* FROM (
-        	   SELECT p.pNum, pSubject, pPrice, TO_DATE(pRegDate, 'YYYY-MM-DD') pRegDate,
-		              TO_DATE(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, area3,
+        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD HH:MI:SS') pRegDate,
+		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
 		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName
         		FROM product p
         		JOIN area a ON p.areaNum = a.areaNum
@@ -105,7 +106,7 @@
 		                           SELECT * FROM (
 		                               SELECT areaNum,
 		                                   (6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-                              -#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+                              				-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
 		                                   AS distance
 		                                   FROM area ar
 		                               ) WHERE distance &lt;= 5    
@@ -118,6 +119,7 @@
         		ORDER BY pUpdate_date DESC
     		) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
+		order by pUpdate_date DESC
 	</select>
 	
 	<!-- 조회수 증가 --> 
@@ -145,7 +147,7 @@
 	<select id="readProduct" parameterType="Integer" resultType="com.sp.mango.product.Product">
 		SELECT p.pNum, pSubject, pStatus, pContent, pPrice, pHitCount, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
 		        TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, pSoldDate, pIsProposable, area1, area2, area3,
-		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, p.userId,
+		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, p.userId, pUp, p.areaNum,
 		        (36.5 + (0.1* NVL(manner.mannerStar, 0)) + (0.1* NVL(manner.productStar, 0)) - NVL(manner.minusDeg, 0)) AS manner
 		FROM product p
 		JOIN area a ON p.areaNum = a.areaNum
@@ -195,7 +197,11 @@
 		VALUES(reportProduct_seq.NEXTVAL, #{rpReasonNum}, #{repPrdContent, jdbcType=VARCHAR},
 				 SYSDATE, 'F', #{userId}, #{pNum})
 	</insert>
-
+	
+	<!-- 끌올가능 날짜 구하기 -->
+	<select id="pUpOkDate" parameterType="Integer" resultType="String">
+		SELECT (pRegDate + 3) pUpOkDate FROM product WHERE pNum = #{pNum}
+	</select>
 
 
 
