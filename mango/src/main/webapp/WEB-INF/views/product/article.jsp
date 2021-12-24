@@ -114,11 +114,25 @@ $(function(){
 	var afterday = "${pUpOkDate}";
 	
 	var target = document.getElementById('pUpOkBtn');
+/*
 	target.disabled = true;
 	
 	if(today2 >= afterday) {
 		target.disabled = false;
 	}
+*/	
+	if("${dto.pUp}" < 3) {
+	target.disabled = false;
+	   $("#pUpOkBtn").click(function(){
+	      if(today2 < afterday){
+	         alert("끌어올리기는 첫 게시물 등록 3일후부터 가능합니다.");
+	         target.disabled = true;
+	      } else {
+	         target.disabled = false;
+	         updateDate();
+	      }
+	   });
+	}	   
 });
 
 </script>
@@ -143,10 +157,26 @@ $(function(){
                     
                     <div class="project-infos col-md-12">                    
                         <div class="box-content">
-                            <h2 class="project-title">${dto.pSubject}</h2>
-                            <span class="project-subtitle">${dto.userNickName}</span>
-                            <span>${dto.manner} ℃</span>
-                            <span>조회수 : ${dto.pHitCount}</span>
+                        	<div>
+	                            <span style="font-size: 20px;">${dto.pSubject}</span>
+	                            <span style="float: right">조회수 : ${dto.pHitCount}</span>
+                            </div>
+                            
+                            <div>
+	                            <span>(프로필사진자리)</span>
+	                            <span>${dto.userNickName}</span> <br>
+	                            <span class="project-subtitle">${dto.area2}&nbsp;${dto.area3}</span>
+                            </div>
+                            
+                            <div style="float: right">
+                            	<span>${dto.manner} ℃</span>
+	                            <div class="progress" style="width: 110px; font-size: 10px;">
+								  <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: ${dto.manner}%">${dto.manner} ℃</div>
+								</div>
+	               
+	                            <span>매너온도</span>
+                            </div>
+                            
                             <p>${dto.pContent}</p>
                             <ul class="project-meta">
                                 
@@ -235,7 +265,7 @@ $(function(){
 					    			<button type="button" class="btn btn-light" onclick="deleteProduct();">삭제</button>
 					    			
 					    			<c:if test="${dto.pUp < 3}">
-					    				<button type="button" id="pUpOkBtn" class="btn btn-light" onclick="updateDate();">끌어올리기</button>
+					    				<button type="button" id="pUpOkBtn" class="btn btn-light">끌어올리기</button>
 					    			</c:if>
 					    		</c:when>
 				    		</c:choose>
