@@ -263,7 +263,7 @@ $(function(){
 	        <div class="col-md-6 service-item service-left">
 	            <div class="box-content">
 	                <div class="service-icon">
-	                    <a href="${pageContext.request.contextPath}/cscenter/csNotice" style="text-decoration-line: none;"><i class="li_heart"></i></a>
+	                    <a href="${pageContext.request.contextPath}/csEvent/event" style="text-decoration-line: none;"><i class="li_heart"></i></a>
 	                </div>
 	                <div class="service-content">
 	                    <h4 id="sub-title">이벤트</h4>

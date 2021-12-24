@@ -1,4 +1,4 @@
-package com.sp.mango.csQna;
+package com.sp.mango.csEvent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,55 +18,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
 
-@Controller("csQna.qnaController")
-@RequestMapping("/csQna/*")
-public class QnaController {
+@Controller("csEvent.eventController")
+@RequestMapping("/csEvent/*")
+public class EventController {
 	
 	@Autowired
-	private QnaService service;
+	private EventService service;
 	
 	@Autowired
 	private MyUtil myUtil;
 	
 	
-	@RequestMapping(value = "qna")
-	public String main(
-			@RequestParam(value = "pageNo", defaultValue = "1") int current_page,
-			Model model
-			) throws Exception {
+	@RequestMapping(value = "event")
+	public String main(Model model) throws Exception {
 		
-		Map<String, Object> map = new HashMap<String, Object>();
-		
-		List<Qna> listCategory = service.listCategory(map);
-		
-		model.addAttribute("listCategory", listCategory);
-		model.addAttribute("categoryNum", 0);
-		model.addAttribute("pageNo", current_page);
-		
-		
-		return ".csQna.qna";
+		return ".csEvent.event";
 	}
 	
 	@RequestMapping(value = "write", method = RequestMethod.GET)
 	public String writeForm(Model model) throws Exception {
 
-		
-		Map<String, Object> map = new HashMap<>();
-		List<Qna> listCategory = service.listCategory(map);
-
-		// map.put("mode", "all");
-		// List<Faq> listAllCategory=service.listCategory(map);
-
 		model.addAttribute("pageNo", "1");
 		model.addAttribute("mode", "write");
-		model.addAttribute("listCategory", listCategory);
-		// model.addAttribute("listAllCategory", listAllCategory);
 
-		return ".csQna.write";
+		return ".csEvent.write";
 	}
 	
 	@RequestMapping(value = "write", method = RequestMethod.POST)
-	public String writeSubmit(Qna dto, HttpSession session) throws Exception {
+	public String writeSubmit(Event dto, HttpSession session) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
@@ -74,14 +53,14 @@ public class QnaController {
 			
 			if(info.getMembership() > 50) {
 				dto.setUserId(info.getUserId());
-				service.insertFaq(dto);
+				service.insertEvent(dto);
 				
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		
-		return "redirect:/csQna/qna?pageNo=1";
+		return "redirect:/csEvent/event?pageNo=1";
 	}
 	
 	
@@ -114,12 +93,13 @@ public class QnaController {
 		map.put("start", start);
 		map.put("end", end);
 		
-		List<Qna> list = service.listFaq(map);
+		List<Event> list = service.listEvent(map);
+		
+		
 		int listNum, n = 0;
-		for (Qna dto : list) {
+		for (Event dto : list) {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
-			n++;
 
 			// dto.setFaqContent(myUtil.htmlSymbols(dto.getFaqContent()));
 		}
@@ -133,24 +113,24 @@ public class QnaController {
 		model.addAttribute("paging", paging);
 		model.addAttribute("categoryNum", categoryNum);
 		
-		return "csQna/list";
+		return "csEvent/list";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.GET)
 	public String updateForm(
-			@RequestParam int faqNum,
+			@RequestParam int num,
 			@RequestParam String pageNo,
 			HttpSession session,
 			Model model
 			) throws Exception {
 		
-		Qna dto = service.readFaq(faqNum);
+		Event dto = service.readEvent(num);
 		if(dto == null) {
-			return "redirect:/csQna/qna?pageNo=" + pageNo;
+			return "redirect:/csEvent/event?pageNo=" + pageNo;
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		List<Qna> listCategory = service.listCategory(map);
+		List<Event> listCategory = service.listCategory(map);
 		
 		model.addAttribute("mode", "update");
 		model.addAttribute("pageNo", pageNo);
@@ -158,13 +138,13 @@ public class QnaController {
 		model.addAttribute("listCategory", listCategory);
 		
 		
-		return ".csQna.write";
+		return ".csEvent.write";
 	}
 	
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
 	@ResponseBody
 	public void delete(
-			@RequestParam int faqNum,
+			@RequestParam int num,
 			HttpSession session
 			) throws Exception {
 		
@@ -173,9 +153,9 @@ public class QnaController {
 		if(info.getMembership() > 50) {
 			try {
 				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("faqNum", faqNum);
+				map.put("num", num);
 				
-				service.deleteFqa(map);
+				service.deleteEvent(map);
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
@@ -183,6 +163,5 @@ public class QnaController {
 	
 	}
 	
-
 
 }
