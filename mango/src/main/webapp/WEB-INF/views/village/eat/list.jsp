@@ -48,8 +48,8 @@ $(function() {
 	<div class="inner-container container">
 		<div class="row">
 			<div class="section-header col-md-12">
-				<h2>동네 질문</h2>
-				<span>Village QNA</span>
+				<h2>동네 맛집</h2>
+				<span>Village EAT</span>
 			</div>
 		</div> <!-- row -->
 	<div class="projects-holder">
@@ -107,7 +107,7 @@ $(function() {
 					</div>
 					
 					<div class="col-6 text-center">
-						<form class="row" name="searchForm" action="${pageContext.request.contextPath}/village/qna/list" method="post">
+						<form class="row" name="searchForm" action="${pageContext.request.contextPath}/village/eat/list" method="post">
 							<div class="col-auto p-1">
 								<select name="condition" class="form-select">
 									<option value="all" ${condition=="all"?":selected='selected'":""}>제목+내용</option>
@@ -129,7 +129,7 @@ $(function() {
 					</div>
 					
 					<div class="col text-end">
-						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/qna/write';">글쓰기</button>
+						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/eat/write';">글쓰기</button>
 					</div>
 				</div>
 			</div>

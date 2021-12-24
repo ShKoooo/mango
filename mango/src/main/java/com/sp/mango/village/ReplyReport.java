@@ -2,7 +2,7 @@ package com.sp.mango.village;
 
 public class ReplyReport {
 	private int vrReportNum; // 리플 신고번호
-	private int vReplyNum; // 리플 번호
+	private int vreplyNum; // 리플 번호
 	private int vrrReasonNum; // 신고 사유 번호
 	private String vrrReasonName; // 신고 사유 항목
 	private String userId; // 신고자 아이디
@@ -16,11 +16,11 @@ public class ReplyReport {
 	public void setVrReportNum(int vrReportNum) {
 		this.vrReportNum = vrReportNum;
 	}
-	public int getvReplyNum() {
-		return vReplyNum;
+	public int getVreplyNum() {
+		return vreplyNum;
 	}
-	public void setvReplyNum(int vReplyNum) {
-		this.vReplyNum = vReplyNum;
+	public void setVreplyNum(int vreplyNum) {
+		this.vreplyNum = vreplyNum;
 	}
 	public int getVrrReasonNum() {
 		return vrrReasonNum;

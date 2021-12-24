@@ -1,21 +1,24 @@
-package com.sp.mango.village;
+package com.sp.mango.village.eat;
 
-public class Village {
+public class VillageEat {
 	private int listNum;
 	
 	private int vNum;
 	private String userId;
 	private String userNickName;
 	private String subject;
+	private String content;
 	private String reg_date;
 	private int hitCount;
 	
 	private int replyCount;
+	private int boardLikeCount;
 	
 	private int categoryNum;
-	private String cateogry;
+	private String category;
 	
 	private int areaNum;
+	private String addr2;
 	private double vBlat;
 	private double vBlon;
 	
@@ -61,6 +64,14 @@ public class Village {
 		this.subject = subject;
 	}
 
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
 	public String getReg_date() {
 		return reg_date;
 	}
@@ -85,6 +96,14 @@ public class Village {
 		this.replyCount = replyCount;
 	}
 
+	public int getBoardLikeCount() {
+		return boardLikeCount;
+	}
+
+	public void setBoardLikeCount(int boardLikeCount) {
+		this.boardLikeCount = boardLikeCount;
+	}
+
 	public int getCategoryNum() {
 		return categoryNum;
 	}
@@ -93,12 +112,12 @@ public class Village {
 		this.categoryNum = categoryNum;
 	}
 
-	public String getCateogry() {
-		return cateogry;
+	public String getCategory() {
+		return category;
 	}
 
-	public void setCateogry(String cateogry) {
-		this.cateogry = cateogry;
+	public void setCategory(String category) {
+		this.category = category;
 	}
 
 	public int getAreaNum() {
@@ -107,6 +126,14 @@ public class Village {
 
 	public void setAreaNum(int areaNum) {
 		this.areaNum = areaNum;
+	}
+
+	public String getAddr2() {
+		return addr2;
+	}
+	
+	public void setAddr2(String addr2) {
+		this.addr2 = addr2;
 	}
 
 	public double getvBlat() {
@@ -132,6 +159,6 @@ public class Village {
 	public void setMaAddr1(String maAddr1) {
 		this.maAddr1 = maAddr1;
 	}
-	
+
 	
 }

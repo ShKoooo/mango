@@ -1,21 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="qna">
+<mapper namespace="eat">
 
-	<insert id="insertBoard" parameterType="com.sp.mango.village.qna.VillageQna">
-		INSERT INTO village_bbs(vNum, userId, subject, content, hitCount, regDate, 
-				vcNum, areaNum, addr2, vBlat, vBlon)
-		VALUES (village_bbs_seq.NEXTVAL, #{userId}, #{subject}, #{content}, 0, SYSDATE, 
-		1, #{areaNum}, #{addr2, jdbcType=VARCHAR}, #{vBlat, jdbcType=DOUBLE}, #{vBlon, jdbcType=DOUBLE})
+	<insert id="insertBoard" parameterType="com.sp.mango.village.eat.VillageEat">
+		INSERT INTO village_bbs(vNum, userId, subject, content, hitCount, regDate,
+			vcNum, areaNum, addr2, vBlat, vBlon)
+		VALUES (village_bbs_seq.NEXTVAL, #{userId}, #{subject}, #{content}, 0, SYSDATE,
+			2, #{areaNum}, #{addr2, jdbcType=VARCHAR}, #{vBlat, jdbcType=DOUBLE}, #{vBlon, jdbcType=DOUBLE})
 	</insert>
-	
-	<!-- 이미지 첨부
-	<insert id="insertImg" parameterType="com.sp.mango.village.qna.VillageQna">
-		INSERT INTO villageImg (vimgNum, vimgSaveFilename, vimgOrigFilename, vNum)
-		VALUES (villageImg_seq.NEXTVAL, #{vimgSaveFilename}, #{vimgOrigFilename}, 1)
-	</insert>
-	-->
 	
 	<sql id="where-list">
 		<choose>
@@ -32,14 +25,13 @@
 		</choose>
 	</sql>
 	
-	
 	<select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
 		FROM village_bbs v
 		JOIN area a ON v.areaNum = a.areaNum
 		JOIN member m ON v.userId = m.userId
 		<where>
-		vcNum = 1
+		vcNum = 2
 			<if test="keyword!=null and keyword!='' ">
 				AND <include refid="where-list"/>
 			</if>
@@ -62,7 +54,7 @@
 			</if>			
 		</where>
 	</select>
-
+	
 	<!-- 회원이 등록한 주소 및 주소가 속한 지역 -->
 	<select id="listMemberAddr" parameterType="String" resultType="com.sp.mango.village.MemberAddr">
 		SELECT maNum, maLat, maLon, maAddr1, maAddr2, a.areaNum, a.area1, a.area2, a.area3, a.aLat, a.aLon
@@ -72,7 +64,7 @@
 	</select>
 	
 	<!-- 게시글 리스트 : 전체 -->
-	<select id="listBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+	<select id="listBoard" parameterType="map" resultType="com.sp.mango.village.eat.VillageEat">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT vNum, v.userId, userNickName, subject,
@@ -82,7 +74,7 @@
 				JOIN area a ON v.areaNum = a.areaNum
 				JOIN member m ON v.userId = m.userId
 				<where>
-				vcNum = 1
+				vcNum = 2
 					<if test="keyword != null and keyword != ''">
 						AND <include refid="where-list"/>
 					</if>
@@ -93,7 +85,7 @@
 	</select>
 	
 	<!-- 게시글 리스트(회원) : 회원 지정 위치 기준 반경 5km 게시글-->
-	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.eat.VillageEat">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT vNum, v.userId, userNickName, subject,
@@ -103,7 +95,7 @@
 				JOIN area a ON v.areaNum = a.areaNum
 				JOIN member m ON v.userId = m.userId
 				<where>
-				vcNum = 1 
+				vcNum = 2
 					<if test="keyword != null and keyword != ''">
 						AND <include refid="where-list"/>
 					</if>
@@ -130,7 +122,7 @@
 		SELECT COUNT(maAddr1) FROM memberAddr WHERE userId=#{userId}
 	</select>
 	
-	<select id="readBoard" parameterType="Integer" resultType="com.sp.mango.village.qna.VillageQna">
+	<select id="readBoard" parameterType="Integer" resultType="com.sp.mango.village.eat.VillageEat">
 		SELECT v.vNum, v.userId, userNickName, subject, areaNum,
 			content, TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, hitCount,
 			NVL(boardLikeCount, 0) boardLikeCount
@@ -147,90 +139,34 @@
 		UPDATE village_bbs SET hitCount=hitCount+1 WHERE vNum=#{vNum}
 	</update>
 	
-	<!-- 이전글, 다음글 -->
-	<select id="preReadBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
-		SELECT * FROM (
-			SELECT vNum, subject
-			FROM village_bbs v
-			JOIN member m ON v.userId = m.userId
-			<where>
-			vcNum = 1
-				<if test="keyword != null and keyword != '' ">
-					AND <include refid="where-list"/>
-				</if>
-				
-				
-				<if test="info == true">
-				AND v.areaNum IN (
-					SELECT areaNum
-					FROM (
-						SELECT * FROM (
-							SELECT areaNum,
-								(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-		                        -#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
-		                        AS distance
-		                        FROM area ar
-		                    ) WHERE distance &lt;= 5   
-						)
-					)
-				</if>
-			
-				AND (vNum &lt; #{vNum})
-			</where>
-			ORDER BY vNum DESC
-		) WHERE ROWNUM = 1
-	</select>
-	
-	<select id="nextReadBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
-		SELECT * FROM (
-			SELECT vNum, subject
-			FROM village_bbs v
-			JOIN member m ON v.userId = m.userId
-			<where>
-				<if test="keyword != null and keyword != '' ">
-					<include refid="where-list"/>
-				</if>
-				AND (vNum &gt; #{vNum})
-			</where>
-			ORDER BY vNum ASC
-		) WHERE ROWNUM = 1
-	</select>
-	
-	
-	<update id="updateBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+	<update id="updateBoard" parameterType="com.sp.mango.village.eat.VillageEat">
 		UPDATE village_bbs SET subject=#{subject}, content=#{content}, areaNum=#{areaNum},
 			vBlat=#{vBlat, jdbcType=DOUBLE}, vBlon=#{vBlon, jdbcType=DOUBLE}
 		WHERE vNum = #{vNum}
 	</update>
 	
-	<delete id="deleteBoard" parameterType="com.sp.mango.village.qna.VillageQna">
+	<delete id="deleteBoard" parameterType="com.sp.mango.village.eat.VillageEat">
 		DELETE FROM village_bbs WHERE vNum = #{vNum}
 	</delete>
-
-	<!-- 좋아요 추가 -->
+	
+	
 	<insert id="insertBoardLike" parameterType="map">
 		INSERT INTO vbbsLike(vNum, userId) VALUES (#{vNum}, #{userId})
 	</insert> 
 	
-	<!-- 좋아요 삭제 -->
 	<delete id="deleteBoardLike" parameterType="map">
 		DELETE FROM vbbsLike WHERE vNum = #{vNum} AND userId = #{userId}
 	</delete>
 	
-	<!-- 게시글 좋아요 개수 -->
 	<select id="boardLikeCount" parameterType="Integer" resultType="Integer">
 		SELECT COUNT(*) FROM vbbsLike WHERE vNum=#{vNum}
 	</select>
 	
-	<!-- 게시글 좋아요 여부 -->
-	<select id="userBoardLiked" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+	<select id="userBoardLiked" parameterType="map" resultType="com.sp.mango.village.eat.VillageEat">
 		SELECT vNum, userId FROM vbbsLike WHERE vNum = #{vNum} AND userId = #{userId}
 	</select>
 	
-	
-	
-	<!-- 댓글 -->
-	<insert id="insertReply" parameterType="com.sp.mango.village.qna.Reply">
+	<insert id="insertReply" parameterType="com.sp.mango.village.eat.Reply">
 		INSERT INTO vbbsReply(vreplyNum, vNum, userId, vrContent, vrAnswer, vrRegdate)
 		VALUES (vbbsReply_seq.NEXTVAL, #{vNum}, #{userId}, #{vrContent}, #{vrAnswer}, SYSDATE)
 	</insert>
@@ -240,8 +176,7 @@
 		WHERE vNum=#{vNum} AND vrAnswer = 0
 	</select>	
 	
-	<!-- 댓글 리스트 -->
-	<select id="listReply" parameterType="map" resultType="com.sp.mango.village.qna.Reply">
+	<select id="listReply" parameterType="map" resultType="com.sp.mango.village.eat.Reply">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT v.vreplyNum, v.userId, userNickName, vNum, vrContent, v.vrRegdate,
@@ -264,17 +199,16 @@
 			) tb WHERE ROWNUM &lt;=#{end}
 		) WHERE rnum &gt;=#{start}
 	</select>
-
-	<delete id = "deleteReply" parameterType="map">
+	
+	<delete id="deleteReply" parameterType="map">
 		DELETE FROM vbbsReply
 		WHERE vreplyNum=#{vreplyNum}
 		<if test="mode=='reply'">
-			OR vrAnswer=#{vreplyNum}
+			OR vrAnswer=#{replyNum}
 		</if>
 	</delete>
 	
-	<!-- 댓글의 답글리스트 -->
-	<select id="listReplyAnswer" parameterType="Integer" resultType="com.sp.mango.village.qna.Reply">
+	<select id="listReplyAnswer" parameterType="Integer" resultType="com.sp.mango.village.eat.Reply">
 		SELECT vreplyNum, vNum, v.userId, userNickName, vrContent, vrRegdate, vrAnswer
 		FROM vbbsReply v
 		JOIN member m ON v.userId = m.userId
@@ -282,48 +216,8 @@
 		ORDER BY vreplyNum DESC
 	</select>
 	
-	<!-- 댓글의 답글 개수 -->
 	<select id="replyAnswerCount" parameterType="Integer" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
 		FROM vbbsReply WHERE vrAnswer = #{vrAnswer}
 	</select>
-	
-	<!-- 좋아요 싫어요 추가 -->
-	<insert id="insertReplyLike" parameterType="map">
-		INSERT INTO  vbbsReplyLike(vreplyNum, userId, replyLike)
-		VALUES (#{vreplyNum}, #{userId}, #{replyLike})
-	</insert>
-	
-	<!-- 좋아요/싫어요 개수 -->
-	<select id="replyLikeCount" parameterType="map" resultType="map">
-		SELECT COUNT(DECODE(replyLike, 1, 1)) likeCount,
-			   COUNT(DECODE(replyLike, 0, 1)) disLikeCount
-		FROM vbbsReplyLike WHERE vreplyNum = #{vreplyNum}
-	</select>
-	
-	<!-- 신고사유 -->
-	<select id="listVreport" resultType="com.sp.mango.village.VillageReport">
-		SELECT * FROM vbbsReport_reason	
-	</select>
-	
-	<!-- 신고하기 -->
-	<insert id="insertVreport" parameterType="com.sp.mango.village.VillageReport">
-		INSERT INTO vbbsReport (vNum, userId, vbbsRepNum, vrReasonNum, vbbsRepContent, 
-			vbbsRepRegDate, vbbsRepChecked)
-		VALUES (#{vNum}, #{userId}, vbbsReport_seq.NEXTVAL, #{vrReasonNum}, #{vbbsRepContent, jdbcType=VARCHAR},
-			SYSDATE, 'F')
-	</insert>
-	
-	<!-- 댓글 신고 사유 -->
-	<select id="listVRreport" resultType="com.sp.mango.village.ReplyReport">
-		SELECT * FROM vbbsReplyReport_reason
-	</select>
-	
-	<!-- 댓글 신고 -->
-	<insert id="insertVRreport" parameterType="com.sp.mango.village.ReplyReport">
-		INSERT INTO vbbsReplyReport (vreplyNum, userId, vrReportNum, vrrReasonNum, vrReportContent, 
-			vrReportRegDate, vrReportChecked)
-		VALUES ( #{vreplyNum}, #{userId}, vbbsReplyReport_seq.NEXTVAL, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR},
-			SYSDATE, 'F') 
-	</insert>
 </mapper>

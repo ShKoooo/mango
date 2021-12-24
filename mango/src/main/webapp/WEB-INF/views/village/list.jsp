@@ -5,7 +5,9 @@
 
 <style type="text/css">
 
-
+.table {
+	width: 95%
+}
 
 .section-header {
 	margin-top : 60px;
@@ -51,6 +53,26 @@ a:hover, a:active {
 
 
 </style>
+<script type="text/javascript">
+
+$(function() {
+	
+	$("#selectArea").change( function() {
+		// 주소 바꿨을 때 좌표 영역에 값 세팅
+		var maLat = $("#selectArea option:selected").attr("data-maLat");
+		var maLon = $("#selectArea option:selected").attr("data-maLon");
+		
+		var f = document.searchForm;
+		f.maLat.value = maLat;
+		f.maLon.value = maLon;
+		f.areaNum.value = $(this).val();
+		searchList()
+	});
+	
+});
+
+</script>
+
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100">
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,400italic,300italic,300,500,500italic,700,900">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
@@ -68,6 +90,25 @@ a:hover, a:active {
 		<div class="col-12">
 			<div class="row">
 				<div class="col-md-12 project-item">
+					<c:if test="${! empty sessionScope.member}">
+				    	<div style="width: 120px; float: right;">
+							<c:if test="${! empty listMemberAddr || memAddrCount == 2}">
+								<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01"> 
+									<c:forEach var="vo" items="${listMemberAddr}">
+										<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>
+									</c:forEach>
+								</select>                
+							</c:if>
+				                	
+				            <c:if test="${empty listMemberAddr || memAddrCount < 2}">
+								<a href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium;">내 동네 설정하기</a>
+							</c:if>
+				        </div>
+				        <div>
+							<input type="hidden" name="maLat" id="maLat" value="${vo.maLat}">
+							<input type="hidden" name="maLon" id="maLon" value="${vo.maLon}">
+						</div>
+			       	</c:if>
 					<ul class="nav nav-tabs">
 					  <li class="nav-item">
 					    <a class="nav-link active" data-bs-toggle="tab" href="#qna">동네 질문</a>
@@ -82,10 +123,28 @@ a:hover, a:active {
 					    <a class="nav-link" data-bs-toggle="tab" href="#withme">같이해요</a>
 					  </li>
 					</ul>
+
 					
 					<!-- Tab panes -->
 					<div class="tab-content">
-					  <div class="tab-pane container active" id="qna">동네질문게시판 리스트 (희망사항)</div>
+					  <div class="tab-pane container active" id="qna">
+						<table class="table table-hover board-list">
+							<tbody>
+								<c:forEach var="qnadto" items="${listqna}">
+									<tr style="text-align: center">
+										<td>1</td>
+										<td style="text-align: left;">
+											<a href="${articleUrl}&vNum=${qnadto.vNum}&areaNum=${areaNum}" class="text-reset">제목</a>
+											<c:if test="${qnadto.replyCount!=0}">(${qnadto.replyCount})</c:if>
+										</td>
+										<td> 이름 </td>
+										<td> 작성일 </td>
+										<td> 조회수 </td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
 					  <div class="tab-pane container " id="eat">동네맛집게시판 리스트</div>
 					  <div class="tab-pane container " id="helpme">해주세요게시판 리스트</div>
 					  <div class="tab-pane container " id="withme">같이해요게시판 리스트</div>
