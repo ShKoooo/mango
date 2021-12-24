@@ -201,9 +201,9 @@
 			</if>
 			AND
 			receiveId = #{userId}
-			AND (
-			    (isSendDelete != 'T' AND noteReadDate IS NULL)
-			    OR (isRecDelete != 'T')
+			AND NOT (
+			    (isSendDelete != 'F' AND noteReadDate IS NULL)
+			    OR (isRecDelete != 'F')
 			)
 		</where>
 		ORDER BY userNickName
@@ -226,8 +226,7 @@
 			AND
 			sendId = #{userId}
 			AND (
-			    (isSendDelete != 'T' AND noteReadDate IS NULL)
-			    OR (isRecDelete != 'T')
+			    isSendDelete = 'F'
 			)
 		</where>
 		ORDER BY userNickName
@@ -245,12 +244,20 @@
 					</if>
 					AND
 					(
-			            (receiveId = #{meId} AND sendId = #{youId})
-			            OR
-			            (receiveId = #{youId} AND sendId = #{meId})
-			       	) AND (
-					    (isSendDelete != 'T' AND noteReadDate IS NULL)
-					    OR (isRecDelete != 'T')
+				        (receiveId = #{meId} AND sendId = #{youId} AND (  
+				            	NOT (
+						            isRecDelete != 'F'
+						            OR
+						            (
+						                noteReadDate IS NULL
+						                AND
+						                isSendDelete != 'F'
+						            )
+						        )
+				            )
+				        )
+				        OR
+				        (receiveId = #{youId} AND sendId = #{meId} AND isSendDelete != 'T')
 					)
 				</where>	
 		        ORDER BY noteRegDate DESC
@@ -263,14 +270,19 @@
 		FROM note n
 		JOIN member m ON n.receiveId = m.userId
 		WHERE
-		    (
-		        (receiveId = #{meId} AND sendId = #{youId})
-		        OR
-		        (receiveId = #{youId} AND sendId = #{meId})
-		    ) AND (
-		        (isSendDelete != 'T' AND noteReadDate IS NULL)
-		        OR (isRecDelete != 'T')
-		    )
+	        receiveId = #{meId} AND sendId = #{youId} AND (  
+	            NOT (
+		            isRecDelete != 'F'
+		            OR
+		            (
+		                noteReadDate IS NULL
+		                AND
+		                isSendDelete != 'F'
+		            )
+		        )
+	        )
+	        OR
+	        (receiveId = #{youId} AND sendId = #{meId} AND isSendDelete != 'T')
 		ORDER BY noteRegDate DESC
 	</select>
 	
@@ -280,11 +292,31 @@
 	</insert>
 	
 	<update id="updateNoteReadDate" parameterType="map">
-	UPDATE note SET noteReadDate = SYSDATE
-	WHERE
-		receiveId = #{meId}
-	    AND sendId = #{youId}
-	    AND noteReadDate IS NULL
-	    AND isSendDelete != 'T'
+		UPDATE note SET noteReadDate = SYSDATE
+		WHERE
+			receiveId = #{meId}
+		    AND sendId = #{youId}
+		    AND noteReadDate IS NULL
+		    AND isSendDelete != 'T'
+	</update>
+	
+	<update id="updateSendDelete" parameterType="map">
+		UPDATE note SET isSendDelete = 'T'
+			WHERE noteNum = #{noteNum}
+	</update>
+	
+	<update id="updateReceiveDelete" parameterType="map">
+		UPDATE note SET isRecDelete = 'T'
+			WHERE noteNum = #{noteNum}
+	</update>
+	
+	<update id="updateUserAllDelete" parameterType="map">
+		UPDATE note SET ${isSendOrRec}='T'
+			WHERE sendId=#{sendId} AND receiveId=#{receiveId}
+	</update>
+	
+	<update id="updateEntireMyNoteDelete" parameterType="map">
+		UPDATE note SET ${isSendOrRec}='T'
+			WHERE ${sendOrRecId}=#{meId}
 	</update>
 </mapper>

@@ -8,15 +8,26 @@
 	max-width: 640px;
 }
 
+.mybox-sender-color {
+	background-color: #FFE08C;
+}
+
+.mybox-receiver-color {
+	background-color: #CEF279;
+}
+
 .mybox-mango {
-	background-color: #ffebb5;
 	border-radius: 20px;
 	max-width: 400px;
+}
+
+.delete-one-msg:hover {
+	color: red;
 }
 </style>
 
 <script type="text/javascript">
-
+// background-color: #ffebb5;
 function login() {
 	location.href="${pageContext.request.contextPath}/member/login";
 }
@@ -77,6 +88,69 @@ $(function() {
 		ajaxFun(url, "post", query, "json", fn);
 	});
 });
+
+$(function() {
+	$("body").on("click",".delete-one-msg", function() {
+		if (!confirm("메시지를 삭제하겠습니까?")) {
+			return false;
+		}
+		
+		var noteNum = $(this).attr('data-noteNum');
+		var sendId = $(this).attr('data-sender');
+		var receiveId = $(this).attr('data-receiver');
+		var meId = '${sessionScope.member.userId}';
+		
+		var url = "${pageContext.request.contextPath}/mypage/deleteNoteMsg";
+		var query = "noteNumStr="+noteNum+"&meId="+meId+"&sendId="+sendId+"&receiveId="+receiveId;
+		
+		var fn = function(data) {
+			var state = data.state;
+			if (state==="true") {
+				location.href = "${pageContext.request.contextPath}/mypage/notenote?youNick=${youNick}";
+				location.reload();
+			} else if (state === "unAuthorizedAccess") {
+				alert("채팅 삭제가 정상적으로 이루어지지 않았습니다. [오류코드 01]");
+			} else if (state === "numberFormatException") {
+				alert("채팅 삭제가 정상적으로 이루어지지 않았습니다. [오류코드 02]");
+			} else {
+				alert("채팅 삭제가 정상적으로 이루어지지 않았습니다. [오류코드 99]");
+			}
+		}
+		
+		ajaxFun(url, "post", query, "json", fn);
+	});
+});
+
+$(function() {
+	$("body").on("click",".delete-user-msg", function() {
+		var confirmMsg = "${youNick} 님과의 모든 메시지를 삭제하시겠습니까?";
+		if (!confirm(confirmMsg)) {
+			return false;
+		}
+		
+		var meId = '${sessionScope.member.userId}';
+		var youId = $(this).attr("data-youId");
+		
+		var url = "${pageContext.request.contextPath}/mypage/deleteNoteUser";
+		var query = "youId="+youId+"&meId="+meId;
+		
+		console.log(url+"?"+query);
+		
+		var fn = function(data) {
+			var state = data.state;
+			if (state==="true") {
+				location.href = "${pageContext.request.contextPath}/mypage/notenote?youNick=${youNick}";
+				location.reload();
+			} else if (state === "unAuthorizedAccess") {
+				alert("채팅 삭제가 정상적으로 이루어지지 않았습니다. [오류코드 01]");
+			} else {
+				alert("채팅 삭제가 정상적으로 이루어지지 않았습니다. [오류코드 99]");
+			}
+		}
+		
+		ajaxFun(url, "post", query, "json", fn);
+	});
+});
 </script>
 
 <div class="container">
@@ -87,9 +161,11 @@ $(function() {
 					<h3><i class="bi bi-app"></i> ${youNick} 님과의 쪽지 </h3>
 				</div>
 				<div class="col-auto">
-					<button type="button" class="btn btn-outline-primary"><i class="icofont-refresh"></i></button>
+					<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${youNick}'"><i class="icofont-refresh"></i></button>
 					&nbsp;
-					<button type="button" class="btn btn-outline-danger"><i class="icofont-bin"></i></button>
+					<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-arrow-left"></i></button>
+					&nbsp;
+					<button type="button" title="전체삭제" class="btn btn-outline-danger delete-user-msg" data-youId="${youId}"><i class="icofont-bin"></i></button>
 				</div>
 			</div>
 		</div>
@@ -100,14 +176,9 @@ $(function() {
 					<textarea class="form-control" name="content" style="height: 120px; resize: none;"></textarea>
 					<br>
 					<div class="row">
-						<div class="col-md-6">
-							<button class="btn btn-primary btnSend" type="button" id="sendBtn">
-								전송
-							</button>
-						</div>
-						<div class="col-md-6 text-right">
-							<button class="btn btn-danger" type="button" id="gobackBtn" onclick="location.href='${pageContext.request.contextPath}/mypage/note'">
-								뒤로가기
+						<div class="col text-right">
+							<button title="전송" class="btn btn-primary btnSend text-center" type="button" id="sendBtn">
+								<i class="icofont-paper-plane"></i>
 							</button>
 						</div>
 					</div>
@@ -127,13 +198,16 @@ $(function() {
 							<div class="row mb-3">
 								<c:if test="${dto.sendId == sessionScope.member.userId}">
 									<div class="col-auto me-auto">&nbsp;</div>
-									<div class="col-auto p-3 mybox-mango">
+									<div class="col-auto p-3 mybox-mango mybox-sender-color">
 										<p class="text-right">
 											${dto.noteRegDate}&nbsp;(${dto.timeMsg})
 										</p>
 										<hr>
 										${dto.noteContent}
-										<p class="text-right mb-0">
+										<p class="text-right mb-0 delete-one-msg"
+											data-notenum="${dto.noteNum}"
+											data-sender="${dto.sendId}"
+											data-receiver="${dto.receiveId}">
 											<i class="icofont-close"></i>
 										</p>
 									</div>
@@ -142,13 +216,16 @@ $(function() {
 									</c:if>
 								</c:if>
 								<c:if test="${dto.receiveId == sessionScope.member.userId}">
-									<div class="col-auto me-auto p-3 mybox-mango">
+									<div class="col-auto me-auto p-3 mybox-mango mybox-receiver-color">
 										<p class="text-right">
 											${dto.noteRegDate}&nbsp;(${dto.timeMsg})
 										</p>
 										<hr>
 										${dto.noteContent}
-										<p class="text-right mb-0">
+										<p class="text-right mb-0 delete-one-msg"
+											data-notenum="${dto.noteNum}"
+											data-sender="${dto.sendId}"
+											data-receiver="${dto.receiveId}">
 											<i class="icofont-close"></i>
 										</p>
 									</div>

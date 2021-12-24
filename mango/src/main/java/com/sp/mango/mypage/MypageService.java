@@ -39,4 +39,8 @@ public interface MypageService {
 	public void insertNote(Map<String, Object> map) throws Exception;
 	public int getBlockCount(String userId) throws Exception;
 	public void updateNoteReadDate(Map<String, Object> map) throws Exception;
+	public void updateSendDelete(Map<String,Object> map) throws Exception;
+	public void updateReceiveDelete(Map<String,Object> map) throws Exception;
+	public void updateUserAllDelete(Map<String,Object> map) throws Exception;
+	public void updateEntireMyNoteDelete(Map<String,Object> map) throws Exception;
 }

@@ -538,6 +538,7 @@ public class MypageController {
 		return "redirect:/mypage/mykeyword";
 	}
 	
+	// 쪽지
 	@RequestMapping(value="note")
 	public String note(
 			HttpSession session,
@@ -780,6 +781,12 @@ public class MypageController {
 			return model;
 		}
 		
+		if (sendId.equals(receiveId)) {
+			model.put("state", "false");
+			model.put("message", "자기 자신에게는 쪽지를 전송할 수 없습니다.");
+			return model;
+		}
+		
 		List<BlockedUser> blockList = service.listBlockedUser(userId);
 		for (BlockedUser dto:blockList) {
 			if (dto.getTarget_id().equals(receiveId)) {
@@ -803,6 +810,177 @@ public class MypageController {
 		
 		model.put("state","true");
 		model.put("message", "메시지 전송 성공");
+		return model;
+	}
+	
+	@RequestMapping(value="sendNoteAtMain", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> sendNoteAtMain(
+			@RequestParam String sendId,
+			@RequestParam String targetNickName,
+			@RequestParam String content,
+			HttpSession session
+			) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userId = memberInfo.getUserId();
+		if (!userId.equals(sendId)) {
+			model.put("state", "unAuthorizedAccess"); 		// ErrCode 01
+			return model;
+		}
+		
+		try {
+			String receiveId = service.readUserIdByNickName(targetNickName);
+			
+			if (receiveId==null || receiveId.equals("")) {
+				model.put("state","nickNameNotFound");
+				return model;
+			}
+			
+			if (sendId.equals(receiveId)) {
+				model.put("state", "selfSendErr");
+				return model;
+			}
+			
+			List<BlockedUser> blockList = service.listBlockedUser(userId);
+			for (BlockedUser dto:blockList) {
+				if (dto.getTarget_id().equals(receiveId)) {
+					model.put("state", "blockReceiverException");
+					return model;
+				}
+			}
+			
+			Map<String, Object> mapperMap = new HashMap<String, Object>();
+			mapperMap.put("sendId", sendId);
+			mapperMap.put("receiveId", receiveId);
+			mapperMap.put("noteContent", content);
+			
+			service.insertNote(mapperMap);
+			
+		} catch (Exception e) {
+			model.put("state", "error"); 					// ErrCode 99
+			return model;
+		}
+		
+		
+		model.put("state", "true");
+		return model;
+	}
+	
+	@RequestMapping(value="deleteNoteMsg", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> deleteNoteMsg(
+			@RequestParam String noteNumStr,
+			@RequestParam String sendId,
+			@RequestParam String receiveId,
+			@RequestParam String meId,
+			HttpSession session
+			) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userId = memberInfo.getUserId();
+		if (!userId.equals(meId)) {
+			model.put("state", "unAuthorizedAccess");
+			return model;
+		}
+		
+		try {
+			int noteNum = Integer.parseInt(noteNumStr);
+			
+			Map<String, Object> mapperMap = new HashMap<String, Object>();
+			mapperMap.put("noteNum", noteNum);
+			
+			if (meId.equals(sendId)) {
+				service.updateSendDelete(mapperMap);
+			} else if (meId.equals(receiveId)) {
+				service.updateReceiveDelete(mapperMap);
+			}
+		} catch (NumberFormatException e) {
+			model.put("state", "numberFormatException");
+			return model;
+		} catch (Exception e) {
+			model.put("state", "error");
+			return model;
+		}
+		
+		model.put("state", "true");
+		return model;
+	}
+	
+	@RequestMapping(value="deleteNoteUser", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> deleteNoteUser(
+			HttpSession session,
+			@RequestParam String meId,
+			@RequestParam String youId
+			) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userId = memberInfo.getUserId();
+		if (!userId.equals(meId)) {
+			model.put("state", "unAuthorizedAccess");
+			return model;
+		}
+		
+		try {
+			Map<String, Object> sendMap = new HashMap<String, Object>();
+			sendMap.put("isSendOrRec", "isSendDelete");
+			sendMap.put("sendId",meId);
+			sendMap.put("receiveId",youId);
+			
+			Map<String, Object> recMap = new HashMap<String, Object>();
+			recMap.put("isSendOrRec", "isRecDelete");
+			recMap.put("sendId",youId);
+			recMap.put("receiveId",meId);
+			
+			service.updateUserAllDelete(sendMap);
+			service.updateUserAllDelete(recMap);
+		} catch (Exception e) {
+			model.put("state", "error");
+			return model;
+		}
+		
+		model.put("state", "true");
+		return model;
+	}
+	
+	@RequestMapping(value="deleteEntireMyNote", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String,Object> deleteEntireMyNote(
+			HttpSession session,
+			@RequestParam String meId
+			) throws Exception {
+		Map<String, Object> model = new HashMap<String, Object>();
+		
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userId = memberInfo.getUserId();
+		if (!userId.equals(meId)) {
+			model.put("state", "unAuthorizedAccess");
+			return model;
+		}
+		
+		try {
+			Map<String, Object> sendMap = new HashMap<String, Object>();
+			sendMap.put("meId", meId);
+			sendMap.put("isSendOrRec", "isSendDelete");
+			sendMap.put("sendOrRecId", "sendId");
+			
+			Map<String, Object> recMap = new HashMap<String, Object>();
+			recMap.put("meId", meId);
+			recMap.put("isSendOrRec", "isRecDelete");
+			recMap.put("sendOrRecId", "receiveId");
+			
+			service.updateEntireMyNoteDelete(sendMap);
+			service.updateEntireMyNoteDelete(recMap);
+		} catch (Exception e) {
+			model.put("state", "error");
+			return model;
+		}
+		
+		model.put("state", "true");
 		return model;
 	}
 }

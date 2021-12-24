@@ -330,4 +330,40 @@ public class MypageServiceImpl implements MypageService {
 		}
 	}
 
+	@Override
+	public void updateSendDelete(Map<String, Object> map) throws Exception {
+		try {
+			dao.updateData("mypage.updateSendDelete",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public void updateReceiveDelete(Map<String, Object> map) throws Exception {
+		try {
+			dao.updateData("mypage.updateReceiveDelete",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public void updateUserAllDelete(Map<String, Object> map) throws Exception {
+		try {
+			dao.updateData("mypage.updateUserAllDelete",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
+	@Override
+	public void updateEntireMyNoteDelete(Map<String, Object> map) throws Exception {
+		try {
+			dao.updateData("mypage.updateEntireMyNoteDelete",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
 }
