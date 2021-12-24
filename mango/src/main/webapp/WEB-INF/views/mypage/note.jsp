@@ -110,6 +110,16 @@ $(function() {
 		var content = $(this).closest("form").find("textarea").val().trim();
 		var sendId = '${sessionScope.member.userId}';
 		var targetNickName = $(this).closest(".row").find("input").val().trim();
+		
+		if (!content) {
+			$(this).closest("form").find("textarea").focus();
+			return false;
+		}
+		if (!targetNickName) {
+			$(this).closest("form").find("input").focus();
+			return false;
+		}
+		
 		var origNick = targetNickName;
 		targetNickName = encodeURIComponent(targetNickName);
 		content = encodeURIComponent(content);
