@@ -220,4 +220,37 @@
 		SELECT NVL(COUNT(*), 0)
 		FROM vbbsReply WHERE vrAnswer = #{vrAnswer}
 	</select>
+	
+	<insert id="insertReplyLike" parameterType="map">
+		INSERT INTO  vbbsReplyLike(vreplyNum, userId, replyLike)
+		VALUES (#{vreplyNum}, #{userId}, #{replyLike})
+	</insert>
+	
+	<select id="replyLikeCount" parameterType="map" resultType="map">
+		SELECT COUNT(DECODE(replyLike, 1, 1)) likeCount,
+			   COUNT(DECODE(replyLike, 0, 1)) disLikeCount
+		FROM vbbsReplyLike WHERE vreplyNum = #{vreplyNum}
+	</select>
+	
+	<select id="listVreport" resultType="com.sp.mango.village.VillageReport">
+		SELECT * FROM vbbsReport_reason	
+	</select>
+	
+	<insert id="insertVreport" parameterType="com.sp.mango.village.VillageReport">
+		INSERT INTO vbbsReport (vNum, userId, vbbsRepNum, vrReasonNum, vbbsRepContent, 
+			vbbsRepRegDate, vbbsRepChecked)
+		VALUES (#{vNum}, #{userId}, vbbsReport_seq.NEXTVAL, #{vrReasonNum}, #{vbbsRepContent, jdbcType=VARCHAR},
+			SYSDATE, 'F')
+	</insert>
+	
+	<select id="listVRreport" resultType="com.sp.mango.village.ReplyReport">
+		SELECT * FROM vbbsReplyReport_reason
+	</select>
+	
+	<insert id="insertVRreport" parameterType="com.sp.mango.village.ReplyReport">
+		INSERT INTO vbbsReplyReport (vreplyNum, userId, vrReportNum, vrrReasonNum, vrReportContent, 
+			vrReportRegDate, vrReportChecked)
+		VALUES ( #{vreplyNum}, #{userId}, vbbsReplyReport_seq.NEXTVAL, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR},
+			SYSDATE, 'F') 
+	</insert>
 </mapper>

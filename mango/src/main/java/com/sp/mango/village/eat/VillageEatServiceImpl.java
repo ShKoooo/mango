@@ -220,62 +220,115 @@ public class VillageEatServiceImpl implements VillageEatService {
 
 	@Override
 	public int replyCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("eat.replyCount", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public void deleteReply(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
+		try {
+			dao.deleteData("eat.deleteReply", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
 	public List<Reply> listReplyAnswer(int vrAnswer) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Reply> list = null;
+		
+		try {
+			list = dao.selectList("eat.listReplyAnswer", vrAnswer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	@Override
 	public int replyAnswerCount(int vrAnswer) {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("eat.replyAnswerCount", vrAnswer);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
 	public void insertReplyLike(Map<String, Object> map) throws Exception {
-		// TODO Auto-generated method stub
-		
+		try {
+			dao.insertData("eat.insertReplyLike", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Override
 	public Map<String, Object> replyLikeCount(Map<String, Object> map) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, Object> countMap = null;
+		
+		try {
+			countMap = dao.selectOne("eat.replyLikeCount", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return countMap;
 	}
 
 	@Override
 	public List<VillageReport> listVreport() {
-		// TODO Auto-generated method stub
-		return null;
+		List<VillageReport> listVreport = null;
+		
+		try {
+			listVreport = dao.selectList("eat.listVreport");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listVreport;
 	}
 
 	@Override
 	public void insertVreport(VillageReport dto) throws Exception {
-		// TODO Auto-generated method stub
+		try {
+			dao.insertData("eat.insertVreport", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 		
 	}
 
 	@Override
 	public List<ReplyReport> listVRreport() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ReplyReport> listVRreport = null;
+		
+		try {
+			listVRreport = dao.selectList("eat.listVRreport");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return listVRreport;
 	}
 
 	@Override
 	public void insertVRreport(ReplyReport dto) throws Exception {
-		// TODO Auto-generated method stub
-		
+		try {
+			dao.insertData("eat.insertVRreport", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 }

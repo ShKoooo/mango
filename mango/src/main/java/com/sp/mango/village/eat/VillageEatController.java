@@ -1,6 +1,7 @@
 package com.sp.mango.village.eat;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -24,7 +25,6 @@ import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
-import com.sp.mango.village.eat.Reply;
 
 @Controller("village.eat.VillageEatController")
 @RequestMapping("/village/eat/*")
@@ -422,4 +422,86 @@ public class VillageEatController {
 		return model;
 	}
 	
+	@RequestMapping(value = "insertReplyLike", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> insertReplyLike(@RequestParam Map<String, Object> paramMap,
+			HttpSession session) {
+		String state = "true";
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		Map<String, Object> model = new HashMap<>();
+		
+		try {
+			paramMap.put("userId", info.getUserId());
+			service.insertReplyLike(paramMap);
+		} catch (DuplicateKeyException e) {
+			state = "liked";
+		} catch (Exception e) {
+			state = "false";
+		}
+		
+		Map<String, Object> countMap = service.replyLikeCount(paramMap);
+		
+		int likeCount = ((BigDecimal) countMap.get("LIKECOUNT")).intValue();
+		int disLikeCount = ((BigDecimal) countMap.get("DISLIKECOUNT")).intValue();
+		
+		model.put("likeCount", likeCount);
+		model.put("dislikeCount", disLikeCount);
+		model.put("state", state);
+		
+		return model;
+	}
+	
+	public Map<String, Object> countReplyLike(@RequestParam Map<String, Object> paramMap,
+			HttpSession session) {
+		
+		Map<String, Object> countMap = service.replyLikeCount(paramMap);
+		int likeCount = ((BigDecimal) countMap.get("LIKECOUNT")).intValue();
+		int disLikeCount = ((BigDecimal) countMap.get("DISLIKECOUNT")).intValue();
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put("likeCount", likeCount);
+		model.put("disLikeCount", disLikeCount);
+		
+		return model;
+	}
+	
+	
+	@RequestMapping(value = "report")
+	public String insertVreport(VillageReport dto, 
+			@RequestParam int vNum,
+			@RequestParam String page,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			service.insertVreport(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/village/eat/article?page="+page+"&vNum="+vNum;
+	
+	}
+	
+	@RequestMapping(value = "reportReply")
+	public String insertVRreport(ReplyReport dto,
+			@RequestParam int vNum,
+			@RequestParam String page,
+			@RequestParam int vreplyNum,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			
+			// #{userId}, #{vreplyNum}, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR}
+			System.out.println(":::::: replyNum = "+dto.getVreplyNum()); // 0 (부모키오류..)
+			
+			service.insertVRreport(dto); // TODO
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/village/eat/article?page="+page+"&vNum="+vNum;
+	}
 }
