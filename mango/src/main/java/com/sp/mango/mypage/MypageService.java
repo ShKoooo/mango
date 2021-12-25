@@ -43,4 +43,11 @@ public interface MypageService {
 	public void updateReceiveDelete(Map<String,Object> map) throws Exception;
 	public void updateUserAllDelete(Map<String,Object> map) throws Exception;
 	public void updateEntireMyNoteDelete(Map<String,Object> map) throws Exception;
+	
+	public List<Rating> listRating(Map<String,Object> map) throws Exception;
+	public List<Rating> listProductRating(Map<String,Object> map) throws Exception;
+	public List<Rating> listGiftyRating(Map<String,Object> map) throws Exception;
+	public int countRating(String userId) throws Exception;
+	public int countProductRating(String userId) throws Exception;
+	public int countGiftyRating(String userId) throws Exception;
 }

@@ -319,4 +319,75 @@
 		UPDATE note SET ${isSendOrRec}='T'
 			WHERE ${sendOrRecId}=#{meId}
 	</update>
+	
+	<select id="listRating" parameterType="map" resultType="com.sp.mango.mypage.Rating">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM(
+		        SELECT 'product' AS pgType, pr.PNUM pgNum, p.psubject subject, buyerId, m.userNickName buyerNick, mannerStar, prdStar, sellerId, prContent reviewContent, userImgSaveFileName, pSoldDate AS soldDate
+		        FROM pReview pr
+		        JOIN member m ON pr.buyerId = m.userId
+		        JOIN product p ON pr.pnum = p.pnum
+		        WHERE sellerId=#{userId}
+		        
+		        UNION ALL
+		        
+		        SELECT 'giftycon' AS pgType, gr.GNUM pgNum, g.gsubject subject, buyerId, m.userNickName buyerNick, mannerStar, null AS prdStar, sellerId, grContent reviewContent, userImgSaveFileName, gSoldDate AS soldDate
+		        FROM gReview gr
+		        JOIN member m ON gr.buyerId = m.userId
+		        JOIN giftycon g ON gr.gnum = g.gnum
+		        WHERE sellerId =#{userId}
+		        
+		        ORDER BY soldDate DESC    
+		    ) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="listProductRating" parameterType="map" resultType="com.sp.mango.mypage.Rating">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM(
+				SELECT 'product' AS pgType, pr.PNUM pgNum, p.psubject subject, buyerId, m.userNickName buyerNick, mannerStar, prdStar, sellerId, prContent reviewContent, userImgSaveFileName, pSoldDate AS soldDate
+				FROM pReview pr
+				JOIN member m ON pr.buyerId = m.userId
+				JOIN product p ON pr.pnum = p.pnum
+				WHERE sellerId=#{userId}
+				ORDER BY soldDate DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="listGiftyRating" parameterType="map" resultType="com.sp.mango.mypage.Rating">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM(
+				SELECT 'giftycon' AS pgType, gr.GNUM pgNum, g.gsubject subject, buyerId, m.userNickName buyerNick, mannerStar, null AS prdStar, sellerId, grContent reviewContent, userImgSaveFileName, gSoldDate AS soldDate
+				FROM gReview gr
+				JOIN member m ON gr.buyerId = m.userId
+				JOIN giftycon g ON gr.gnum = g.gnum
+				WHERE sellerId =#{userId}
+				ORDER BY soldDate DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<select id="countRating" parameterType="String" resultType="Integer">	
+		SELECT NVL(COUNT(*),0) cnt
+		FROM pReview
+		WHERE sellerId=#{userId}
+		UNION ALL
+		SELECT NVL(COUNT(*),0) cnt
+		FROM gReview
+		WHERE sellerId=#{userId}
+	</select>
+	
+	<select id="countProductRating" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt
+		FROM pReview
+		WHERE sellerId=#{userId}	
+	</select>
+	
+	<select id="countGiftyRating" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt
+		FROM gReview
+		WHERE sellerId=#{userId}	
+	</select>
+	
 </mapper>

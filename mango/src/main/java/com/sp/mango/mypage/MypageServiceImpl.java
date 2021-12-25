@@ -366,4 +366,87 @@ public class MypageServiceImpl implements MypageService {
 		}
 	}
 
+	@Override
+	public List<Rating> listRating(Map<String,Object> map) throws Exception {
+		List<Rating> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listRating",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
+	@Override
+	public List<Rating> listProductRating(Map<String,Object> map) throws Exception {
+		List<Rating> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listProductRating",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}		
+		
+		return list;
+	}
+
+	@Override
+	public List<Rating> listGiftyRating(Map<String,Object> map) throws Exception {
+		List<Rating> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listGiftyRating",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}		
+		
+		return list;
+	}
+
+	@Override
+	public int countRating(String userId) throws Exception {
+		int result = 0;
+		
+		List<Integer> list = null;
+		try {
+			list = dao.selectList("mypage.countRating",userId);
+			
+			for (Integer val : list) {
+				if (val != null) result += val;
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int countProductRating(String userId) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.countProductRating",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int countGiftyRating(String userId) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.countGiftyRating",userId);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
 }

@@ -983,6 +983,111 @@ public class MypageController {
 		model.put("state", "true");
 		return model;
 	}
+	
+	@RequestMapping("myrating")
+	public String myrating(
+			HttpSession session,
+			Model model,
+			HttpServletRequest req,
+			@RequestParam(defaultValue = "all") String typeName,
+			@RequestParam(value="page", defaultValue="1") int current_page
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		if (memberInfo == null) {
+			return "redirect:/member/login";
+		}
+		String userId = memberInfo.getUserId();
+		
+		String cp = req.getContextPath();
+		
+		int rows = 10;
+		int total_page = 0;
+		int dataCount = 0;
+		
+		if (typeName.equals("product")) {
+			dataCount = service.countProductRating(userId);
+		} else if (typeName.equals("giftycon")) {
+			dataCount = service.countGiftyRating(userId);
+		} else {		// all
+			dataCount = service.countRating(userId);
+		}
+		
+		if (dataCount != 0) {
+			total_page = myUtil.pageCount(rows, dataCount);
+		}
+		
+		if (total_page < current_page) {
+			current_page = total_page;
+		}
+		
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userId", userId);
+		map.put("start", start);
+		map.put("end", end);
+		
+		List<Rating> ratingList = null;
+		
+		String query = "typeName="+typeName;
+		String listUrl = cp + "/mypage/myrating";
+		if (typeName != null) {
+			listUrl+="?"+query;
+		}
+		String paging = myUtil.paging(current_page, total_page, listUrl);
+		
+		Double avgPrd = 0.0;
+		String avgPrdS = "";
+		int idxPrd = 0;
+		Double avgMan = 0.0;
+		String avgManS = "";
+		int idxMan = 0;
+		
+		try {
+			if (typeName.equals("product")) {
+				ratingList = service.listProductRating(map);
+			} else if (typeName.equals("giftycon")) {
+				ratingList = service.listGiftyRating(map);
+			} else {		// all
+				ratingList = service.listRating(map);				
+			}
+			
+			for (Rating dto : ratingList) {
+				if (dto.getPrdStar() != null) {
+					idxPrd++;
+					avgPrd += (double)dto.getPrdStar();
+				}
+				if (dto.getMannerStar() != null) {
+					idxMan++;
+					avgMan += (double)dto.getMannerStar();
+				}
+			}
+			
+			if (idxPrd > 0) {
+				avgPrd = (double)(avgPrd/idxPrd);
+				avgPrdS = String.format("%.1f", avgPrd);
+			}
+			
+			if (idxMan > 0) {
+				avgMan = (double)(avgMan/idxMan);
+				avgManS = String.format("%.1f", avgMan);
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		model.addAttribute("ratingList",ratingList);
+		model.addAttribute("avgPrdStar",avgPrdS);
+		model.addAttribute("avgManStar",avgManS);
+		model.addAttribute("typeName",typeName);
+		model.addAttribute("page", current_page);
+		model.addAttribute("dataCount", dataCount);
+		model.addAttribute("total_page", total_page);
+		model.addAttribute("paging", paging);
+		
+		return ".mypage.myrating";
+	}
 }
 
 class IUComparator implements Comparator<NoteIU> {

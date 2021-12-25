@@ -311,7 +311,9 @@ $(function() {
 			
 			<div class="row mb-3">
 				<h4>
-					<i class="icofont-ui-rating"></i> 내 평가
+					<a href="${pageContext.request.contextPath}/mypage/myrating">
+						<i class="icofont-ui-rating"></i> 내 평가
+					</a>
 				</h4>
 			</div>
 			
