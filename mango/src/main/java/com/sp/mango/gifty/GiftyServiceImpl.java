@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
+import com.sp.mango.mypage.Note;
 
 
 @Service("gifty.giftyService")
@@ -230,12 +231,40 @@ public class GiftyServiceImpl implements GiftyService {
 				return;
 			}
 			
-			
 			dao.updateData("gifty.updateDate", gnum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
+		
+	}
+
+	@Override
+	public String gUpOkDate(int gnum) {
+		String result = "";
+		
+		try {
+			result = dao.selectOne("gifty.gUpOkDate", gnum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void sendMsg(Note dto) throws Exception {
+		try {
+			dao.insertData("gifty.sendMsg", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void getUserId(int gnum) {
+		// TODO Auto-generated method stub
 		
 	}
 

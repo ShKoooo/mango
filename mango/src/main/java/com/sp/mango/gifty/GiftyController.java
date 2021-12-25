@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
+import com.sp.mango.mypage.Note;
 
 
 
@@ -189,9 +191,20 @@ public class GiftyController {
 		}
 		
 		int giftyWishCount = service.giftyWishCount(gNum);
-		
+		String gUpOkDate = service.gUpOkDate(gNum);
 		// dto.setgContent(myUtil.htmlSymbols(dto.getgContent()));
+		/*
+		Date date = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		long gap;
 		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date regDate = sdf.parse(dto.getgRegdate());
+		gap = (cal.after(regDate)) / (1000*60*60*24);
+		
+		model.addAttribute("gap", gap);
+		*/
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
@@ -201,6 +214,7 @@ public class GiftyController {
 		model.addAttribute("listGreport", listGreport);
 		model.addAttribute("condition", condition);
 		model.addAttribute("keyword", keyword);
+		model.addAttribute("gUpOkDate", gUpOkDate);
 		
 		return ".gifty.article";
 	}
@@ -271,7 +285,7 @@ public class GiftyController {
 		
 		service.deleteGifty(gNum, info.getUserId());
 		
-		return "redirect:/gifyt/list?" + query;
+		return "redirect:/gifty/list?" + query;
 	}
 	
 	@RequestMapping(value = "insertGwish", method = RequestMethod.POST)
@@ -331,20 +345,65 @@ public class GiftyController {
 	
 	@RequestMapping("updateDate")
 	public String updateDate(
+			Gifty dto,
 			@RequestParam int gNum,
+			HttpServletResponse resp,
 			HttpSession session
 			) throws Exception {
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
+			/*
+			Date date = new Date();
+			long gap;
 			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date regDate = sdf.parse(dto.getgRegdate());
+			gap = (date.getTime() - regDate.getTime()) / (1000*60*60);
 			
+			if(gap < 3) {
+				resp.setContentType("text/html; charset=utf-8");
+				PrintWriter out = resp.getWriter();
+				out.print("<script>alert('끌어올리기는 첫 등록 3일 후 가능합니다');</script>");
+			} else {
+			}
+				*/
 			service.updateDate(gNum, info.getUserId());
 			
 		} catch (Exception e) {
 		}
 		
 		return "redirect:/gifty/list"; 
+	}
+	
+	
+	@RequestMapping("poplist")
+	public String poplist() throws Exception {
+		
+		return ".gifty.poplist";
+	}
+	
+	@RequestMapping("sendMsg")
+	public String sendMsg(
+			Note dto,
+			@RequestParam int gNum,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");	
+		
+		try {
+			dto.setSendId(info.getUserId());
+			
+			Gifty vo = service.readGifty(gNum);
+			String nContent = "안녕하세요 "+vo.getgSubject()+"를 구매하고 싶어서 쪽지남깁니다.";
+			dto.setReceiveId(vo.getUserId());
+			dto.setNoteContent(nContent);
+		
+			service.sendMsg(dto);
+		} catch (Exception e) {
+
+		}
+		
+		return ".mypage.note";
 	}
 	
 }

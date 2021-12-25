@@ -3,6 +3,8 @@ package com.sp.mango.gifty;
 import java.util.List;
 import java.util.Map;
 
+import com.sp.mango.mypage.Note;
+
 public interface GiftyService {
 	public void insertGifty(Gifty dto) throws Exception;
 	public List<Gifty> listGifty(Map<String, Object> map);
@@ -29,5 +31,9 @@ public interface GiftyService {
 	
 	// 끌어올리기
 	public void updateDate(int gnum, String userId) throws Exception;
+	public String gUpOkDate(int gnum);
 	
+	// 쪽지 보내기
+	public void sendMsg(Note dto) throws Exception;
+	public void getUserId(int gnum);
 }

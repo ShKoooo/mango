@@ -31,6 +31,9 @@ public class Gifty {
 	
 	private double manner;
 	
+	private int gUp; // 끌어올리는 횟수
+	private int gUpSeq; // 끌어올리기 시퀀스 부여해서 가장 최근 순서 가져오기
+	
 	
 	public int getgNum() {
 		return gNum;
@@ -169,6 +172,18 @@ public class Gifty {
 	}
 	public void setManner(double manner) {
 		this.manner = manner;
+	}
+	public int getgUp() {
+		return gUp;
+	}
+	public void setgUp(int gUp) {
+		this.gUp = gUp;
+	}
+	public int getgUpSeq() {
+		return gUpSeq;
+	}
+	public void setgUpSeq(int gUpSeq) {
+		this.gUpSeq = gUpSeq;
 	}
 	
 	

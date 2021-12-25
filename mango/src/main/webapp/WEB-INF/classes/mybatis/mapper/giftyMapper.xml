@@ -6,6 +6,10 @@
 		SELECT giftycon_seq.NEXTVAL FROM dual 
     </select>
     
+    <select id="gUpSeq" resultType="Integer">
+    	SELECT gUpSeq.NEXTVAL FROM dual
+    </select>
+    
     <insert id="insertGifty" parameterType="com.sp.mango.gifty.Gifty">
     	INSERT INTO giftycon (gNum, userId, gSubject, gRegdate, gExpdate, gHitCount, gPrice, gContent, gStatus, gUpdate_date, gSoldDate, gcNum, gIsProposable)
 					VALUES (#{gNum}, #{userId}, #{gSubject}, SYSDATE, #{gExpdate, jdbcType=VARCHAR}, 0, #{gPrice, jdbcType=VARCHAR}, #{gContent, jdbcType=VARCHAR}, #{gStatus, jdbcType=VARCHAR}, SYSDATE, #{gSoldDate, jdbcType=VARCHAR}, #{gcNum}, #{gIsProposable, jdbcType=VARCHAR})
@@ -42,8 +46,11 @@
     
     <select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
-		FROM giftycon
+		FROM giftycon 
 		<where>
+			<if test="group!=0">
+				gc.gcNum = #{group}
+			</if>
 			<if test="keyword!=null and keyword!='' ">
 				<include refid="where-list"/>
 			</if>
@@ -54,8 +61,8 @@
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-					 TO_DATE(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
-					 gHitCount, TO_DATE(g.gExpdate, 'YYYY-MM-DD') gExpdate, gUpdate_date
+					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD HH:MI:SS') gRegdate, g.gcNum,
+					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, gUpdate_date, gUp
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId
 				JOIN giftyCategory gc ON g.gcNum = gc.gcNum
@@ -74,8 +81,8 @@
 	
 	<select id="readGifty" parameterType="Integer" resultType="com.sp.mango.gifty.Gifty">
 		SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-			TO_DATE(g.gRegdate, 'YYYY-MM-DD') gRegdate, gc.gcNum, gc.gcName,
-			gHitCount, TO_DATE(g.gExpdate, 'YYYY-MM-DD') gExpdate, TO_DATE(gUpdate_date, 'YYYY-MM-DD') gUpdate_date, 
+			TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, gc.gcNum, gc.gcName, gUp,
+			gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate, TO_CHAR(gUpdate_date, 'YYYY-MM-DD') gUpdate_date, 
 			gSoldDate, gIsProposable, NVL(gWishCount, 0) gWishCount,
 			(36.5 + (0.1* NVL(man.mannerStar, 0)) + (0.1* NVL(man.productStar, 0)) - NVL(man.minusDeg, 0)) AS manner
 		FROM giftycon g
@@ -100,7 +107,7 @@
 			WHERE gNum = #{gNum} AND userId = #{userId}
 	</update>
 	
-	<delete id="deletGifty" parameterType="map">
+	<delete id="deleteGifty" parameterType="Integer">
 		DELETE FROM giftycon WHERE gNum = #{gNum}
 	</delete>
 	
@@ -132,18 +139,35 @@
 			WHERE gNum = #{gNum} AND userId = #{userId}
 	</update>
 	
-	<select id="listGreport" parameterType="com.sp.mango.gifty.Gifty">
+	<select id="listGreport" parameterType="map" resultType="com.sp.mango.gifty.GiftyReport">
 		SELECT * FROM reportGifty_Reason
 	</select>
 	
-	<insert id="insertGreport" parameterType="com.sp.mango.gifty.Gifty">
+	<insert id="insertGreport" parameterType="com.sp.mango.gifty.GiftyReport">
 		INSERT INTO reportGifty(repGiftyNum, rgReasonNum, reqGiftyContent, reqGiftyRegDate, reqGiftyChecked, gNum, userId)
 			VALUES(reportGifty_seq.NEXTVAL, #{rgReasonNum}, #{reqGiftyContent, jdbcType=VARCHAR}, SYSDATE, 'F', #{gNum}, #{userId})
 	</insert>
 	
 	<update id="updateDate" parameterType="com.sp.mango.gifty.Gifty">
-		UPDATE giftycon SET gUpdate_date = TO_DATE(SYSDATE, 'YYYY/MM/DD HH:MI:SS') 
+		UPDATE giftycon SET gUpdate_date = SYSDATE, gUp = gUp + 1
 		WHERE gNum = #{gNum}
 	</update>
+	
+	<select id="gUpOkDate" parameterType="Integer" resultType="String">
+      SELECT (gRegDate + 3) gUpOkDate FROM giftycon WHERE gNum = #{gNum}
+   </select>
+   
+   <insert id="sendMsg" parameterType="map">
+   		INSERT INTO note (noteNum, sendId, receiveId, noteContent, noteRegdate, isSendDelete, isRecDelete)
+			VALUES (note_seq.NEXTVAL, #{sendId}, #{receiveId}, #{noteContent}, SYSDATE, 'F','F')
+   </insert>
+   
+   <select id="getUserId" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
+   	SELECT g.userId, m.userNickName 
+   	FROM giftycon g
+   	JOIN member m ON g.userId = m.userId
+   	WHERE gNum = #{gNum}
+   
+   </select>
 
 </mapper>

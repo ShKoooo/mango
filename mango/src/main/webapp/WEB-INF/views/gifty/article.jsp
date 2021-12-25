@@ -85,8 +85,8 @@ function deleteGifty() {
 
 function sendReport() {
 	if(confirm("한 번 신고한 상품/게시물은 신고를 철회할 수 없습니다.\n정말 신고하시겠습니까?")) {
-		var f = document.pReportForm;
-		var query = "gNum=${dto.gNum}&page=${page}&gpcNum=${gcNum}"
+		var f = document.gReportForm;
+		var query = "gNum=${dto.gNum}&page=${page}&gcNum=${gcNum}"
 		
 		f.action = "${pageContext.request.contextPath}/gifty/report?" + query;
 	    f.submit();
@@ -110,8 +110,35 @@ function updateDate() {
 	    var url = "${pageContext.request.contextPath}/gifty/updateDate?" + query;
     	location.href = url;
     }
+	
 }
 
+$(function(){
+	var today = new Date();
+	var year = today.getFullYear();
+	var month = ('0' + (today.getMonth()+1)).slice(-2);
+	var day = ('0' + today.getDate()).slice(-2);
+	
+	var today2 = year + "-" + month + "-" + day;
+	
+	var afterday = "${gUpOkDate}";
+	
+	var target = document.getElementById('gUpOkBtn');
+	if("${dto.gUp}" < 3) {
+		target.disabled = false;
+		$("#gUpOkBtn").click(function(){
+			if(today2 < afterday){
+				alert("끌어올리기는 첫 게시물 등록 3일 후부터 가능합니다.");
+				target.disabled = true;
+			} else {
+				target.disabled = false;
+				updateDate();
+			}
+			});
+	}
+});
+		
+		
 
 </script>
 
@@ -134,7 +161,13 @@ function updateDate() {
                         <div class="box-content">
                             <h2 class="project-title">${dto.gSubject}</h2>
                             <span class="project-subtitle">${dto.userNickName}</span>
-                            <span>${dto.manner} ℃</span>
+                            <div style="float: right;">
+	                            <span>${dto.manner} ℃</span>
+	                            <div class="progress">
+									<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: ${dto.manner}%;"></div>
+								</div>
+								  <span>매너온도</span>
+                            </div>
                             <span>조회수 : ${dto.gHitCount}</span>
                             <p class="editor">${dto.gContent}</p>
                             <ul class="project-meta">
@@ -151,21 +184,21 @@ function updateDate() {
                                 </c:if>
                             
                             	 <li>${dto.gPrice}원
-                            	 	<c:if test="${dto.gIsProposable=='T'}">
+                            	 	<c:if test="${dto.gIsProposable eq 'T'}">
                                 		<a href="">가격 제안하기</a>
                                 	</c:if>
-                                	<c:if test="${dto.gIsProposable=='F'}">
+                                	<c:if test="${dto.gIsProposable eq 'F'}">
                                 		가격 제안 불가
                                 	</c:if>
                             	 </li>
                                  <li>
-                                	<c:if test="${dto.gStatus=='판매중'}">
-                                		<i class="fa fa-envelope-o"></i><a href="">거래 쪽지 보내기</a>
+                                	<c:if test="${dto.gStatus eq '판매중'}">
+                                		<i class="fa fa-envelope-o"></i><a href="${pageContext.request.contextPath}/gifty/sendMsg?gNum=${dto.gNum}">거래 쪽지 보내기</a>
                                 	</c:if>
-                                	<c:if test="${dto.gStatus=='예약중'}">
+                                	<c:if test="${dto.gStatus eq '예약중'}">
                                 		<i class="bi bi-calendar-check-fill"></i><span>다른 회원이 예약중입니다.</span>
                                 	</c:if>
-                                	<c:if test="${dto.gStatus=='거래완료'}">
+                                	<c:if test="${dto.gStatus eq '거래완료'}">
                                 		<i class="bi bi-check2-circle"></i><span>판매완료</span>
                                 	</c:if>
                                 </li>
@@ -174,7 +207,7 @@ function updateDate() {
                         </div>
                         
                         <div class="box-content">
-                        <c:if test="${dto.gStatus !='거래완료'}">
+                        <c:if test="${dto.gStatus ne '거래완료'}">
                         	<c:choose>
 								<c:when test="${sessionScope.member.userId==dto.userId}">
 									<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/gifty/update?gNum=${dto.gNum}&page=${page}&group=${group}';">수정</button>
@@ -195,13 +228,13 @@ function updateDate() {
 									            <!--  
 									            <input type="text" class="form-control" id="recipient-name">
 									            -->
-									            <c:forEach var="vo" items="${listPreport}">							
-													<input type="radio" name="rpReasonNum" value="${vo.rpReasonNum}">${vo.rpReasonName}<br>
+									            <c:forEach var="vo" items="${listGreport}">							
+													<input type="radio" name="rgReasonNum" value="${vo.rgReasonNum}">${vo.rgReasonName}<br>
 												</c:forEach>
 									          </div>
 									          <div class="mb-3">
 									            <label for="message-text" class="col-form-label">자세한 사유</label>
-									            <textarea class="form-control" id="message-text" name="repPrdContent"></textarea>
+									            <textarea class="form-control" id="message-text" name="repGiftyContent"></textarea>
 									          </div>
 									      </div>
 									      <div class="modal-footer">
@@ -218,11 +251,13 @@ function updateDate() {
 							<c:choose>
 					    		<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.membership>50}">
 					    			<button type="button" class="btn btn-light" onclick="deleteGifty();">삭제</button>
-					    			<button type="button" class="btn btn-light" onclick="updateDate();">끌어올리기</button>
+					    		<c:if test="${dto.gUp < 3}">
+					    			<button type="button" class="btn btn-light" id="gUpOkBtn" >끌어올리기</button>
+				    			</c:if>
 					    		</c:when>
 				    		</c:choose>
 					    </c:if>		
-	                        <span style="float: right;">
+	                        <span style='float: right;'>
 	                        	<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/gifty/list?${query}';">리스트</button>
 	                        </span>
                         </div>
