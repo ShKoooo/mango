@@ -26,6 +26,25 @@
 function sendOk() {
     var f = document.boardForm;
 	var str;
+	
+	var dateFrom = document.getElementById('dateFrom');
+	var dateTo = document.getElementById('dateTo');
+	
+	dateFrom = new Date(dateFrom.value);
+	dateTo = new Date(dateTo.value);
+	
+	if(isNaN(dateFrom.valueOf())) {
+		alert("시작 날짜를 선택 해주세요");
+		return false;
+	} else if(isNaN(dateTo.valueOf())) {
+		alert("종료 날짜를 선택 해주세요");
+		return false;
+	}
+	
+	if(dateFrom.valueOf() > dateTo.valueOf()) {
+		alert("종료 날짜는 시작 날짜보다 커야 합니다.");
+		return false;
+	}
 
 	
     str = f.subject.value.trim();
@@ -63,14 +82,13 @@ function sendOk() {
 				<table class="table write-form mt-5">
 				
 					<tr>
-						<td class="table-light" scope="row">카테고리</td>
+						<td class="table-light" scope="row">이벤트 공개 유무</td>
 						<td>
 							<div class="row">
 								<div class="col-sm-4 pe-1">
-									<select name="categoryNum" class="form-select">
-										<c:forEach var="vo" items="${listCategory}">
-											<option value="${vo.categoryNum}" ${dto.categoryNum==vo.categoryNum?"selected='selected'":""}>${vo.category}</option>
-										</c:forEach>
+									<select name="show" class="form-select">
+										<option value="y">공개</option>
+										<option value="n">비공개</option>
 									</select>
 								</div>
 
@@ -81,9 +99,9 @@ function sendOk() {
 					<tr>
 						<td class="table-light" scope="row">이벤트 날짜 설정</td>
 						<td>
-							<input type="date" name="start_date" style="border-radius: 10px; color: black;"> 
+							<input type="date" id="dateFrom" name="start_date" value="${dto.start_date}" style="border-radius: 10px; color: black;"> 
 							&nbsp;~&nbsp; 
-							<input type="date" name="end_date" style="border-radius: 10px; color: red;">
+							<input type="date" id="dateTo" name="end_date" value="${dto.end_date}" style="border-radius: 10px; color: red;">
 						</td>
 					</tr>
 					

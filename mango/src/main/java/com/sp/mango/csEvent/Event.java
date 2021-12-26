@@ -16,8 +16,7 @@ public class Event {
 	private int categoryNum;
 	private String category;
 	
-	private long gap;
-	
+	private String show;
 	
 
 	public int getListNum() {
@@ -100,15 +99,17 @@ public class Event {
 		this.category = category;
 	}
 
-	public long getGap() {
-		return gap;
+	public String getShow() {
+		return show;
 	}
 
-	public void setGap(long gap) {
-		this.gap = gap;
+	public void setShow(String show) {
+		this.show = show;
 	}
+
 	
 	
+
 
 	
 

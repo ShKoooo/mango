@@ -3,8 +3,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="event">
 	<insert id="insertEvent" parameterType="com.sp.mango.csEvent.Event">
-		INSERT INTO event(num, subject, content, userId, reg_date, categoryNum, start_date, end_date) 
-		VALUES (event_seq.NEXTVAL, #{subject}, #{content}, #{userId}, SYSDATE, #{categoryNum}, #{start_date}, #{end_date})
+		INSERT INTO event(num, subject, content, userId, reg_date, start_date, end_date, show) 
+		VALUES (event_seq.NEXTVAL, #{subject}, #{content}, #{userId}, SYSDATE, #{start_date}, #{end_date}, #{show})
 	</insert>
 	
 	<select id="listCategory" parameterType="map" resultType="com.sp.mango.csEvent.Event">
@@ -33,7 +33,8 @@
 				SELECT f.num, f.userId, subject, 
 					TO_CHAR(f.reg_date, 'YYYY-MM-DD') reg_date, content, 
 					TO_CHAR(f.start_date, 'YYYY-MM-DD') start_date, 
-					TO_CHAR(f.end_date, 'YYYY-MM-DD') end_date
+					TO_CHAR(f.end_date, 'YYYY-MM-DD') end_date,
+					show
 				FROM event f 
 				JOIN member m ON f.userId=m.userId 
 				<where>
@@ -50,16 +51,16 @@
 	</select>
 	
 	<select id="readEvent" parameterType="Integer" resultType="com.sp.mango.csEvent.Event">
-		SELECT f.num, f.userId, subject, content, 
-			 f.reg_date
+		SELECT f.num, f.userId, subject, content, show,
+			 f.reg_date, f.start_date, f.end_date 
 		FROM event f
 		JOIN member m ON f.userId=m.userId 
 		WHERE f.num = #{num}
 	</select>
 	
 	<update id="updateEvent" parameterType="com.sp.mango.csEvent.Event">
-		UPDATE event SET subject=#{subject}, 
-			content=#{content} 
+		UPDATE event SET subject=#{subject}, show=#{show}, content=#{content}, 
+							start_date = #{start_date}, end_date = #{end_date} 
 		WHERE num = #{num}
 	</update>
 

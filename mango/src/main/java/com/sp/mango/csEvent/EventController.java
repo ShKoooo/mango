@@ -129,16 +129,28 @@ public class EventController {
 			return "redirect:/csEvent/event?pageNo=" + pageNo;
 		}
 		
-		Map<String, Object> map = new HashMap<String, Object>();
-		List<Event> listCategory = service.listCategory(map);
 		
 		model.addAttribute("mode", "update");
 		model.addAttribute("pageNo", pageNo);
 		model.addAttribute("dto", dto);
-		model.addAttribute("listCategory", listCategory);
 		
 		
 		return ".csEvent.write";
+	}
+	
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	public String updateSubmit(
+			Event dto,
+			@RequestParam int num
+			) throws Exception {
+		
+		try {
+			service.updateEvent(dto);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return ".csEvent.event";
 	}
 	
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
