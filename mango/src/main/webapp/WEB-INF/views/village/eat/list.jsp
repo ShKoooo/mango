@@ -103,7 +103,7 @@ $(function() {
 				
 				<div class="row board-list-footer">
 					<div class="col">
-						<button type="button" class="btn btn-light" onclick="history.back(-1)">새로고침</button>
+						<button type="button" class="btn btn-light" onclick="window.location.reload()">새로고침</button>
 					</div>
 					
 					<div class="col-6 text-center">

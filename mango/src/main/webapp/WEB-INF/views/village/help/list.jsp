@@ -27,13 +27,14 @@ function searchList() {
 	f.submit();
 }
 
+
 $(function() {
-	
 	$("#selectArea").change( function() {
 		// 주소 바꿨을 때 좌표 영역에 값 세팅
 		var maLat = $("#selectArea option:selected").attr("data-maLat");
 		var maLon = $("#selectArea option:selected").attr("data-maLon");
-		
+		var areaNum = $(this).val();
+
 		var f = document.searchForm;
 		f.maLat.value = maLat;
 		f.maLon.value = maLon;
@@ -48,8 +49,8 @@ $(function() {
 	<div class="inner-container container">
 		<div class="row">
 			<div class="section-header col-md-12">
-				<h2>동네 질문</h2>
-				<span>Village QNA</span>
+				<h2>해주세요</h2>
+				<span>Help ME</span>
 			</div>
 		</div> <!-- row -->
 	<div class="projects-holder">
@@ -69,27 +70,14 @@ $(function() {
 							</c:if>
 						</c:if>
 					</div>
-				<!-- 
-				<c:if test="${! empty sessionScope.member}">
-					<div style="width: 120px; float: right;">
-						<select name="areaNum" id="selectArea" class="form-select">
-							<c:forEach var="vo" items="${listMemberAddr}">
-								<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}' ${areaNum == vo.areaNum ? "selected='selected'" :"" }>${vo.area3}</option>
-							</c:forEach>
-							
-							<c:if test="${empty listMemberAddr}">
-								<option value="${pageContext.request.contextPath}/member/address">동네 설정</option>
-							</c:if>
-						</select>
-					</div>
-					<div>
-					</div>
-				</c:if>
-				-->
+				
 				<table class="table table-hover board-list">
 					<thead>
 						<tr style="text-align: center;">
 							<th class="bw-60">번호</th>
+							<c:if test="${sessionScope.member.membership > 50}">
+								<th class="bw-70">지역</th>
+							</c:if>
 							<th class="bw-auto">제목</th>
 							<th class="bw-100">작성자</th>
 							<th class="bw-100">작성일</th>
@@ -101,6 +89,9 @@ $(function() {
 						<c:forEach var="dto" items="${list}">
 							<tr style="text-align: center">
 								<td>${dto.listNum}</td>
+								<c:if test="${sessionScope.member.membership > 50}">
+									<td>${dto.area1}&nbsp;${dto.area3}</td>
+								</c:if>
 								<td style="text-align: left;">
 									<a href="${articleUrl}&vNum=${dto.vNum}" class="text-reset">${dto.subject}</a>
 									<c:if test="${dto.replyCount!=0}">(${dto.replyCount})</c:if>
@@ -123,7 +114,7 @@ $(function() {
 					</div>
 					
 					<div class="col-6 text-center">
-						<form class="row" name="searchForm" action="${pageContext.request.contextPath}/village/qna/list" method="post">
+						<form class="row" name="searchForm" action="${pageContext.request.contextPath}/village/help/list" method="post">
 							<div class="col-auto p-1">
 								<select name="condition" class="form-select">
 									<option value="all" ${condition=="all"?":selected='selected'":""}>제목+내용</option>
@@ -145,7 +136,7 @@ $(function() {
 					</div>
 					
 					<div class="col text-end">
-						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/qna/write';">글쓰기</button>
+						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/help/write';">글쓰기</button>
 					</div>
 				</div>
 			</div>

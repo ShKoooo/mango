@@ -230,7 +230,7 @@
 	
 	
 	<!-- 댓글 -->
-	<insert id="insertReply" parameterType="com.sp.mango.village.qna.Reply">
+	<insert id="insertReply" parameterType="com.sp.mango.village.Reply">
 		INSERT INTO vbbsReply(vreplyNum, vNum, userId, vrContent, vrAnswer, vrRegdate)
 		VALUES (vbbsReply_seq.NEXTVAL, #{vNum}, #{userId}, #{vrContent}, #{vrAnswer}, SYSDATE)
 	</insert>
@@ -241,7 +241,7 @@
 	</select>	
 	
 	<!-- 댓글 리스트 -->
-	<select id="listReply" parameterType="map" resultType="com.sp.mango.village.qna.Reply">
+	<select id="listReply" parameterType="map" resultType="com.sp.mango.village.Reply">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT v.vreplyNum, v.userId, userNickName, vNum, vrContent, v.vrRegdate,
@@ -274,7 +274,7 @@
 	</delete>
 	
 	<!-- 댓글의 답글리스트 -->
-	<select id="listReplyAnswer" parameterType="Integer" resultType="com.sp.mango.village.qna.Reply">
+	<select id="listReplyAnswer" parameterType="Integer" resultType="com.sp.mango.village.Reply">
 		SELECT vreplyNum, vNum, v.userId, userNickName, vrContent, vrRegdate, vrAnswer
 		FROM vbbsReply v
 		JOIN member m ON v.userId = m.userId

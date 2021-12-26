@@ -10,6 +10,7 @@ import com.sp.mango.common.dao.CommonDAO;
 import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
+import com.sp.mango.village.Reply;
 
 @Service("village.eat.villageEatService")
 public class VillageEatServiceImpl implements VillageEatService {

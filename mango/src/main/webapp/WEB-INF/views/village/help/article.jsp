@@ -30,7 +30,7 @@ textarea.form-control {
 	function deleteBoard() {
 		if(confirm("게시글을 삭제하시겠습니까?")) {
 			var query = "vNum=${dto.vNum}&${query}";
-			var url = "${pageContext.request.contextPath}/village/eat/delete?" + query;
+			var url = "${pageContext.request.contextPath}/village/help/delete?" + query;
 			location.href = url;
 		}
 	}
@@ -78,7 +78,7 @@ $(function() {
 			return false;
 		}
 		
-		var url="${pageContext.request.contextPath}/village/eat/insertBoardLike";
+		var url="${pageContext.request.contextPath}/village/help/insertBoardLike";
 		var vNum="${dto.vNum}";
 		var query = "vNum="+vNum+"&userLiked="+userLiked;
 		
@@ -110,7 +110,7 @@ $(function() {
 });
 
 function listPage(page) {
-	var url = "${pageContext.request.contextPath}/village/eat/listReply";
+	var url = "${pageContext.request.contextPath}/village/help/listReply";
 	var query = "vNum=${dto.vNum}&pageNo="+page;
 	var selector = "#listReply";
 	
@@ -132,7 +132,7 @@ $(function() {
 		}
 		vrContent = encodeURIComponent(vrContent);
 		
-		var url = "${pageContext.request.contextPath}/village/eat/insertReply";
+		var url = "${pageContext.request.contextPath}/village/help/insertReply";
 		var query = "vNum=" + vNum + "&vrContent="+vrContent+"&vrAnswer=0";
 		
 		var fn = function(data) {
@@ -160,7 +160,7 @@ $(function() {
 		var vreplyNum = $(this).attr("data-vreplyNum");
 		var page = $(this).attr("data-pageNo");
 		
-		var url = "${pageContext.request.contextPath}/village/eat/deleteReply";
+		var url = "${pageContext.request.contextPath}/village/help/deleteReply";
 		var query = "vreplyNum="+vreplyNum;
 		
 		var fn = function(data) {
@@ -188,7 +188,7 @@ $(function() {
 			return false;
 		}
 		
-		var url = "${pageContext.request.contextPath}/village/eat/insertReplyLike";
+		var url = "${pageContext.request.contextPath}/village/help/insertReplyLike";
 		var query = "vreplyNum="+vreplyNum+"&replyLike="+replyLike;
 		
 		var fn = function(data) {
@@ -212,7 +212,7 @@ $(function() {
 
 // 댓글별 답글 리스트
 function listReplyAnswer(vrAnswer) {
-	var url ="${pageContext.request.contextPath}/village/eat/listReplyAnswer";
+	var url ="${pageContext.request.contextPath}/village/help/listReplyAnswer";
 	var query = "vrAnswer="+vrAnswer;
 	var selector="#listReplyAnswer" + vrAnswer;
 	
@@ -224,7 +224,7 @@ function listReplyAnswer(vrAnswer) {
 
 // 댓글별 답글 개수
 function countReplyAnswer(vrAnswer) {
-	var url="${pageContext.request.contextPath}/village/eat/countReplyAnswer";
+	var url="${pageContext.request.contextPath}/village/help/countReplyAnswer";
 	var query = "vrAnswer="+vrAnswer;
 	
 	var fn = function(data) {
@@ -272,7 +272,7 @@ $(function() {
 		}
 		vrContent = encodeURIComponent(vrContent);
 		
-		var url = "${pageContext.request.contextPath}/village/eat/insertReply";
+		var url = "${pageContext.request.contextPath}/village/help/insertReply";
 		var query = "vNum="+vNum+"&vrContent="+vrContent+"&vrAnswer="+vreplyNum;
 		
 		var fn = function(data) {
@@ -299,7 +299,7 @@ $(function() {
 		var vreplyNum = $(this).attr("data-vreplyNum");
 		var vrAnswer = $(this).attr("data-vrAnswer");
 		
-		var url = "${pageContext.request.contextPath}/village/eat/deleteReply";
+		var url = "${pageContext.request.contextPath}/village/help/deleteReply";
 		var query = "vreplyNum="+vreplyNum;
 		
 		var fn = function(data) {
@@ -324,7 +324,7 @@ function sendReport() {
 			return;
 		}
 		
-		f.action = "${pageContext.request.contextPath}/village/eat/report?" + query;
+		f.action = "${pageContext.request.contextPath}/village/help/report?" + query;
 		f.submit();
 		
 		alert("신고가 접수되었습니다.");
@@ -338,8 +338,8 @@ function sendReport() {
 	<div class="inner-container container">
 		<div class="row">
 			<div class="section-header col-md-12">
-				<h2> 동네 맛집 </h2>
-				<span>Village EAT</span>
+				<h2> 해주세요 </h2>
+				<span>Help ME</span>
 			</div>
 		</div> <!-- row -->
 	<div class="projects-holder">
@@ -360,7 +360,8 @@ function sendReport() {
 						<tbody>
 							<tr>
 								<td width="50%">
-								<img class="rounded-circle profileImg" src="https://dummyimage.com/20x20/ced4da/6c757d" alt="..." style="float: left; margin-right: 10px"/> <b> ${dto.userNickName} </b>
+								<img class="rounded-circle profileImg" src="https://dummyimage.com/20x20/ced4da/6c757d" alt="..." style="float: left; margin-right: 10px"/>
+									<b>${dto.userNickName}</b>
 								</td>
 								<td align="right">
 									${dto.reg_date} | 조회 ${dto.hitCount}
@@ -387,7 +388,7 @@ function sendReport() {
 							<td width="50%">
 								<c:choose>
 									<c:when test="${sessionScope.member.userId==dto.userId}">
-										<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/eat/update?vNum=${dto.vNum}&page=${page}';">수정</button>
+										<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/help/update?vNum=${dto.vNum}&page=${page}';">수정</button>
 									</c:when>
 								</c:choose>
 								
@@ -527,7 +528,7 @@ function sendReplyReport() {
 			return;
 		}
 		
-		f.action = "${pageContext.request.contextPath}/village/eat/reportReply";
+		f.action = "${pageContext.request.contextPath}/village/help/reportReply";
 		
 		
 		f.submit();

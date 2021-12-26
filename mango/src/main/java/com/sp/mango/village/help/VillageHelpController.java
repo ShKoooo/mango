@@ -1,6 +1,5 @@
-package com.sp.mango.village.qna;
+package com.sp.mango.village.help;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -23,25 +22,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.MemberAddr;
+import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
-import com.sp.mango.village.Reply;
 
-@Controller("village.qna.VillageQnaController")
-@RequestMapping("/village/qna/*")
-public class VillageQnaController {
+@Controller("village.help.VillageHelpController")
+@RequestMapping("/village/help/*")
+public class VillageHelpController {
+	
 	@Autowired
-	private VillageQnaService service;
+	private VillageHelpService service;
 	@Autowired
 	private MyUtil myUtil;
-	
-	@RequestMapping(value="list")
+
+	@RequestMapping(value = "list")
 	public String list(@RequestParam(value = "page", defaultValue = "1") int current_page,
 			@RequestParam(defaultValue = "all") String condition,
 			@RequestParam(defaultValue = "") String keyword,
-			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
+			@RequestParam(value = "maLat", defaultValue="0") double maLat,
 			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
-			@RequestParam(value = "areaNum", defaultValue = "0") String areaNum,
+			@RequestParam(value = "areaNum", defaultValue="0") String areaNum,
 			HttpServletRequest req,
 			Model model) throws Exception {
 		
@@ -53,7 +53,6 @@ public class VillageQnaController {
 		int rows = 10;
 		int total_page = 0;
 		int dataCount = 0;
-		// int memberDataCount = 0;
 		
 		if(req.getMethod().equalsIgnoreCase("GET")) {
 			keyword = URLDecoder.decode(keyword, "utf-8");
@@ -64,7 +63,6 @@ public class VillageQnaController {
 		map.put("condition", condition);
 		map.put("keyword", keyword);
 		map.put("info", info!=null);
-		// 회원이 선택한 주소의 위도, 경도
 		
 		List<MemberAddr> listMemberAddr = null;
 		int memAddrCount = 0;
@@ -72,80 +70,58 @@ public class VillageQnaController {
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
 		
-		if (info != null) {
+		if (info!=null) {
 			map.put("membership", info.getMembership());
 			listMemberAddr = service.listMemberAddr(info.getUserId());
 			memAddrCount = service.memAddrCount(info.getUserId());
 			
-			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) { 
+			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) {
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
-				// memAddrCount = service.memAddrCount(info.getUserId());
-				
 			}
 		}
 		
 		dataCount = service.dataCount(map);
-		if (dataCount != 0) {
+		if(dataCount != 0) {
 			total_page = myUtil.pageCount(rows, dataCount);
 		}
 		
-		// 다른 사람이 자료 삭제해서 전체 페이지 수 변화
-		if (total_page < current_page) {
+		if(total_page < current_page) {
 			current_page = total_page;
 		}
 		
-		// 리스트에 출력할 데이터
 		int start = (current_page - 1) * rows + 1;
 		int end = current_page * rows;
 		map.put("start", start);
 		map.put("end", end);
 		
-		
-		// 글 리스트
-		List<VillageQna> list = null;
+		List<VillageHelp> list = null;
 		
 		if (info != null) {
 			list = service.memberListBoard(map);
 		}
 		
-		/*
-		if (info != null) {
-			if (info.getMembership()<51) {		// 일반회원
-				list = service.memberListBoard(map);
-			} else {							// 관리자
-				list = service.listBoard(map);
-			}
-		} else if(info == null || maLat==0 && maLon==0) {
-			list = service.listBoard(map);
-		}
-		*/
-		
-		// 리스트 번호
-		
 		int listNum, n = 0;
-		for (VillageQna dto : list) {
+		for(VillageHelp dto : list) {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
 			n++;
 			
-			// 리플 갯수 불러오기
 			Map<String, Object> rplyMap = new HashMap<String, Object>();
-			rplyMap.put("vNum", dto.getvNum());
+			rplyMap.put("vNum",  dto.getvNum());
 			dto.setReplyCount(service.replyCount(rplyMap));
 		}
 		
-		
 		String query = "";
-		String listUrl = cp + "/village/qna/list";
-		String articleUrl = cp + "/village/qna/article?page="+current_page;
-		if(keyword.length() != 0) {
-			query = "condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "utf-8");
+		String listUrl = cp + "/village/help/list";
+		String articleUrl = cp + "/village/help/article?page="+current_page;
+		if (keyword.length()!=0) {
+			query = "condition="+condition+"&keyword="+URLEncoder.encode(keyword, "UTF-8");
 		}
 		
 		if(query.length() != 0) {
-			listUrl = cp + "/village/qna/list?"+query;
-			articleUrl = cp + "/village/qna/article?page=" + current_page + "&" + query;
+			listUrl = cp + "/village/help/list?"+query;
+			articleUrl = cp + "/village/help/article?page="+current_page+"&"+query;
 		}
 		
 		String paging = myUtil.paging(current_page, total_page, listUrl);
@@ -157,7 +133,6 @@ public class VillageQnaController {
 		model.addAttribute("articleUrl", articleUrl);
 		model.addAttribute("page", current_page);
 		model.addAttribute("dataCount", dataCount);
-		// model.addAttribute("memberDataCount", memberDataCount);
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
@@ -165,7 +140,7 @@ public class VillageQnaController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("areaNum", areaNum);
 		
-		return ".village.qna.list";
+		return ".village.help.list";
 	}
 	
 	@RequestMapping(value = "write", method = RequestMethod.GET)
@@ -176,24 +151,22 @@ public class VillageQnaController {
 		model.addAttribute("mode", "write");
 		model.addAttribute("listMemberAddr", listMemberAddr);
 		
-		return ".village.qna.write";
+		return ".village.help.write";
 	}
 	
-	@RequestMapping(value = "/village/qna/write", method = RequestMethod.POST)
-	public String writeSubmit(VillageQna dto, HttpSession session) throws Exception {
-		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-		
-		String root = session.getServletContext().getRealPath("/");
-		String pathname = root + "uploads" + File.separator + "qna";
+	@RequestMapping(value = "village/help/write", method = RequestMethod.POST)
+	public String writeSubmit (VillageHelp dto, HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
 			dto.setUserId(info.getUserId());
-			service.insertBoard(dto, pathname);
+			service.insertBoard(dto);
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/qna/list";
+		return "redirect:/village/help/list";
 	}
+	
 	
 	@RequestMapping(value = "article")
 	public String article(@RequestParam int vNum,
@@ -203,61 +176,51 @@ public class VillageQnaController {
 			HttpSession session,
 			Model model) throws Exception {
 		
-		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		keyword = URLDecoder.decode(keyword, "utf-8");
 		
 		String query = "page=" + page;
 		if (keyword.length() != 0) {
-			query += "&condition=" + condition + 
-					"&keyword=" + URLEncoder.encode(keyword, "UTF-8");
+			query += "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "utf-8");
 		}
 		
 		service.updateHitCount(vNum);
-	
-		// 가져오기
-		VillageQna dto = service.readBoard(vNum);
-		if (dto == null) {
-			return "redirect:/village/qna/list?" + query;
+		
+		VillageHelp dto = service.readBoard(vNum);
+		if(dto == null) {
+			return "redirect:/village/help/list?" + query;
 		}
 		
-		// 이전글, 다음글
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("condition", condition);
 		map.put("keyword", keyword);
 		map.put("vNum", vNum);
 		
-		
-		// 게시글 좋아요
 		map.put("userId", info.getUserId());
 		boolean userBoardLiked = service.userBoardLiked(map);
 		
 		List<VillageReport> listVreport = null;
 		List<ReplyReport> listVRreport = null;
 		
-		// 게시글 신고
-		if(info != null) {
+		if(info != null)  {
 			map.put("userId", info.getUserId());
 			
 			listVreport = service.listVreport();
 		}
 		
-		// 댓글 신고
 		if(info != null) {
 			map.put("userId", info.getUserId());
 			
 			listVRreport = service.listVRreport();
 		}
-		
 		model.addAttribute("dto", dto);
 		model.addAttribute("userBoardLiked", userBoardLiked);
-		
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
-		
 		model.addAttribute("listVreport", listVreport);
 		model.addAttribute("listVRreport", listVRreport);
 		
-		return ".village.qna.article";
+		return ".village.help.article";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.GET)
@@ -265,11 +228,11 @@ public class VillageQnaController {
 			@RequestParam String page,
 			HttpSession session,
 			Model model) throws Exception {
-		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
-		VillageQna dto = service.readBoard(vNum);
+		VillageHelp dto = service.readBoard(vNum);
 		if(dto == null || ! info.getUserId().equals(dto.getUserId())) {
-			return "redirect:/village/qna/list?page=" + page;
+			return "redirect:/village/help/list?page=" + page;
 		}
 		
 		List<MemberAddr> listMemberAddr = service.listMemberAddr(info.getUserId());
@@ -279,11 +242,11 @@ public class VillageQnaController {
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
 		
-		return ".village.qna.write";
+		return ".village.help.write";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String updateSubmit(VillageQna dto,
+	public String updateSubmit(VillageHelp dto,
 			@RequestParam String page,
 			HttpSession session) throws Exception {
 		
@@ -295,7 +258,7 @@ public class VillageQnaController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/qna/list?page=" + page;
+		return "redirect:/village/help/list?page="+page;
 	}
 	
 	@RequestMapping(value = "delete")
@@ -314,23 +277,22 @@ public class VillageQnaController {
 		
 		service.deleteBoard(vNum, info.getUserId(), info.getMembership());
 		
-		return "redirect:/village/qna/list?"+query;
+		return "redirect:/village/help/list?"+query;
 	}
-
-	// 게시글 좋아요 추가/삭제
+	
 	@RequestMapping(value = "insertBoardLike", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> insertBoardLike(@RequestParam int vNum, 
+	public Map<String, Object> insertBoardLike(@RequestParam int vNum,
 			@RequestParam boolean userLiked,
 			HttpSession session) {
 		String state = "true";
 		int boardLikeCount = 0;
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-
+		
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("vNum", vNum);
 		paramMap.put("userId", info.getUserId());
-
+		
 		try {
 			if(userLiked) {
 				service.deleteBoardLike(paramMap);
@@ -342,17 +304,16 @@ public class VillageQnaController {
 		} catch (Exception e) {
 			state = "false";
 		}
-
+		
 		boardLikeCount = service.boardLikeCount(vNum);
-
+		
 		Map<String, Object> model = new HashMap<>();
 		model.put("state", state);
 		model.put("boardLikeCount", boardLikeCount);
-
+		
 		return model;
 	}
 	
-	// 댓글 리스트
 	@RequestMapping(value = "listReply")
 	public String listReply(@RequestParam int vNum,
 			@RequestParam(value="pageNo", defaultValue="1") int current_page,
@@ -390,11 +351,9 @@ public class VillageQnaController {
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
-		return "village/qna/listReply";
+		return "village/help/listReply";
 	}
 	
-	
-	// 댓글 및 답글 등록
 	@RequestMapping(value = "insertReply", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> insertReply(Reply dto, HttpSession session) {
@@ -413,7 +372,6 @@ public class VillageQnaController {
 		return model;
 	}
 	
-	// 댓글 및 댓글의 답글 삭제
 	@RequestMapping(value = "deleteReply", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> deleteReply(@RequestParam Map<String, Object> paramMap) {
@@ -430,8 +388,7 @@ public class VillageQnaController {
 		return map;
 	}
 	
-	// 댓글의 답글 리스트
-	@RequestMapping(value="listReplyAnswer")
+	@RequestMapping(value = "listReplyAnswer")
 	public String listReplyAnswer(@RequestParam int vrAnswer, Model model) throws Exception {
 		List<Reply> listReplyAnswer = service.listReplyAnswer(vrAnswer);
 		
@@ -440,10 +397,9 @@ public class VillageQnaController {
 		}
 		
 		model.addAttribute("listReplyAnswer", listReplyAnswer);
-		return "village/qna/listReplyAnswer";
+		return "village/help/listReplyAnswer";
 	}
 	
-	// 댓글의 답글 개수
 	@RequestMapping(value = "countReplyAnswer")
 	@ResponseBody
 	public Map<String, Object> countReplyAnswer(@RequestParam(value="vrAnswer") int vrAnswer) {
@@ -454,7 +410,6 @@ public class VillageQnaController {
 		return model;
 	}
 	
-	// 댓글의 좋아요/싫어요 추가 : AJAX-JSON
 	@RequestMapping(value = "insertReplyLike", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> insertReplyLike(@RequestParam Map<String, Object> paramMap,
@@ -481,15 +436,13 @@ public class VillageQnaController {
 		model.put("likeCount", likeCount);
 		model.put("dislikeCount", disLikeCount);
 		model.put("state", state);
+		
 		return model;
 	}
 	
-	// 댓글 좋아요/싫어요 개수
-	@RequestMapping(value = "countReplyLike", method = RequestMethod.POST)
-	@ResponseBody
 	public Map<String, Object> countReplyLike(@RequestParam Map<String, Object> paramMap,
 			HttpSession session) {
-
+		
 		Map<String, Object> countMap = service.replyLikeCount(paramMap);
 		int likeCount = ((BigDecimal) countMap.get("LIKECOUNT")).intValue();
 		int disLikeCount = ((BigDecimal) countMap.get("DISLIKECOUNT")).intValue();
@@ -501,7 +454,6 @@ public class VillageQnaController {
 		return model;
 	}
 	
-	// 게시글 신고
 	@RequestMapping(value = "report")
 	public String insertVreport(VillageReport dto, 
 			@RequestParam int vNum,
@@ -515,10 +467,9 @@ public class VillageQnaController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/qna/article?page="+page+"&vNum="+vNum;
+		return "redirect:/village/help/article?page="+page+"&vNum="+vNum;
 	}
 	
-	// 댓글 신고
 	@RequestMapping(value = "reportReply")
 	public String insertVRreport(ReplyReport dto,
 			@RequestParam int vNum,
@@ -529,14 +480,13 @@ public class VillageQnaController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			
-			// #{userId}, #{vreplyNum}, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR}
-			System.out.println(":::::: replyNum = "+dto.getVreplyNum()); // 0 (부모키오류..)
-			
 			service.insertVRreport(dto); // TODO
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/qna/article?page="+page+"&vNum="+vNum;
+		return "redirect:/village/help/article?page="+page+"&vNum="+vNum;
 	}
 }
+
+
+

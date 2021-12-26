@@ -25,6 +25,7 @@ import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
+import com.sp.mango.village.Reply;
 
 @Controller("village.eat.VillageEatController")
 @RequestMapping("/village/eat/*")
@@ -73,6 +74,7 @@ public class VillageEatController {
 		if (info != null) {
 			map.put("membership",  info.getMembership());
 			listMemberAddr = service.listMemberAddr(info.getUserId());
+			memAddrCount = service.memAddrCount(info.getUserId());
 			
 			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) {
 				map.put("maLat", listMemberAddr.get(0).getaLat());
@@ -122,7 +124,7 @@ public class VillageEatController {
 		String listUrl = cp + "/village/eat/list";
 		String articleUrl = cp + "/village/eat/article?page="+current_page;
 		if(keyword.length()!=0) {
-			query = "conditionn="+condition+"&keyword="+URLEncoder.encode(keyword, "UTF-8");
+			query = "condition="+condition+"&keyword="+URLEncoder.encode(keyword, "UTF-8");
 		}
 		
 		if(query.length() != 0) {
@@ -186,7 +188,7 @@ public class VillageEatController {
 			Model model) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-		keyword = URLDecoder.decode(keyword, "utf-8");
+		keyword = URLDecoder.decode(keyword, "UTF-8");
 		
 		String query = "page=" + page;
 		if (keyword.length() != 0) {
@@ -253,7 +255,7 @@ public class VillageEatController {
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
 		
-		return ".village.qna.write";
+		return ".village.eat.write";
 	}
 	
 	

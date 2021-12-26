@@ -6,6 +6,7 @@ import java.util.Map;
 import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
+import com.sp.mango.village.Reply;
 
 public interface VillageEatService {
 	public void insertBoard(VillageEat dto, String pathname) throws Exception;
