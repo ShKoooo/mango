@@ -63,34 +63,13 @@
 		WHERE userId = #{userId}
 	</select>
 	
-	<!-- 게시글 리스트 : 전체 -->
-	<select id="listBoard" parameterType="map" resultType="com.sp.mango.village.eat.VillageEat">
-		SELECT * FROM (
-			SELECT ROWNUM rnum, tb.* FROM (
-				SELECT vNum, v.userId, userNickName, subject,
-					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date,
-					hitCount, vcNum, area3
-				FROM village_bbs v
-				JOIN area a ON v.areaNum = a.areaNum
-				JOIN member m ON v.userId = m.userId
-				<where>
-				vcNum = 2
-					<if test="keyword != null and keyword != ''">
-						AND <include refid="where-list"/>
-					</if>
-				</where>
-				ORDER BY vNum DESC
-			) tb WHERE ROWNUM &lt;= #{end}
-		) WHERE rnum &gt;= #{start}
-	</select>
-	
 	<!-- 게시글 리스트(회원) : 회원 지정 위치 기준 반경 5km 게시글-->
 	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.eat.VillageEat">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT vNum, v.userId, userNickName, subject,
 					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, 	
-					hitCount, vcNum, area3
+					hitCount, vcNum, area1, area3
 				FROM village_bbs v
 				JOIN area a ON v.areaNum = a.areaNum
 				JOIN member m ON v.userId = m.userId
@@ -99,18 +78,23 @@
 					<if test="keyword != null and keyword != ''">
 						AND <include refid="where-list"/>
 					</if>
-					AND v.areaNum IN (
-						  SELECT areaNum
-						  FROM (
-							SELECT * FROM (
-								SELECT areaNum,
-									(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-	                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
-	                        		AS distance
-	                        		FROM area ar
-	                    		) WHERE distance &lt;= 5   
-							)
-						)
+					
+					<if test="info == true">
+						<if test="membership &lt; 51">
+							AND v.areaNum IN (
+								  SELECT areaNum
+								  FROM (
+									SELECT * FROM (
+										SELECT areaNum,
+											(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+			                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+			                        		AS distance
+			                        		FROM area ar
+			                    		) WHERE distance &lt;= 5   
+									)
+								)
+						</if>
+					</if>
 				</where>
 				ORDER BY vNum DESC
 			) tb WHERE ROWNUM &lt;=#{end}

@@ -69,27 +69,14 @@ $(function() {
 							</c:if>
 						</c:if>
 					</div>
-				<!-- 
-				<c:if test="${! empty sessionScope.member}">
-					<div style="width: 120px; float: right;">
-						<select name="areaNum" id="selectArea" class="form-select">
-							<c:forEach var="vo" items="${listMemberAddr}">
-								<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}' ${areaNum == vo.areaNum ? "selected='selected'" :"" }>${vo.area3}</option>
-							</c:forEach>
-							
-							<c:if test="${empty listMemberAddr}">
-								<option value="${pageContext.request.contextPath}/member/address">동네 설정</option>
-							</c:if>
-						</select>
-					</div>
-					<div>
-					</div>
-				</c:if>
-				-->
+					
 				<table class="table table-hover board-list">
 					<thead>
 						<tr style="text-align: center;">
 							<th class="bw-60">번호</th>
+							<c:if test="${sessionScope.member.membership > 50}">
+								<th class="bw-70">지역</th>
+							</c:if>
 							<th class="bw-auto">제목</th>
 							<th class="bw-100">작성자</th>
 							<th class="bw-100">작성일</th>
@@ -101,6 +88,9 @@ $(function() {
 						<c:forEach var="dto" items="${list}">
 							<tr style="text-align: center">
 								<td>${dto.listNum}</td>
+								<c:if test="${sessionScope.member.membership > 50}">
+									<td>${dto.area1}&nbsp;${dto.area3}</td>
+								</c:if>
 								<td style="text-align: left;">
 									<a href="${articleUrl}&vNum=${dto.vNum}" class="text-reset">${dto.subject}</a>
 									<c:if test="${dto.replyCount!=0}">(${dto.replyCount})</c:if>

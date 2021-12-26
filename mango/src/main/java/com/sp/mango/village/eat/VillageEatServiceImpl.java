@@ -28,18 +28,6 @@ public class VillageEatServiceImpl implements VillageEatService {
 	}
 
 	@Override
-	public List<VillageEat> listBoard(Map<String, Object> map) {
-		List<VillageEat> list = null;
-		
-		try {
-			list = dao.selectList("eat.listBoard", map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-
-	@Override
 	public List<VillageEat> memberListBoard(Map<String, Object> map) {
 		List<VillageEat> memberList = null;
 		
@@ -58,18 +46,6 @@ public class VillageEatServiceImpl implements VillageEatService {
 		
 		try {
 			result = dao.selectOne("eat.dataCount", map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	@Override
-	public int memberDataCount(Map<String, Object> map) {
-		int result = 0;
-		
-		try {
-			result = dao.selectOne("eat.memberDataCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

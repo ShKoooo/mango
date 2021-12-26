@@ -53,7 +53,6 @@ public class VillageQnaController {
 		int rows = 10;
 		int total_page = 0;
 		int dataCount = 0;
-		// int memberDataCount = 0;
 		
 		if(req.getMethod().equalsIgnoreCase("GET")) {
 			keyword = URLDecoder.decode(keyword, "utf-8");
@@ -80,8 +79,6 @@ public class VillageQnaController {
 			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) { 
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
-				// memAddrCount = service.memAddrCount(info.getUserId());
-				
 			}
 		}
 		
@@ -108,18 +105,6 @@ public class VillageQnaController {
 		if (info != null) {
 			list = service.memberListBoard(map);
 		}
-		
-		/*
-		if (info != null) {
-			if (info.getMembership()<51) {		// 일반회원
-				list = service.memberListBoard(map);
-			} else {							// 관리자
-				list = service.listBoard(map);
-			}
-		} else if(info == null || maLat==0 && maLon==0) {
-			list = service.listBoard(map);
-		}
-		*/
 		
 		// 리스트 번호
 		
@@ -157,7 +142,6 @@ public class VillageQnaController {
 		model.addAttribute("articleUrl", articleUrl);
 		model.addAttribute("page", current_page);
 		model.addAttribute("dataCount", dataCount);
-		// model.addAttribute("memberDataCount", memberDataCount);
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
@@ -220,12 +204,10 @@ public class VillageQnaController {
 			return "redirect:/village/qna/list?" + query;
 		}
 		
-		// 이전글, 다음글
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("condition", condition);
 		map.put("keyword", keyword);
 		map.put("vNum", vNum);
-		
 		
 		// 게시글 좋아요
 		map.put("userId", info.getUserId());

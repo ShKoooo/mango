@@ -10,13 +10,6 @@
 		1, #{areaNum}, #{addr2, jdbcType=VARCHAR}, #{vBlat, jdbcType=DOUBLE}, #{vBlon, jdbcType=DOUBLE})
 	</insert>
 	
-	<!-- 이미지 첨부
-	<insert id="insertImg" parameterType="com.sp.mango.village.qna.VillageQna">
-		INSERT INTO villageImg (vimgNum, vimgSaveFilename, vimgOrigFilename, vNum)
-		VALUES (villageImg_seq.NEXTVAL, #{vimgSaveFilename}, #{vimgOrigFilename}, 1)
-	</insert>
-	-->
-	
 	<sql id="where-list">
 		<choose>
 			<when test="condition == 'all'">
@@ -31,7 +24,6 @@
 			</otherwise>
 		</choose>
 	</sql>
-	
 	
 	<select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
@@ -71,13 +63,13 @@
 		WHERE userId = #{userId}
 	</select>
 	
-	<!-- 게시글 리스트 : 전체 -->
-	<select id="listBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
+	<!-- 게시글 리스트(회원) : 회원 지정 위치 기준 반경 5km 게시글-->
+	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT vNum, v.userId, userNickName, subject,
-					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date,
-					hitCount, vcNum, area3
+					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, 	
+					hitCount, vcNum, area1, area3
 				FROM village_bbs v
 				JOIN area a ON v.areaNum = a.areaNum
 				JOIN member m ON v.userId = m.userId
@@ -86,39 +78,23 @@
 					<if test="keyword != null and keyword != ''">
 						AND <include refid="where-list"/>
 					</if>
-				</where>
-				ORDER BY vNum DESC
-			) tb WHERE ROWNUM &lt;= #{end}
-		) WHERE rnum &gt;= #{start}
-	</select>
-	
-	<!-- 게시글 리스트(회원) : 회원 지정 위치 기준 반경 5km 게시글-->
-	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
-		SELECT * FROM (
-			SELECT ROWNUM rnum, tb.* FROM (
-				SELECT vNum, v.userId, userNickName, subject,
-					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, 	
-					hitCount, vcNum, area3
-				FROM village_bbs v
-				JOIN area a ON v.areaNum = a.areaNum
-				JOIN member m ON v.userId = m.userId
-				<where>
-				vcNum = 1 
-					<if test="keyword != null and keyword != ''">
-						AND <include refid="where-list"/>
+					
+					<if test="info == true">
+						<if test="membership &lt; 51">
+							AND v.areaNum IN (
+								  SELECT areaNum
+								  FROM (
+									SELECT * FROM (
+										SELECT areaNum,
+											(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+			                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+			                        		AS distance
+			                        		FROM area ar
+			                    		) WHERE distance &lt;= 5   
+									)
+								)
+						</if>
 					</if>
-					AND v.areaNum IN (
-						  SELECT areaNum
-						  FROM (
-							SELECT * FROM (
-								SELECT areaNum,
-									(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-	                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
-	                        		AS distance
-	                        		FROM area ar
-	                    		) WHERE distance &lt;= 5   
-							)
-						)
 				</where>
 				ORDER BY vNum DESC
 			) tb WHERE ROWNUM &lt;=#{end}
@@ -146,56 +122,6 @@
 	<update id="updateHitCount" parameterType="Integer">
 		UPDATE village_bbs SET hitCount=hitCount+1 WHERE vNum=#{vNum}
 	</update>
-	
-	<!-- 이전글, 다음글 -->
-	<select id="preReadBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
-		SELECT * FROM (
-			SELECT vNum, subject
-			FROM village_bbs v
-			JOIN member m ON v.userId = m.userId
-			<where>
-			vcNum = 1
-				<if test="keyword != null and keyword != '' ">
-					AND <include refid="where-list"/>
-				</if>
-				
-				
-				<if test="info == true">
-				AND v.areaNum IN (
-					SELECT areaNum
-					FROM (
-						SELECT * FROM (
-							SELECT areaNum,
-								(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-		                        -#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
-		                        AS distance
-		                        FROM area ar
-		                    ) WHERE distance &lt;= 5   
-						)
-					)
-				</if>
-			
-				AND (vNum &lt; #{vNum})
-			</where>
-			ORDER BY vNum DESC
-		) WHERE ROWNUM = 1
-	</select>
-	
-	<select id="nextReadBoard" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
-		SELECT * FROM (
-			SELECT vNum, subject
-			FROM village_bbs v
-			JOIN member m ON v.userId = m.userId
-			<where>
-				<if test="keyword != null and keyword != '' ">
-					<include refid="where-list"/>
-				</if>
-				AND (vNum &gt; #{vNum})
-			</where>
-			ORDER BY vNum ASC
-		) WHERE ROWNUM = 1
-	</select>
-	
 	
 	<update id="updateBoard" parameterType="com.sp.mango.village.qna.VillageQna">
 		UPDATE village_bbs SET subject=#{subject}, content=#{content}, areaNum=#{areaNum},
@@ -226,8 +152,6 @@
 	<select id="userBoardLiked" parameterType="map" resultType="com.sp.mango.village.qna.VillageQna">
 		SELECT vNum, userId FROM vbbsLike WHERE vNum = #{vNum} AND userId = #{userId}
 	</select>
-	
-	
 	
 	<!-- 댓글 -->
 	<insert id="insertReply" parameterType="com.sp.mango.village.Reply">

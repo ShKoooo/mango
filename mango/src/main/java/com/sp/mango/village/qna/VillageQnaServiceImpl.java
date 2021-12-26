@@ -22,42 +22,13 @@ public class VillageQnaServiceImpl implements VillageQnaService {
 		
 		try {
 			dao.insertData("qna.insertBoard", dto);
-			
-			/* 이미지파일 업로드
-			if(!dto.getSelectFile().isEmpty()) {
-				for(MultipartFile mf : dto.getSelectFile()) {
-					String vimageSaveFilename = FileManager.doFileUpload(mf, pathname);
-					if (vimageSaveFilename == null) {
-						continue;
-					}
-					
-					dto.setVimageSaveFilename(vimageSaveFilename);
-					dto.setVimageOrigFilename(mf.getOriginalFilename());
-					
-					insertImg(dto);
-				}
-			}
-			*/
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
 	}
 
-	// 비회원 혹은 1개 주소 등록 회원의 전체 글보기 리스트
-	@Override
-	public List<VillageQna> listBoard(Map<String, Object> map) {
-		List<VillageQna> list = null;
-		
-		try {
-			list = dao.selectList("qna.listBoard", map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return list;
-	}
-	
-	// 주소 2개 등록한 회원의 반경 5km 게시글 리스트
+	// 회원의 반경 5km 게시글 리스트
 	@Override
 	public List<VillageQna> memberListBoard(Map<String, Object> map) {
 		List<VillageQna> memberList = null;
@@ -77,18 +48,6 @@ public class VillageQnaServiceImpl implements VillageQnaService {
 		
 		try {
 			result = dao.selectOne("qna.dataCount", map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	@Override
-	public int memberDataCount(Map<String, Object> map) {
-		int result = 0;
-		
-		try {
-			result = dao.selectOne("qna.memberDataCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -117,30 +76,6 @@ public class VillageQnaServiceImpl implements VillageQnaService {
 			e.printStackTrace();
 			throw e;
 		}
-	}
-
-	@Override
-	public VillageQna preReadBoard(Map<String, Object> map) {
-		VillageQna dto = null;
-		
-		try {
-			dto = dao.selectOne("qna.preReadBoard", map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return dto;
-	}
-
-	@Override
-	public VillageQna nextReadBoard(Map<String, Object> map) {
-		VillageQna dto = null;
-		
-		try {
-			dto = dao.selectOne("qna.nextReadBoard", map);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return dto;
 	}
 
 	@Override

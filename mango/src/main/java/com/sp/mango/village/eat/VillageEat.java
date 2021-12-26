@@ -14,15 +14,14 @@ public class VillageEat {
 	private int replyCount;
 	private int boardLikeCount;
 	
-	private int categoryNum;
-	private String category;
-	
 	private int areaNum;
 	private String addr2;
 	private double vBlat;
 	private double vBlon;
 	
 	private String maAddr1;
+	private String area1;
+	private String area3;
 
 	public int getListNum() {
 		return listNum;
@@ -104,22 +103,6 @@ public class VillageEat {
 		this.boardLikeCount = boardLikeCount;
 	}
 
-	public int getCategoryNum() {
-		return categoryNum;
-	}
-
-	public void setCategoryNum(int categoryNum) {
-		this.categoryNum = categoryNum;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
 	public int getAreaNum() {
 		return areaNum;
 	}
@@ -158,6 +141,22 @@ public class VillageEat {
 
 	public void setMaAddr1(String maAddr1) {
 		this.maAddr1 = maAddr1;
+	}
+
+	public String getArea1() {
+		return area1;
+	}
+
+	public void setArea1(String area1) {
+		this.area1 = area1;
+	}
+
+	public String getArea3() {
+		return area3;
+	}
+
+	public void setArea3(String area3) {
+		this.area3 = area3;
 	}
 
 	

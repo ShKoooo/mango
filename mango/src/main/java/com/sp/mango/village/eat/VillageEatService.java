@@ -10,10 +10,8 @@ import com.sp.mango.village.Reply;
 
 public interface VillageEatService {
 	public void insertBoard(VillageEat dto, String pathname) throws Exception;
-	public List<VillageEat> listBoard(Map<String, Object> map);
 	public List<VillageEat> memberListBoard(Map<String, Object> map);
 	public int dataCount(Map<String, Object> map);
-	public int memberDataCount(Map<String, Object> map);
 	public VillageEat readBoard(int vNum);
 	public void updateHitCount(int vNum) throws Exception;
 	public void updateBoard(VillageEat dto) throws Exception;

@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.MemberAddr;
+import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
-import com.sp.mango.village.Reply;
 
 @Controller("village.eat.VillageEatController")
 @RequestMapping("/village/eat/*")
@@ -53,7 +53,6 @@ public class VillageEatController {
 		int rows = 10;
 		int total_page = 0;
 		int dataCount = 0;
-		int memberDataCount = 0;
 		
 		if(req.getMethod().equalsIgnoreCase("GET")) {
 			keyword = URLDecoder.decode(keyword, "utf-8");
@@ -100,13 +99,7 @@ public class VillageEatController {
 		List<VillageEat> list = null;
 		
 		if (info != null) {
-			if (info.getMembership()<51) {
-				list = service.memberListBoard(map);
-			} else {
-				list = service.listBoard(map);
-			}
-		} else if(info == null || maLat==0 && maLon==0) {
-			list = service.listBoard(map);
+			list = service.memberListBoard(map);
 		}
 		
 		int listNum, n = 0;
@@ -141,7 +134,6 @@ public class VillageEatController {
 		model.addAttribute("articleUrl", articleUrl);
 		model.addAttribute("page", current_page);
 		model.addAttribute("dataCount", dataCount);
-		model.addAttribute("memberDataCount", memberDataCount);
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
