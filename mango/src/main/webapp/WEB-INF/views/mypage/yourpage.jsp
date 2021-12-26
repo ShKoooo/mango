@@ -27,15 +27,91 @@
 }
 </style>
 
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
 <script type="text/javascript">
 $(function() {
-	$("#typeName").change( function() {
-		var typeName = $(this).val();
-		
-		var query = "typeName="+typeName;
-		var url = "${pageContext.request.contextPath}/mypage/myrating?"+query;
-		
-		location.href=url;
+	var values = [];
+	var myDeg = Number($('#thermoContainer').attr('data-deg'));
+	
+	if (myDeg > 100) myDeg = 100;
+	if (myDeg < 0) myDeg = 0;
+	
+	values.push(myDeg);
+	
+	if (myDeg<10) {
+		var rgb = '#0000FF';
+	} else if (myDeg>=10 && myDeg<15) {
+		var rgb = '#146CF6';
+	} else if (myDeg>=15 && myDeg<20) {
+		var rgb = '#188AF0';
+	} else if (myDeg>=20 && myDeg<25) {
+		var rgb = '#00B7D8';
+	} else if (myDeg>=25 && myDeg<30) {
+		var rgb = '#00D4B0';
+	} else if (myDeg>=30 && myDeg<35) {
+		var rgb = '#00E54B';
+	} else if (myDeg>=35 && myDeg<40) {
+		var rgb = '#00F800';
+	} else if (myDeg>=40 && myDeg<45) {
+		var rgb = '#57E86B';
+	} else if (myDeg>=45 && myDeg<50) {
+		var rgb = '#78EC6C';
+	} else if (myDeg>=50 && myDeg<55) {
+		var rgb = '#A9F36A';
+	} else if (myDeg>=55 && myDeg<60) {
+		var rgb = '#DDF969';
+	} else if (myDeg>=60 && myDeg<65) {
+		var rgb = '#FEFE69';
+	} else if (myDeg>=65 && myDeg<70) {
+		var rgb = '#FEF001';
+	} else if (myDeg>=70 && myDeg<75) {
+		var rgb = '#FFCE03';
+	} else if (myDeg>=75 && myDeg<80) {
+		var rgb = '#FD9A01';
+	} else if (myDeg>=80 && myDeg<85) {
+		var rgb = '#FD6104';
+	} else if (myDeg>=85 && myDeg<90) {
+		var rgb = '#FF2C05';
+	} else if (myDeg>=90 && myDeg<95) {
+		var rgb = '#F00505';
+	} else {
+		var rgb = '#FF0000';
+	} 
+	
+	console.log(rgb);
+	
+	Highcharts.chart('thermoContainer', {
+	  	chart: {
+	    	type: 'bar',
+	    	height: 160
+	  	},
+	  	title: {
+	    	text: null
+	  	},
+	  	xAxis: {
+			categories: ['나'],
+	    	title: {
+	        	text: null
+    		}
+		},
+	  	yAxis: {
+			min : 0,
+			title: {
+	      		text: '온도 (deg)',
+	      		align: 'middle'
+	    	},
+	   		max : 100
+	  	},
+	  	tooltip: {
+	    	valueSuffix: ' deg'
+	  	},
+	  	series: [{
+	    	name: '나의 체온 : '+values[0]+' 도',
+	    	data: values,
+	    	pointWidth: 15,
+	    	color: rgb
+	  	}]
 	});
 });
 
@@ -58,20 +134,26 @@ $(function() {
 		<div class="body-title">
 			<div class="row">
 				<div class="col-auto me-auto">
-					<h3><i class="bi bi-app"></i> 내 평가 </h3>
+					<h3><i class="bi bi-app"></i> ${userNick} 님 </h3>
 				</div>
-				<div class="col-auto">
-					<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/myrating'"><i class="icofont-refresh"></i></button>
-					&nbsp;
-					<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/main'"><i class="icofont-arrow-left"></i></button>
+				<div class="col-auto text-right">
+					<button type="button" title="쪽지" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${userNick}'"><i class="icofont-paper-plane"></i></button>
 				</div>
 			</div>
 		</div>
 		
 		<div class="body-main">
+			<div class="row mb-6">
+				<h4><i class="icofont-thermometer"></i> 매너 온도</h4>
+				<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
+			</div>
+			
+			<div class="row mb-3">
+				<h4><i class="icofont-star"></i> 평가</h4>
+			</div>
 			<c:if test="${empty ratingList}">
 				<div class="border bg-light mb-3 p-3 text-center">
-					내 평가가 없습니다.
+					평가가 없습니다.
 				</div>		
 			</c:if>
 			<c:if test="${not empty ratingList}">
@@ -106,7 +188,7 @@ $(function() {
 									</c:if>
 								</div>
 								<div class="row mt-1">
-									<span class="buyerNick" data-nick="${dto.buyerNick}">${dto.buyerNick}</span>
+									${dto.buyerNick}
 								</div>
 							</div>
 							<div class="col-md-9">

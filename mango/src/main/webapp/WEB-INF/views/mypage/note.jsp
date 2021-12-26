@@ -211,7 +211,7 @@ $(function() {
 								<tr>
 									<td class="col-3">${dto.youNick}</td>
 									<td class="col-5">
-										<a href="${pageContext.request.contextPath}/mypage/notenote?youNick=${dto.youNick}">
+										<a href="${pageContext.request.contextPath}/mypage/notenote?youNick=${dto.youNick}&gomain=true">
 											<c:if test="${dto.youId==dto.sendId}">
 												<i class="icofont-inbox"></i>&nbsp;${dto.noteContent}
 											</c:if>

@@ -163,8 +163,10 @@ $(function() {
 				<div class="col-auto">
 					<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${youNick}'"><i class="icofont-refresh"></i></button>
 					&nbsp;
-					<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-arrow-left"></i></button>
-					&nbsp;
+					<c:if test="${gomain=='true'}">
+						<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-arrow-left"></i></button>
+						&nbsp;
+					</c:if>
 					<button type="button" title="전체삭제" class="btn btn-outline-danger delete-user-msg" data-youId="${youId}"><i class="icofont-bin"></i></button>
 				</div>
 			</div>

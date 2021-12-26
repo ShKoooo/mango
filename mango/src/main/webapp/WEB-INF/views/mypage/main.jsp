@@ -24,33 +24,77 @@
 $(function() {
 	var values = [];
 	var myDeg = Number($('#thermoContainer').attr('data-deg'));
-	// var myDeg = 50;
+	// var myDeg = 10;
 	
 	if (myDeg > 100) myDeg = 100;
 	if (myDeg < 0) myDeg = 0;
 	
 	values.push(myDeg);
-	var colorLim = ['#aaff00','#ffaa00'];	// 0도 ~ 100도
+	/*
+		var colorLim = ['#aaff00','#ffaa00'];	// 0도 ~ 100도
+		
+		var cl1rr = colorLim[0][1]+colorLim[0][2];
+		var cl1gg = colorLim[0][3]+colorLim[0][4];
+		var cl1bb = colorLim[0][5]+colorLim[0][6];
+		var cl2rr = colorLim[1][1]+colorLim[1][2];
+		var cl2gg = colorLim[1][3]+colorLim[1][4];
+		var cl2bb = colorLim[1][5]+colorLim[1][6];
+		
+		var rrN = myDeg/100*(Number.parseInt(cl2rr,16)-Number.parseInt(cl1rr,16)) + Number.parseInt(cl1rr,16);
+		var ggN = myDeg/100*(Number.parseInt(cl2gg,16)-Number.parseInt(cl1gg,16)) + Number.parseInt(cl1gg,16);
+		var bbN = myDeg/100*(Number.parseInt(cl2bb,16)-Number.parseInt(cl1bb,16)) + Number.parseInt(cl1bb,16);
+		
+		var gg = parseInt(ggN).toString(16);
+		var rr = parseInt(rrN).toString(16);
+		var bb = parseInt(bbN).toString(16);
+		
+		if (rr.length < 2) rr = '0'+rr;
+		if (gg.length < 2) gg = '0'+gg;
+		if (bb.length < 2) bb = '0'+bb;
+		
+		var rgb = '#'+rr+gg+bb;
+	*/
 	
-	var cl1rr = colorLim[0][1]+colorLim[0][2];
-	var cl1gg = colorLim[0][3]+colorLim[0][4];
-	var cl1bb = colorLim[0][5]+colorLim[0][6];
-	var cl2rr = colorLim[1][1]+colorLim[1][2];
-	var cl2gg = colorLim[1][3]+colorLim[1][4];
-	var cl2bb = colorLim[1][5]+colorLim[1][6];
+	if (myDeg<10) {
+		var rgb = '#0000FF';
+	} else if (myDeg>=10 && myDeg<15) {
+		var rgb = '#146CF6';
+	} else if (myDeg>=15 && myDeg<20) {
+		var rgb = '#188AF0';
+	} else if (myDeg>=20 && myDeg<25) {
+		var rgb = '#00B7D8';
+	} else if (myDeg>=25 && myDeg<30) {
+		var rgb = '#00D4B0';
+	} else if (myDeg>=30 && myDeg<35) {
+		var rgb = '#00E54B';
+	} else if (myDeg>=35 && myDeg<40) {
+		var rgb = '#00F800';
+	} else if (myDeg>=40 && myDeg<45) {
+		var rgb = '#57E86B';
+	} else if (myDeg>=45 && myDeg<50) {
+		var rgb = '#78EC6C';
+	} else if (myDeg>=50 && myDeg<55) {
+		var rgb = '#A9F36A';
+	} else if (myDeg>=55 && myDeg<60) {
+		var rgb = '#DDF969';
+	} else if (myDeg>=60 && myDeg<65) {
+		var rgb = '#FEFE69';
+	} else if (myDeg>=65 && myDeg<70) {
+		var rgb = '#FEF001';
+	} else if (myDeg>=70 && myDeg<75) {
+		var rgb = '#FFCE03';
+	} else if (myDeg>=75 && myDeg<80) {
+		var rgb = '#FD9A01';
+	} else if (myDeg>=80 && myDeg<85) {
+		var rgb = '#FD6104';
+	} else if (myDeg>=85 && myDeg<90) {
+		var rgb = '#FF2C05';
+	} else if (myDeg>=90 && myDeg<95) {
+		var rgb = '#F00505';
+	} else {
+		var rgb = '#FF0000';
+	} 
 	
-	var rrN = myDeg/100*(Number.parseInt(cl2rr,16)-Number.parseInt(cl1rr,16)) + Number.parseInt(cl1rr,16);
-	var rr = parseInt(rrN).toString(16);
-	var ggN = myDeg/100*(Number.parseInt(cl2gg,16)-Number.parseInt(cl1gg,16)) + Number.parseInt(cl1gg,16);
-	var gg = parseInt(ggN).toString(16);
-	var bbN = myDeg/100*(Number.parseInt(cl2bb,16)-Number.parseInt(cl1bb,16)) + Number.parseInt(cl1bb,16);
-	var bb = parseInt(bbN).toString(16);
-	
-	if (rr.length < 2) rr = '0'+rr;
-	if (gg.length < 2) gg = '0'+gg;
-	if (bb.length < 2) bb = '0'+bb;
-	
-	var rgb = '#'+rr+gg+bb;
 	console.log(rgb);
 	
 	Highcharts.chart('thermoContainer', {
