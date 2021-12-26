@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="with">
+
+	<insert id="insertBoard" parameterType="com.sp.mango.village.with.VillageWith">
+		INSERT INTO village_bbs(vNum, userId, subject, content, hitCount, regDate,
+			vcNum, areaNum, addr2, vBlat, vBlon)
+		VALUES (village_bbs_seq.NEXTVAL, #{userId}, #{subject}, #{content}, 0, SYSDATE,
+			4, #{areaNum}, #{addr2, jdbcType=VARCHAR}, #{vBlat, jdbcType=DOUBLE}, #{vBlon, jdbcType=DOUBLE})
+	</insert>
+	
+	<sql id="where-list">
+		<choose>
+			<when test="condition == 'all'">
+				( INSTR(subject, #{keyword}) &gt; 0
+					OR DBMS_LOB.INSTR(content, #{keyword}) &gt; 0 )
+			</when>
+			<when test="condition == 'content'">
+				DBMS_LOB.INSTR(content, #{keyword}) &gt; 0
+			</when>
+			<otherwise>
+			    INSTR(${condition}, #{keyword}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM village_bbs v
+		JOIN area a ON v.areaNum = a.areaNum
+		JOIN member m ON v.userId = m.userId
+		<where>
+		vcNum = 4
+			<if test="keyword!=null and keyword!='' ">
+				AND <include refid="where-list"/>
+			</if>
+
+			<if test="info == true">
+				<if test="membership &lt; 51">
+					AND v.areaNum IN (
+						SELECT areaNum
+						FROM (
+							SELECT * FROM (
+								SELECT areaNum,
+									(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+			                        -#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+			                        AS distance
+			                        FROM area ar
+			                    ) WHERE distance &lt;= 5   
+							)
+						)
+				</if>
+			</if>			
+		</where>
+	</select>
+	
+	<!-- 회원이 등록한 주소 및 주소가 속한 지역 -->
+	<select id="listMemberAddr" parameterType="String" resultType="com.sp.mango.village.MemberAddr">
+		SELECT maNum, maLat, maLon, maAddr1, maAddr2, a.areaNum, a.area1, a.area2, a.area3, a.aLat, a.aLon
+		FROM memberAddr ma
+		JOIN area a ON ma.areaNum = a.areaNum
+		WHERE userId = #{userId}
+	</select>
+	
+	<!-- 회원(membership 50 이하) 지정 위치 기준 반경 5km 게시글, 운영진은 전체 리스트 -->
+	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.with.VillageWith">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT vNum, v.userId, userNickName, subject,
+					TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, 	
+					hitCount, vcNum, area1, area3
+				FROM village_bbs v
+				JOIN area a ON v.areaNum = a.areaNum
+				JOIN member m ON v.userId = m.userId
+				<where>
+				vcNum = 4
+					<if test="keyword != null and keyword != ''">
+						AND <include refid="where-list"/>
+					</if>
+					
+					<if test="info == true">
+						<if test="membership &lt; 51">
+							AND v.areaNum IN (
+								  SELECT areaNum
+								  FROM (
+									SELECT * FROM (
+										SELECT areaNum,
+											(6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+			                        		-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+			                        		AS distance
+			                        		FROM area ar
+			                    		) WHERE distance &lt;= 5   
+									)
+								)
+						</if>
+					</if>
+				</where>
+				ORDER BY vNum DESC
+			) tb WHERE ROWNUM &lt;=#{end}
+		) WHERE rnum &gt;=#{start}
+	</select>
+	
+	<select id="memAddrCount" parameterType="String" resultType="Integer">
+		SELECT COUNT(maAddr1) FROM memberAddr WHERE userId=#{userId}
+	</select>
+	
+	<select id="readBoard" parameterType="Integer" resultType="com.sp.mango.village.with.VillageWith">
+		SELECT v.vNum, v.userId, userNickName, subject, areaNum,
+			content, TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, hitCount,
+			NVL(boardLikeCount, 0) boardLikeCount
+		FROM village_bbs v
+		JOIN member m ON v.userId = m.userId
+		LEFT OUTER JOIN (
+			SELECT vNum, COUNT(*) boardLikeCount FROM vbbsLike
+			GROUP BY vNum
+		) vl ON v.vNum = vl.vNum
+		WHERE v.vNum=#{vNum}
+	</select>
+	
+	<update id="updateHitCount" parameterType="Integer">
+		UPDATE village_bbs SET hitCount=hitCount+1 WHERE vNum=#{vNum}
+	</update>
+	
+	<update id="updateBoard" parameterType="com.sp.mango.village.with.VillageWith">
+		UPDATE village_bbs SET subject=#{subject}, content=#{content}, areaNum=#{areaNum},
+			vBlat=#{vBlat, jdbcType=DOUBLE}, vBlon=#{vBlon, jdbcType=DOUBLE}
+		WHERE vNum = #{vNum}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="com.sp.mango.village.with.VillageWith">
+		DELETE FROM village_bbs WHERE vNum = #{vNum}
+	</delete>
+	
+	<insert id="insertBoardLike" parameterType="map">
+		INSERT INTO vbbsLike(vNum, userId) VALUES (#{vNum}, #{userId})
+	</insert>
+	
+	<delete id="deleteBoardLike" parameterType="map">
+		DELETE FROM vbbsLike WHERE vNum = #{vNum} AND userId = #{userId}
+	</delete>
+	
+	<select id="boardLikeCount" parameterType="Integer" resultType="Integer">
+		SELECT COUNT(*) FROM vbbsLike WHERE vNum=#{vNum}
+	</select>
+	
+	<select id="userBoardLiked" parameterType="map" resultType="com.sp.mango.village.with.VillageWith">
+		SELECT vNum, userId FROM vbbsLike WHERE vNum = #{vNum} AND userId=#{userId}
+	</select>
+	
+	<insert id="insertReply" parameterType="com.sp.mango.village.Reply">
+		INSERT INTO vbbsReply(vreplyNum, vNum, userId, vrContent, vrAnswer, vrRegdate)
+		VALUES (vbbsReply_seq.NEXTVAL, #{vNum}, #{userId}, #{vrContent}, #{vrAnswer}, SYSDATE)
+	</insert>
+	
+	<select id="replyCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0) FROM vbbsReply
+		WHERE vNum=#{vNum} AND vrAnswer = 0
+	</select>
+	
+	<select id="listReply" parameterType="map" resultType="com.sp.mango.village.Reply">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT v.vreplyNum, v.userId, userNickName, vNum, vrContent, v.vrRegdate,
+					NVL(answerCount, 0) answerCount,
+					NVL(likeCount, 0) likeCount,
+					NVL(disLikeCount, 0) disLikeCount
+				FROM vbbsReply v
+				JOIN member m ON v.userId = m.userId
+				LEFT OUTER JOIN (
+					SELECT vrAnswer, COUNT(*) answerCount
+					FROM vbbsReply WHERE vrAnswer!=0 GROUP BY vrAnswer
+				) a ON v.vreplyNum = a.vrAnswer
+				LEFT OUTER JOIN (
+					SELECT vreplyNum, COUNT(DECODE(replyLike, 1, 1)) likeCount,
+						COUNT(DECODE(replyLike, 0, 1)) disLikeCount
+					FROM vbbsReplyLike GROUP BY vreplyNum
+				) c on v.vreplyNum = c.vreplyNum
+				WHERE vNum=#{vNum} AND v.vrAnswer=0
+				ORDER BY v.vreplyNum DESC
+			) tb WHERE ROWNUM &lt;=#{end}
+		) WHERE rnum &gt;=#{start}
+	</select>
+	
+	<delete id="deleteReply" parameterType="map">
+		DELETE FROM vbbsReply
+		WHERE vreplyNum=#{vreplyNum}
+		<if test="mode=='reply'">
+			OR vrAnswer=#{replyNum}
+		</if>
+	</delete>
+	
+	<select id="listReplyAnswer" parameterType="Integer" resultType="com.sp.mango.village.Reply">
+		SELECT vreplyNum, vNum, v.userId, userNickName, vrContent, vrRegdate, vrAnswer
+		FROM vbbsReply v
+		JOIN member m ON v.userId = m.userId
+		WHERE vrAnswer = #{vrAnswer}
+		ORDER BY vreplyNum DESC
+	</select>
+	
+	<select id="replyAnswerCount" parameterType="Integer" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM vbbsReply WHERE vrAnswer = #{vrAnswer}
+	</select>
+	
+	<insert id="insertReplyLike" parameterType="map">
+		INSERT INTO vbbsReplyLike(vreplyNum, userId, replyLike)
+		VALUES (#{vreplyNum}, #{userId}, #{replyLike})
+	</insert>
+
+	<select id="replyLikeCount" parameterType="map" resultType="map">
+		SELECT COUNT(DECODE(replyLike, 1, 1)) likeCount,
+			   COUNT(DECODE(replyLike, 0, 1)) disLikeCount
+		FROM vbbsReplyLike WHERE vreplyNum = #{vreplyNum}
+	</select>
+	
+	<select id="listVreport" resultType="com.sp.mango.village.VillageReport">
+		SELECT * FROM vbbsReport_reason
+	</select>
+	
+	<insert id="insertVreport" parameterType="com.sp.mango.village.VillageReport">
+		INSERT INTO vbbsReport (vNum, userId, vbbsRepNum, vrReasonNum, vbbsRepContent,
+			vbbsRepRegDate, vbbsRepChecked)
+		VALUES (#{vNum}, #{userId}, vbbsReport_seq.NEXTVAL, #{vrReasonNum}, #{vbbsRepContent, jdbcType=VARCHAR},
+			SYSDATE, 'F') 
+	</insert>
+	
+	<select id="listVRreport" resultType="com.sp.mango.village.ReplyReport">
+		SELECT * FROM vbbsReplyReport_reason
+	</select>
+	
+	<insert id="insertVRreport" parameterType="com.sp.mango.village.ReplyReport">
+		INSERT INTO vbbsReplyReport (vreplyNum, userId, vrReportNum, vrrReasonNum, vrReportContent, 
+			vrReportRegDate, vrReportChecked)
+		VALUES ( #{vreplyNum}, #{userId}, vbbsReplyReport_seq.NEXTVAL, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR},
+			SYSDATE, 'F') 
+	</insert>
+</mapper>
