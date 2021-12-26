@@ -74,6 +74,8 @@
 			<exclude-mapping path="/product/list"/>
 			<exclude-mapping path="/product/morelist"/>
 			<exclude-mapping path="/product/article"/>
+			<exclude-mapping path="/product/popular"/>
+			<exclude-mapping path="/search/productList"/>
 			
 			<exclude-mapping path="/cscenter/list"/>
 			<exclude-mapping path="/cscenter/csNotice"/>
@@ -88,8 +90,6 @@
 			<exclude-mapping path="/gifty/morelist"/>
 			<exclude-mapping path="/gifty/list"/>
 			<exclude-mapping path="/gifty/article"/>
-			<exclude-mapping path="/village/list"/>
-			<exclude-mapping path="/village/qna/list"/>
 			<!-- 밑에 추가 -->
 			
 			<beans:bean class="com.sp.mango.member.LoginCheckInterceptor"/>
