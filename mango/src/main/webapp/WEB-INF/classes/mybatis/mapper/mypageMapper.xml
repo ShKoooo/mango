@@ -390,4 +390,63 @@
 		WHERE sellerId=#{userId}	
 	</select>
 	
+	<select id="countActivity" parameterType="map" resultType="Integer">
+		<trim suffixOverrides="UNION ALL">
+			<if test="product == 'true'">
+				SELECT  NVL(COUNT(*),0) cnt FROM product WHERE userId = #{userId}
+				UNION ALL
+			</if>
+			<if test="giftycon == 'true'">
+				SELECT  NVL(COUNT(*),0) cnt FROM giftycon WHERE userId = #{userId}
+				UNION ALL
+			</if>
+			<if test="vbbs == 'true'">
+				SELECT  NVL(COUNT(*),0) cnt FROM village_bbs WHERE userId = #{userId}
+				UNION ALL
+			</if>
+			<if test="vbbsReply == 'true'">
+				SELECT  NVL(COUNT(*),0) cnt FROM vbbsReply WHERE userId = #{userId}
+				UNION ALL
+			</if>
+		</trim>
+	</select>
+	
+	<select id="listActivity" parameterType="map" resultType="com.sp.mango.mypage.Activity">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM(
+				<trim prefix="(" suffixOverrides="UNION ALL" suffix=") ORDER BY regDate DESC">
+					<if test="product == 'true'">
+						SELECT 'product' myType, pNum num, pcNum catNum, pSubject subject, pRegdate regDate
+						FROM product
+						WHERE userId = #{userId}
+						UNION ALL
+					</if>
+					<if test="giftycon == 'true'">
+						SELECT 'giftycon' myType, gNum num, gcNum catNum, gSubject subject, gRegdate regDate
+						FROM giftycon
+						WHERE userId = #{userId}
+						UNION ALL			
+					</if>
+					<if test="vbbs == 'true'">
+						SELECT 'vbbs' myType, vNum num, vcNum catNum, subject, regDate
+						FROM village_bbs
+						WHERE userId = #{userId}
+						UNION ALL	
+					</if>
+					<if test="vbbsReply == 'true'">
+						SELECT 'vbbsReply' myType, r.vNum num, v.vcNum catNum, vrContent subject, vrRegDate regDate
+						FROM vbbsReply r
+						JOIN village_bbs v ON r.vNum = v.vNum
+						WHERE v.userId = #{userId}
+						UNION ALL
+					</if>
+				</trim>
+		    ) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}		
+	</select>
+	
+	<select id ="getVbbsCatNumByReply" parameterType="Integer" resultType="Integer">
+		SELECT vcNum FROM village_bbs WHERE vNum = #{vNum}
+	</select>
+	
 </mapper>
