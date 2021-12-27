@@ -1218,6 +1218,92 @@ public class MypageController {
 		model.addAttribute("userNick",userNickName);
 		return ".mypage.yourpage";
 	}
+	
+	@RequestMapping("activity")
+	public String activity(
+			HttpSession session,
+			@RequestParam(defaultValue = "true") String product,
+			@RequestParam(defaultValue = "true") String giftycon,
+			@RequestParam(defaultValue = "true") String vbbs,
+			@RequestParam(defaultValue = "true") String vbbsReply,
+			@RequestParam(value="page", defaultValue="1") int current_page,
+			Model model,
+			HttpServletRequest req
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		if (memberInfo == null) {
+			return "redirect:/member/login";
+		}
+		String userId = memberInfo.getUserId();
+		
+		System.out.println(":::: "+product+giftycon+vbbs+vbbsReply);
+		if (!product.equals("true")&&
+				!giftycon.equals("true")&&
+				!vbbs.equals("true")&&
+				!vbbsReply.equals("true") ) {
+			product = giftycon = vbbs = vbbsReply = "true";
+		}
+		
+		System.out.println(":::: "+product+giftycon+vbbs+vbbsReply);
+		
+		String cp = req.getContextPath();
+		
+		
+		try {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("userId", userId);
+			map.put("product", product);
+			map.put("giftycon", giftycon);
+			map.put("vbbs", vbbs);
+			map.put("vbbsReply", vbbsReply);
+			
+			int rows = 10;
+			int total_page = 0;
+			
+			int countActivity = service.countActivity(map);
+			
+			if (countActivity != 0) {
+				total_page = myUtil.pageCount(rows, countActivity);
+			}
+			
+			if (total_page < current_page) {
+				current_page = total_page;
+			}
+			
+			int start = (current_page - 1) * rows + 1;
+			int end = current_page * rows;
+			
+			String listUrl = cp + "/mypage/activity";
+			String query = "product="+product+"&giftycon="+giftycon+"&vbbs="+vbbs+"&vbbsReply="+vbbsReply;
+			listUrl += "?"+query;
+			String paging = myUtil.paging(current_page, total_page, listUrl);
+			map.put("start",start);
+			map.put("end",end);
+			List<Activity> list = service.listActivity(map);
+			
+			for(Activity dto:list) {
+				if (dto.getSubject().length()>16) {
+					dto.setSubject(dto.getSubject().substring(0, 16)+"...");
+				}
+			}
+			
+			model.addAttribute("countActivity", countActivity);
+			model.addAttribute("list", list);
+			model.addAttribute("dataCount", countActivity);
+			model.addAttribute("page", current_page);
+			model.addAttribute("total_page", total_page);
+			model.addAttribute("paging", paging);
+			
+			model.addAttribute("product",product);
+			model.addAttribute("giftycon",giftycon);
+			model.addAttribute("vbbs",vbbs);
+			model.addAttribute("vbbsReply",vbbsReply);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return ".mypage.activity";
+	}
 }
 
 class IUComparator implements Comparator<NoteIU> {

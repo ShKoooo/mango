@@ -158,7 +158,7 @@ $(function() {
 		});
 	});
 	
-	// 비즈니스 프로필 삭제 --- TODO ---
+	// 비즈니스 프로필 삭제
 	$("body").on("click",".btn-delBusn", function() {
 		if(!confirm("프로필을 삭제하시겠습니까?")) {
 			return false;
@@ -347,7 +347,7 @@ $(function() {
 			
 			<div class="row mb-3">
 				<h4>
-					<a href="#">
+					<a href="${pageContext.request.contextPath}/mypage/activity">
 						<i class="icofont-history"></i> 내 활동
 					</a>
 				</h4>

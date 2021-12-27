@@ -50,4 +50,7 @@ public interface MypageService {
 	public int countRating(String userId) throws Exception;
 	public int countProductRating(String userId) throws Exception;
 	public int countGiftyRating(String userId) throws Exception;
+	
+	public int countActivity(Map<String,Object> map) throws Exception;
+	public List<Activity> listActivity(Map<String,Object> map) throws Exception;
 }

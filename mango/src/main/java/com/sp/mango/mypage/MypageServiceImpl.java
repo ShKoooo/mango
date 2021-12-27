@@ -1,5 +1,6 @@
 package com.sp.mango.mypage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -414,7 +415,10 @@ public class MypageServiceImpl implements MypageService {
 			list = dao.selectList("mypage.countRating",userId);
 			
 			for (Integer val : list) {
-				if (val != null) result += val;
+				if (val != null) {
+					result += val;
+					System.out.println(":::: val : "+val);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace(); throw e;
@@ -447,6 +451,40 @@ public class MypageServiceImpl implements MypageService {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public int countActivity(Map<String, Object> map) throws Exception {
+		int result = 0;
+		List<Integer> list = new ArrayList<Integer>();
+		
+		try {
+			list = dao.selectList("mypage.countActivity",map);
+			
+			for (Integer val : list) {
+				if (val != null) {
+					result += val;
+					System.out.println(":::: val : "+val);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<Activity> listActivity(Map<String, Object> map) throws Exception {
+		List<Activity> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listActivity",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
 	}
 
 }
