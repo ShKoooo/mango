@@ -17,7 +17,7 @@ public class GreviewServiceImpl implements GreviewService {
 	@Override
 	public void insertGreview(Greview dto) throws Exception {
 		try {
-			// 시퀀스?
+			// 풀하자
 			
 			dao.insertData("greview.insertGreview", dto);
 		} catch (Exception e) {

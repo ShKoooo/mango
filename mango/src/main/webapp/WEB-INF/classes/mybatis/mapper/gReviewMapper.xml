@@ -3,7 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="greview">
 
-
+	<!-- 풀하자 -->
 	<insert id="insertGreview" parameterType="com.sp.mango.greview.Greview">
 		INSERT INTO gReview (gNum, buyerId, sellerId, grContent, mannerstar)
 			VALUES (#{gNum}, #{buyerId}, #{sellerId}, #{grContent, jdbcType=VARCHAR}, #{mannerstar, jdbcType=VARCHAR})

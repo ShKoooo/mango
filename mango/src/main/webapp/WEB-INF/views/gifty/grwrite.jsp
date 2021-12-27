@@ -77,9 +77,13 @@ function sendOk() {
 				<textarea name="grContent" id="grContent" class="form-control" placeholder="${empty sessionScope.member ? '로그인 후 등록 가능합니다.':''}"></textarea>
 			</div>
 			<div class="p-1 text-end">
+				<button type="button" class="btnSend btn btn-dark"  onclick="sendOk();"> 등록하기 <i class="bi bi-check2"></i> </button>
+			</div>
+			<!-- 
+			<div class="p-1 text-end">
 				<button type="button" class="btnSend btn btn-dark" ${empty sessionScope.member ? "disabled='disabled'":""} onclick="sendOk();"> 등록하기 <i class="bi bi-check2"></i> </button>
 			</div>
-			
+			 -->
 		
 		<div style="margin-top: 10px;">
 		<form name="reviewForm">
