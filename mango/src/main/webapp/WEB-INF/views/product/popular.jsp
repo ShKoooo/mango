@@ -31,6 +31,22 @@
 	top: 45%;
 }
 
+.img-viewer {
+	cursor: pointer;
+	border: 1px solid #ccc;
+	width: 45px;
+	height: 45px;
+	border-radius: 45px;
+	padding: 0;
+	background-image: url("${pageContext.request.contextPath}/resources/images/note-person-icon2.png");
+	position: relative;
+	/*
+	z-index: 9999;
+	*/
+	background-repeat : no-repeat;
+	background-size : cover;
+}
+
 </style>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/boot-board.css" type="text/css">
@@ -172,7 +188,14 @@ function printProduct(data) {
 		out += "		<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
 		out += "			<div class='d-flex align-items-end justify-content-between'>";
 		out += "				<div class='d-flex align-items-center'>";
-		out += "					<img class='rounded-circle me-3' src='' alt='' />";
+		out += "					<div class='row'>";
+		out += "						<c:if test='${not empty dto.userImgSaveFileName}'>";
+		out += "							<img src='${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}' class='img-fluid img-thumbnail img-viewer'>";
+		out += "						</c:if>";
+		out += "						<c:if test='${empty dto.userImgSaveFileName}'>";
+		out += "							<img class='img-fluid img-thumbnail img-viewer'>";
+		out += "						</c:if>";
+		out += "					</div>";
 		out += "					<div class='small'>";
 		out += "						<div class='fw-bold'>"+userNickName+"</div>";
 		out += "						<div class='text-muted'>"+pRegDate+" &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>";
@@ -258,7 +281,18 @@ $(function(){
 					                            <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
 					                            	<div class="d-flex align-items-end justify-content-between">
 					                                	<div class="d-flex align-items-center">
-					                                    	<img class="rounded-circle me-3" src="" alt="..." />
+					                                    	
+					                                    	<div class="row">
+						                                    	<c:if test="${not empty dto.userImgSaveFileName}">
+																	<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+																		class="img-fluid img-thumbnail img-viewer">
+																</c:if>
+																<c:if test="${empty dto.userImgSaveFileName}">
+																	<img
+																		class="img-fluid img-thumbnail img-viewer">
+																</c:if>
+															</div>
+					                                    	
 					                                        <div class="small">
 					                                        	<div class="fw-bold">${dto.userNickName}</div>
 					                                            <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>

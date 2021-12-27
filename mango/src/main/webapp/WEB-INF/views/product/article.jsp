@@ -3,6 +3,24 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<style type="text/css">
+.img-viewer {
+	cursor: pointer;
+	border: 1px solid #ccc;
+	width: 45px;
+	height: 45px;
+	border-radius: 45px;
+	padding: 0;
+	background-image: url("${pageContext.request.contextPath}/resources/images/note-person-icon2.png");
+	position: relative;
+	/*
+	z-index: 9999;
+	*/
+	background-repeat : no-repeat;
+	background-size : cover;
+}
+</style>
+
 <script type="text/javascript">
 function ajaxFun(url, method, query, dataType, fn) {
 	$.ajax({
@@ -148,6 +166,10 @@ $(function(){
 	}	   
 });
 
+function clickInfo() {
+	alert("거래 쪽지를 전송했습니다! 쪽지함에서 확인해주세요~!");
+}
+
 </script>
     
     <div class="content-wrapper">
@@ -176,7 +198,16 @@ $(function(){
                             </div>
                             
                             <div>
-	                            <span>(프로필사진자리)</span>
+	                            <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">
+	                            	<c:if test="${not empty dto.userImgSaveFileName}">
+										<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+											class="img-fluid img-thumbnail img-viewer">
+									</c:if>
+									<c:if test="${empty dto.userImgSaveFileName}">
+										<img
+											class="img-fluid img-thumbnail img-viewer">
+									</c:if>
+								</a>
 	                            <span>${dto.userNickName}</span> <br>
 	                            <span class="project-subtitle">${dto.area2}&nbsp;${dto.area3}</span>
                             </div>
@@ -219,7 +250,7 @@ $(function(){
                                 </li>
                                 <li>
                                 	<c:if test="${dto.pStatus=='판매중'}">
-                                		<i class="fa fa-envelope-o"></i><a href="${pageContext.request.contextPath}/product/sendMsg?pNum=${dto.pNum}">거래 쪽지 보내기</a>
+                                		<i class="fa fa-envelope-o"></i><a onclick="clickInfo();" href="${pageContext.request.contextPath}/product/article?pNum=${dto.pNum}&page=${page}&pcNum=${pcNum}">거래 쪽지 보내기</a>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='예약중'}">
                                 		<i class="bi bi-calendar-check-fill"></i><a href="">거래가 예약된 매물입니다</a>

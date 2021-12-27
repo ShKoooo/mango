@@ -57,7 +57,8 @@
         AND CASE WHEN blocked.blockedId IS NULL THEN 1
                  WHEN not regexp_like(p.userId, blocked.blockedId) THEN 1
             ELSE 0 END = 1
-					
+		<!-- 4. 거래완료 제외한 리스트 : 없을때도 뭔가 나오긴했었다. -->
+		AND pSoldDate IS NULL			
 	</select>
 	
 	<!-- 중고거래 글 작성 -->
@@ -166,6 +167,8 @@
 		        AND CASE WHEN blocked.blockedId is null THEN 1
 		                 WHEN not regexp_like(p.userId, blocked.blockedId) THEN 1
 		            ELSE 0 END = 1
+		        <!-- 4. 거래완료 제외한 리스트 -->
+		        AND pSoldDate IS NULL 
         		ORDER BY pUpdate_date DESC
     		) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
@@ -177,7 +180,7 @@
 		SELECT * FROM (
         	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
 		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
-		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, popularPoint, 
+		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
 		              RANK() OVER(ORDER BY popularPoint DESC) RANK
         		FROM product p
         		JOIN area a ON p.areaNum = a.areaNum
@@ -218,68 +221,17 @@
 		      WHERE T1.RANK &lt;= 6
 	</select>
 	
-	<!-- 검색 리스트 -->
-	<select id="searchProductList" parameterType="map" resultType="com.sp.mango.product.Product">
-		SELECT * FROM (
-    		SELECT ROWNUM rnum, tb.* FROM (
-        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
-		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
-		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, m.userImgSaveFileName
-        		FROM product p
-        		JOIN area a ON p.areaNum = a.areaNum
-        		JOIN pCategory pc ON p.pcNum = pc.pcNum
-        		JOIN member m ON p.userId = m.userId
-        		LEFT OUTER JOIN (
-            		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
-            		GROUP BY pNum
-        		) c ON p.pNum = c.pNum
-      		    LEFT OUTER JOIN (
-					SELECT USERID,  LISTAGG(KEYWORD, '|')  WITHIN GROUP(ORDER BY USERID) AS KEYWORD
-					FROM KEYWORD
-					GROUP BY USERID
-				)K ON K.USERID = #{userId} <!-- 접속 유저 ID -->
-				LEFT OUTER JOIN (
-					SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
-					FROM BLOCKEDUSER
-					GROUP BY USERID
-				)BLOCKED ON BLOCKED.USERID = #{userId} <!-- 접속 유저 ID -->
-        		WHERE CASE WHEN #{maLat} = 0 AND #{maLon} = 0 THEN 1
-		                   WHEN p.areaNum IN (
-		                       SELECT areaNum
-		                       FROM (
-		                           SELECT * FROM (
-		                               SELECT areaNum,
-		                                   (6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
-                              				-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
-		                                   AS distance
-		                                   FROM area ar
-		                               ) WHERE distance &lt;= 5    
-		                           )
-		                       ) THEN 1
-		              ELSE 0 END = 1
-            	AND	CASE WHEN #{pcNum} = 0 THEN 1
-		                 WHEN pc.pcNum = #{pcNum} THEN 1
-		            ELSE 0 END = 1
-		        <!-- 1. 검색어 조건-->
-		        AND CASE WHEN #{searchKeyword} IS NULL THEN 1
-		                 WHEN pSubject LIKE CONCAT(CONCAT('%', #{searchKeyword}), '%') THEN 1
-		            ELSE 0 END = 1
-		        <!-- 2. 차단 유저 게시물 안보기 조건 -->
-		        AND CASE WHEN blocked.blockedId is null THEN 1
-		                 WHEN not regexp_like(p.userId, blocked.blockedId) THEN 1
-		            ELSE 0 END = 1
-        		ORDER BY pUpdate_date DESC
-    		) tb WHERE ROWNUM &lt;= #{end}
-		) WHERE rnum &gt;= #{start}
-		order by pUpdate_date DESC
-	</select>
-	
-	
 	<!-- 프로필 사진 가져오기 -->
-	<select id="userProfile" parameterType="String" resultType="com.sp.mango.product.Product">
+	<select id="userProfile" parameterType="Integer" resultType="com.sp.mango.product.Product">
+		<!--  
 		SELECT userImgSaveFileName
 		FROM member
 		WHERE userId = #{userId};
+		-->
+		SELECT userImgSaveFileName
+		FROM member m
+		JOIN product p ON m.userID = p.userId
+		WHERE pNum = #{pNum}
 	</select>
 	
 	<!-- 조회수 증가 --> 
@@ -307,7 +259,7 @@
 	<select id="readProduct" parameterType="Integer" resultType="com.sp.mango.product.Product">
 		SELECT p.pNum, pSubject, pStatus, pContent, pPrice, pHitCount, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
 		        TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, pSoldDate, pIsProposable, area1, area2, area3,
-		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, p.userId, pUp, p.areaNum,
+		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, p.userId, pUp, p.areaNum, m.userImgSaveFileName,
 		        (36.5 + (0.1* NVL(manner.mannerStar, 0)) + (0.1* NVL(manner.productStar, 0)) - NVL(manner.minusDeg, 0)) AS manner
 		FROM product p
 		JOIN area a ON p.areaNum = a.areaNum
@@ -369,14 +321,12 @@
 			VALUES (note_seq.NEXTVAL, #{sendId}, #{receiveId}, #{noteContent}, SYSDATE, 'F','F')
    	</insert>
    	
-   	<!-- 
-   	<select id="getUserId" parameterType="map" resultType="com.sp.mango.product.Product">
-	   	SELECT p.userId, m.userNickName 
-	   	FROM product p
-	   	JOIN member m ON p.userId = m.userId
-	   	WHERE pNum = #{pNum}
-   	</select>
-	 -->
+   	<!-- 리뷰 등록 -->
+	<insert id="insertPreview" parameterType="com.sp.mango.product.Preview">
+		INSERT INTO pReview (pNum, buyerId, sellerId, prContent, mannerStar, prdStar)
+		VALUES (#{pNum}, #{buyerId}, #{sellerId}, #{prContent, jdbcType=VARCHAR}, 
+				#{mannerStar}, #{prdStar})
+	</insert>
 
 
 	<!-- 관리자 : 카테고리 추가 -->

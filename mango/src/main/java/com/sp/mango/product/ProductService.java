@@ -41,8 +41,13 @@ public interface ProductService {
 	public String pUpOkDate(int pNum); // 끌올 가능한 날짜
 	
 	// 쪽지 보내기
-	public void sendMsg(Note dto) throws Exception;
+	public void sendMsg(Note notedto) throws Exception;
+	
+	// 리뷰 등록
+	public void insertPreview(Preview dto) throws Exception;
 	
 	// 프로필 사진
-	public String userImgSaveFileName(String userId);
+	public String userImgSaveFileName(int pNum);
+	
+	
 }

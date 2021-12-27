@@ -252,7 +252,9 @@ public class ProductController {
 			@RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
 			@RequestParam(value = "isPorular", defaultValue = "") String isPorular,
 			HttpSession session,
-			Model model
+			Model model,
+			
+			Note notedto
 			) throws Exception {
 		
 		
@@ -275,7 +277,7 @@ public class ProductController {
 		
 		
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("pNum", pNum);
+		map.put("pNum", pNum);		
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
 		
@@ -298,6 +300,18 @@ public class ProductController {
 		int productWishCount = service.productWishCount(pNum);
 		String pUpOkDate = service.pUpOkDate(pNum);
 		
+		String userImgSaveFileName = service.userImgSaveFileName(pNum);
+		
+		
+		// 거래 쪽지 보내기
+		notedto.setSendId(info.getUserId());
+		// String nContent = "안녕하세요 "+dto.getpSubject()+"를 구매하고 싶어서 쪽지남깁니다.";
+		String nContent = info.getUserNickName()+"님에게서 <"+dto.getpSubject()+"> 글에 대한 구매문의 쪽지가 도착했습니다 !";
+		notedto.setReceiveId(dto.getUserId());
+		notedto.setNoteContent(nContent);
+		
+		service.sendMsg(notedto);
+		
 		model.addAttribute("dto", dto);
 		model.addAttribute("userProductWished", userProductWished);
 		model.addAttribute("page", page);
@@ -308,6 +322,8 @@ public class ProductController {
 		model.addAttribute("pUpOkDate", pUpOkDate);
 		model.addAttribute("searchKeyword", searchKeyword);
 		model.addAttribute("isPorular", isPorular);
+		model.addAttribute("userImgSaveFileName", userImgSaveFileName);
+		
 		
 		return ".product.article";
 	}
@@ -456,7 +472,8 @@ public class ProductController {
 		
 		return "redirect:/product/list"; 
 	}
-	
+
+/*
 	@RequestMapping("sendMsg")
 	public String sendMsg(
 			Note dto,
@@ -479,6 +496,7 @@ public class ProductController {
 		
 		return ".mypage.note";
 	}
+*/
 	
 	@RequestMapping("popular")
 	public String popularList(
@@ -572,5 +590,30 @@ public class ProductController {
 		model.addAttribute("isPorular", isPorular);
 		
 		return ".product.popular";
+	}
+	
+	@RequestMapping(value = "writeReview", method = RequestMethod.GET)
+	public String writeReviewForm() throws Exception {
+		
+		return ".product.prwrite";
+	}
+	
+	@RequestMapping(value = "writeReview", method = RequestMethod.POST)
+	public String writeReviewSubmit(Preview dto, HttpSession session) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		try {
+			dto.setBuyerId(info.getUserId());
+			
+			// 셀러 gnum으로 가져와서 해당게시글 userId 넣어야힘
+			// gnum을 어디서 가져오지
+			dto.setSellerId(null);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "redirect:/product/list";
 	}
 }

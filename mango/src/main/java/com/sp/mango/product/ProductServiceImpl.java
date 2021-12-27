@@ -347,9 +347,9 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public void sendMsg(Note dto) throws Exception {
+	public void sendMsg(Note notedto) throws Exception {
 		try {
-			dao.insertData("product.sendMsg", dto);
+			dao.insertData("product.sendMsg", notedto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -357,16 +357,26 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public String userImgSaveFileName(String userId) {
+	public String userImgSaveFileName(int pNum) {
 		String userImgSaveFileName = "";
 		
 		try {
-			userImgSaveFileName = dao.selectOne("product.userProfile", userId);
+			userImgSaveFileName = dao.selectOne("product.userProfile", pNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return userImgSaveFileName;
+	}
+
+	@Override
+	public void insertPreview(Preview dto) throws Exception {
+		try {
+			dao.insertData("product.insertPreview", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 
