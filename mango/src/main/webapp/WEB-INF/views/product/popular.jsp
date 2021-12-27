@@ -31,31 +31,6 @@
 	top: 45%;
 }
 
-.interest {
-	position: fixed;
-	left: -1%;
-	top: 52%;
-}
-
-.back {
-	position: fixed;
-	left: -1%;
-	top: 50%;
-}
-
-
-.img-viewer {
-	cursor: pointer;
-	border: 1px solid #ccc;
-	width: 45px;
-	height: 45px;
-	border-radius: 45px;
-	background-image: url("${pageContext.request.contextPath}/resources/images/add_photo.png");
-	position: relative;
-	
-	background-repeat : no-repeat;
-	background-size : cover;
-}
 </style>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/boot-board.css" type="text/css">
@@ -68,7 +43,11 @@ $(function(){
 	
     $("button[role='tab']").on("click", function(e){
 		var tab = $(this).attr("data-tab");
-
+		
+		var tab2 = $("#pcateNum").val("tab");
+		
+		console.log(tab2);
+		
 		var maLat = $("#maLat").val() || 0;
 		var maLon = $("#maLon").val() || 0;
 		
@@ -76,11 +55,6 @@ $(function(){
 		var opt = $("#selectArea option:selected").val() || 0;
 		
 		var url = "${pageContext.request.contextPath}/product/list?pcNum="+tab+"&maLat="+maLat+"&maLon="+maLon+"&opt="+opt;
-		
-		var isKeyword = ${isKeyword} || "0";
-		if(isKeyword == "1"){
-			url += "&isKeyword="+"1"
-		}
 		
 		location.href=url;
     });
@@ -151,31 +125,6 @@ function listPage(page, pcNum) {
 	};
 	ajaxFun(url, "get", query, "json", fn);
 }
-
-
-function clickBackBtn() {
-	var url = getUrlDefaultInfo()
-	location.href=url;
-}
-
-function clickInterestBtn() {
-	var url = getUrlDefaultInfo()
-	url += "&isKeyword="+"1";
-	location.href=url;
-}
-
-function getUrlDefaultInfo(){
-	var tab = ${pcNum} || 0;
-	var maLat = $("#maLat").val() || 0;
-	var maLon = $("#maLon").val() || 0;
-	
-	// opt : 지역번호
-	var opt = $("#selectArea option:selected").val() || 0;
-	
-	var url = "${pageContext.request.contextPath}/product/list?pcNum="+tab+"&maLat="+maLat+"&maLon="+maLon+"&opt="+opt;
-	return url;
-}
-
 
 function printProduct(data) {
 	var dataCount = data.dataCount;
@@ -263,21 +212,12 @@ $(function(){
 	<div class="inner-container container">
     	<div class="row">
         	<div class="section-header col-md-12">
-            	<h2>중고거래</h2>
-                <span>망설이지 말고 고! 이웃과 거래를 시작해보세요!</span>
+            	<h2>인기매물</h2>
+                <span>망고마켓 TOP 6 매물!</span>
             </div>
         </div>
         
-        <c:if test="${ isKeyword != '1' }">
-	        <a href="${pageContext.request.contextPath}/product/popular" class="btn btn-danger pop" style="text-decoration: none;">&nbsp;인기 <i class="bi bi-star"></i></a>
-	        <c:if test="${! empty sessionScope.member}">
-	        	<a class="btn btn-warning interest" style="text-decoration: none;" onclick="clickInterestBtn();">&nbsp;관심 <i class="bi bi-heart"></i></a>
-        	</c:if>
-        </c:if>
-        <c:if test="${ isKeyword == '1' }">
-        	<a class="btn btn-outline-secondary back" style="text-decoration: none;" onclick="clickBackBtn();">&nbsp;돌아가기 <i class="bi bi-arrow-left-circle"></i></a>
-		</c:if>
-        
+        <a href="${pageContext.request.contextPath}/product/list" class="btn btn-outline-secondary pop" style="text-decoration: none;">&nbsp;돌아가기</a>
         
         <c:if test="${! empty sessionScope.member}">
 	    	<div style="width: 120px; float: right;">
@@ -294,29 +234,15 @@ $(function(){
 				</c:if>
 	        </div>
 	        <div>
-				<input type="hidden" name="maLat" id="maLat" value="${maLat}">
-				<input type="hidden" name="maLon" id="maLon" value="${maLon}">
-	
+				<input type="hidden" name="maLat" id="maLat" value="${vo.maLat}">
+				<input type="hidden" name="maLon" id="maLon" value="${vo.maLon}">
 			</div>
        	</c:if>
-  	
+              	
+              	
         <div class="tab-content pt-2" id="nav-tabContent">
 			<div class="container px-5">
 				<div class="container">
-					<div class="d-flex justify-content-center py-3">
-						<ul class="nav nav-tabs" id="myTab" role="tablist">
-							<li class="nav-item" role="presentation">
-								<button class="nav-link" id="tab-0" role="tab" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" aria-controls="0" aria-selected="true" data-tab="0">ALL</button>
-							</li>
-							<c:forEach var="vo" items="${listCategory}" varStatus="status">
-								<li class="nav-item" role="presentation">
-									<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="${status.count}" aria-selected="true" data-tab="${vo.pcNum}">${vo.pcName}</button>
-								</li>
-							</c:forEach>
-						</ul>
-					</div>
-								    								    
-								    
 				    <div class="tab-content pt-2" id="nav-tabContent">
 						<div class="tab-pane fade show active mt-3" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content">
 				        	<div class="row gx-5 more-list">
@@ -332,9 +258,7 @@ $(function(){
 					                            <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
 					                            	<div class="d-flex align-items-end justify-content-between">
 					                                	<div class="d-flex align-items-center">
-					                                    	<!-- 
 					                                    	<img class="rounded-circle me-3" src="" alt="..." />
-					                                    	 -->
 					                                        <div class="small">
 					                                        	<div class="fw-bold">${dto.userNickName}</div>
 					                                            <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>
@@ -349,19 +273,6 @@ $(function(){
 					        </div>
 			            </div>
 			       	</div>
-                        
-	                <!-- 글쓰기 버튼 -->
-	                <c:if test="${! empty sessionScope.member}">
-		                <div class="writeBtnTop">
-		                	<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
-		                </div>
-	                </c:if>
-					
-					<c:if test="${total_page > 1}">			
-						<div class="more-box load-more">
-							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
-						</div>
-					</c:if>
 				</div>
 			</div>
 		</div>

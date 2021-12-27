@@ -31,19 +31,6 @@
 	top: 45%;
 }
 
-.interest {
-	position: fixed;
-	left: -1%;
-	top: 52%;
-}
-
-.back {
-	position: fixed;
-	left: -1%;
-	top: 50%;
-}
-
-
 .img-viewer {
 	cursor: pointer;
 	border: 1px solid #ccc;
@@ -68,21 +55,25 @@ $(function(){
 	
     $("button[role='tab']").on("click", function(e){
 		var tab = $(this).attr("data-tab");
-
+		
+		var tab2 = $("#pcateNum").val("tab");
+		
+		console.log("tab >> ", tab);
+		console.log("searchKeyword >> ", $("#searchKeyword").val());
+		
 		var maLat = $("#maLat").val() || 0;
 		var maLon = $("#maLon").val() || 0;
+		
+		console.log("maLat >", maLat)
+		console.log("maLon >", maLon)
+		var searchKeyword = $("#searchKeyword").val();
 		
 		// opt : 지역번호
 		var opt = $("#selectArea option:selected").val() || 0;
 		
-		var url = "${pageContext.request.contextPath}/product/list?pcNum="+tab+"&maLat="+maLat+"&maLon="+maLon+"&opt="+opt;
+		var url = "${pageContext.request.contextPath}/search/productList?pcNum="+tab+"&maLat="+maLat+"&maLon="+maLon+"&opt="+opt +"&searchKeyword="+searchKeyword;
 		
-		var isKeyword = ${isKeyword} || "0";
-		if(isKeyword == "1"){
-			url += "&isKeyword="+"1"
-		}
-		
-		location.href=url;
+		location.href=url; 
     });
 });
 
@@ -99,9 +90,10 @@ $(function(){
 		var maLat = $("#selectArea option:selected").attr("data-maLat");
 		var maLon = $("#selectArea option:selected").attr("data-maLon");
 		var areaNum = $(this).val();
+		var searchKeyword = $("#searchKeyword").val();
 		
-		var query = "maLat="+maLat+"&maLon="+maLon+"&opt="+areaNum;
-		var url="${pageContext.request.contextPath}/product/list?"+query;
+		var query = "maLat="+maLat+"&maLon="+maLon+"&opt="+areaNum +"&searchKeyword="+searchKeyword;
+		var url="${pageContext.request.contextPath}/search/productList?"+query;
 		location.href=url;
 	});	
 
@@ -142,8 +134,9 @@ var current_page = "${page}";
 var total_page = "${total_page}";
 
 function listPage(page, pcNum) {
-	var url = "${pageContext.request.contextPath}/product/morelist";
-	var query = "page=" + page + "&pcNum=" + pcNum;
+	var url = "${pageContext.request.contextPath}/search/morelist";
+	var searchKeyword = $("#searchKeyword").val();
+	var query = "page=" + page + "&pcNum=" + pcNum + "&searchKeyword=" + searchKeyword;
 	
 	var fn = function(data) {
 		printProduct(data);
@@ -151,31 +144,6 @@ function listPage(page, pcNum) {
 	};
 	ajaxFun(url, "get", query, "json", fn);
 }
-
-
-function clickBackBtn() {
-	var url = getUrlDefaultInfo()
-	location.href=url;
-}
-
-function clickInterestBtn() {
-	var url = getUrlDefaultInfo()
-	url += "&isKeyword="+"1";
-	location.href=url;
-}
-
-function getUrlDefaultInfo(){
-	var tab = ${pcNum} || 0;
-	var maLat = $("#maLat").val() || 0;
-	var maLon = $("#maLon").val() || 0;
-	
-	// opt : 지역번호
-	var opt = $("#selectArea option:selected").val() || 0;
-	
-	var url = "${pageContext.request.contextPath}/product/list?pcNum="+tab+"&maLat="+maLat+"&maLon="+maLon+"&opt="+opt;
-	return url;
-}
-
 
 function printProduct(data) {
 	var dataCount = data.dataCount;
@@ -268,17 +236,6 @@ $(function(){
             </div>
         </div>
         
-        <c:if test="${ isKeyword != '1' }">
-	        <a href="${pageContext.request.contextPath}/product/popular" class="btn btn-danger pop" style="text-decoration: none;">&nbsp;인기 <i class="bi bi-star"></i></a>
-	        <c:if test="${! empty sessionScope.member}">
-	        	<a class="btn btn-warning interest" style="text-decoration: none;" onclick="clickInterestBtn();">&nbsp;관심 <i class="bi bi-heart"></i></a>
-        	</c:if>
-        </c:if>
-        <c:if test="${ isKeyword == '1' }">
-        	<a class="btn btn-outline-secondary back" style="text-decoration: none;" onclick="clickBackBtn();">&nbsp;돌아가기 <i class="bi bi-arrow-left-circle"></i></a>
-		</c:if>
-        
-        
         <c:if test="${! empty sessionScope.member}">
 	    	<div style="width: 120px; float: right;">
 				<c:if test="${! empty listMemberAddr || memAddrCount == 2}">
@@ -296,17 +253,17 @@ $(function(){
 	        <div>
 				<input type="hidden" name="maLat" id="maLat" value="${maLat}">
 				<input type="hidden" name="maLon" id="maLon" value="${maLon}">
-	
 			</div>
        	</c:if>
-  	
+              	
+        <input type="hidden" name="searchKeyword" id="searchKeyword" value="${searchKeyword}">
         <div class="tab-content pt-2" id="nav-tabContent">
 			<div class="container px-5">
 				<div class="container">
 					<div class="d-flex justify-content-center py-3">
 						<ul class="nav nav-tabs" id="myTab" role="tablist">
 							<li class="nav-item" role="presentation">
-								<button class="nav-link" id="tab-0" role="tab" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" aria-controls="0" aria-selected="true" data-tab="0">ALL</button>
+								<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">ALL</button>
 							</li>
 							<c:forEach var="vo" items="${listCategory}" varStatus="status">
 								<li class="nav-item" role="presentation">
@@ -335,6 +292,17 @@ $(function(){
 					                                    	<!-- 
 					                                    	<img class="rounded-circle me-3" src="" alt="..." />
 					                                    	 -->
+					                                    	<div>
+					                                    		<!--
+														    	<div class="img-viewer" ></div>
+														    	
+														    	<c:forEach var="dto" items="${list}">
+															    	<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+										 											style="max-height: 450px;">
+									 							</c:forEach>
+									 							-->				
+													    	</div>
+					                                    
 					                                        <div class="small">
 					                                        	<div class="fw-bold">${dto.userNickName}</div>
 					                                            <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>
@@ -349,13 +317,6 @@ $(function(){
 					        </div>
 			            </div>
 			       	</div>
-                        
-	                <!-- 글쓰기 버튼 -->
-	                <c:if test="${! empty sessionScope.member}">
-		                <div class="writeBtnTop">
-		                	<a style="color:orange" href="${pageContext.request.contextPath}/product/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
-		                </div>
-	                </c:if>
 					
 					<c:if test="${total_page > 1}">			
 						<div class="more-box load-more">

@@ -3,6 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<script type="text/javascript">
+function searchWard() {
+	var f = document.searchForm;
+	f.submit();
+}
+
+</script>
 
 	<div class="site-header container-fluid">
             <div class="top-header">
@@ -56,9 +63,9 @@
 							<a id="search-icon" class="btn-left fa fa-search" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
 						</p>
 						<div class="collapse" id="collapseExample">
-							<form class="d-flex">
-								<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-								<button class="btn btn-outline-success" type="submit">Search</button>
+							<form class="d-flex" name="searchForm" method="post" action="${pageContext.request.contextPath}/search/productList">
+								<input class="form-control me-2" type="text" name="searchKeyword" value="${searchKeyword}" placeholder=" 어떤 매물을 찾으시나요  ?" aria-label="Search">
+								<button class="btn btn-outline-success" type="button" onclick="searchWard()">Search</button>
 							</form>
 						</div>
                     </div>
@@ -74,9 +81,10 @@
                             </li>
                             <li><a href="${pageContext.request.contextPath}/village/list">동네 커뮤니티</a>
                             	<ul>
-                            		<li><a href="${pageContext.request.contextPath}/village/list">동네 커뮤니티</a></li>
-                            		<li><a href="${pageContext.request.contextPath}/village/qna/list">동네 질문 게시판</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/qna/list">동네 질문</a></li>
                             		<li><a href="${pageContext.request.contextPath}/village/eat/list">동네 맛집</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/help/list">해주세요</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/with/list">같이해요</a></li>
                             	</ul>
                             </li>
                             <li><a href="${pageContext.request.contextPath}/cscenter/list">고객센터</a></li>

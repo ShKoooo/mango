@@ -12,10 +12,23 @@
 		SELECT NVL(COUNT(*), 0)
 		FROM product p
 		JOIN area a ON p.areaNum = a.areaNum
-		JOIN member m ON p.userId = m.userId		
-		<if test="pcNum != 0 ">
-			WHERE p.pcNum = #{pcNum}
-		</if>
+		JOIN member m ON p.userId = m.userId
+		<!-- 관심 키워드 조건 -->
+    	LEFT OUTER JOIN (
+			SELECT USERID,  LISTAGG(KEYWORD, '|')  WITHIN GROUP(ORDER BY USERID) AS KEYWORD
+			FROM KEYWORD
+			GROUP BY USERID
+		)K ON K.USERID = #{userId} <!-- 접속 유저 ID -->
+		<!-- 차단 유저 조건 -->
+		LEFT OUTER JOIN (
+			SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+			FROM BLOCKEDUSER
+			GROUP BY USERID
+		)BLOCKED ON BLOCKED.USERID = #{userId} <!-- 접속 유저 ID -->
+			
+		WHERE	CASE WHEN #{pcNum} = 0 THEN 1
+	                 WHEN p.pcNum = #{pcNum} THEN 1
+	            ELSE 0 END = 1
 		<if test="info == true">
 			<if test="membership &lt; 51">
 				AND p.areaNum IN (
@@ -31,7 +44,20 @@
 						)
 					)
 			</if>
-		</if>			
+		</if>
+		<!-- 1. 검색어 -->
+        AND CASE WHEN #{searchKeyword} IS NULL THEN 1
+                 WHEN pSubject LIKE CONCAT(CONCAT('%', #{searchKeyword}), '%') THEN 1
+            ELSE 0 END = 1 
+        <!-- 2. 관심 키워드 여부 -->
+        AND CASE WHEN #{isKeyword} = '0' THEN 1
+                 WHEN regexp_like(pSubject, k.keyword) THEN 1
+            ELSE 0 END = 1
+        <!-- 3. 차단 유저 게시물 안보기 -->
+        AND CASE WHEN blocked.blockedId IS NULL THEN 1
+                 WHEN not regexp_like(p.userId, blocked.blockedId) THEN 1
+            ELSE 0 END = 1
+					
 	</select>
 	
 	<!-- 중고거래 글 작성 -->
@@ -88,9 +114,9 @@
 	<select id="memberListProduct" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT * FROM (
     		SELECT ROWNUM rnum, tb.* FROM (
-        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD HH:MI:SS') pRegDate,
+        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
 		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
-		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName
+		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, m.userImgSaveFileName
         		FROM product p
         		JOIN area a ON p.areaNum = a.areaNum
         		JOIN pCategory pc ON p.pcNum = pc.pcNum
@@ -99,6 +125,18 @@
             		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
             		GROUP BY pNum
         		) c ON p.pNum = c.pNum
+        		<!-- 관심 키워드 조건 -->
+      		    LEFT OUTER JOIN (
+					SELECT USERID,  LISTAGG(KEYWORD, '|')  WITHIN GROUP(ORDER BY USERID) AS KEYWORD
+					FROM KEYWORD
+					GROUP BY USERID
+				)K ON K.USERID = #{userId} <!-- 접속 유저 ID -->
+				<!-- 차단 유저 조건 -->
+				LEFT OUTER JOIN (
+					SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+					FROM BLOCKEDUSER
+					GROUP BY USERID
+				)BLOCKED ON BLOCKED.USERID = #{userId} <!-- 접속 유저 ID -->
         		WHERE CASE WHEN #{maLat} = 0 AND #{maLon} = 0 THEN 1
 		                   WHEN p.areaNum IN (
 		                       SELECT areaNum
@@ -116,10 +154,132 @@
             	AND	CASE WHEN #{pcNum} = 0 THEN 1
 		                 WHEN pc.pcNum = #{pcNum} THEN 1
 		            ELSE 0 END = 1
+		        <!-- 1. 검색어 -->
+		        AND CASE WHEN #{searchKeyword} IS NULL THEN 1
+		                 WHEN pSubject LIKE CONCAT(CONCAT('%', #{searchKeyword}), '%') THEN 1
+		            ELSE 0 END = 1 
+		        <!-- 2. 관심 키워드 여부 -->
+		        AND CASE WHEN #{isKeyword} = '0' THEN 1
+		                 WHEN regexp_like(pSubject, k.keyword) THEN 1
+		            ELSE 0 END = 1
+		        <!-- 3. 차단 유저 게시물 안보기 -->
+		        AND CASE WHEN blocked.blockedId is null THEN 1
+		                 WHEN not regexp_like(p.userId, blocked.blockedId) THEN 1
+		            ELSE 0 END = 1
         		ORDER BY pUpdate_date DESC
     		) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
 		order by pUpdate_date DESC
+	</select>
+	
+	<!-- 인기글 리스트 -->
+	<select id="popularList" parameterType="map" resultType="com.sp.mango.product.Product">
+		SELECT * FROM (
+        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
+		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, popularPoint, 
+		              RANK() OVER(ORDER BY popularPoint DESC) RANK
+        		FROM product p
+        		JOIN area a ON p.areaNum = a.areaNum
+        		JOIN pCategory pc ON p.pcNum = pc.pcNum
+        		JOIN member m ON p.userId = m.userId
+        		LEFT OUTER JOIN (
+            		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+            		GROUP BY pNum
+        		) c ON p.pNum = c.pNum
+        		LEFT OUTER JOIN (
+                    SELECT p.pNum, ((NVL(pWishCount, 0) * 2) +
+                            (pHitCount * 0.1)) popularPoint
+                    FROM product p
+                    LEFT OUTER JOIN (
+                                        SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+                                        GROUP BY pNum
+                                    ) c ON p.pNum = c.pNum
+                ) pop ON p.pNum = pop.pNum
+        		WHERE popularPoint &gt;= 5 AND 
+        			  CASE WHEN #{maLat} = 0 AND #{maLon} = 0 THEN 1
+		                   WHEN p.areaNum IN (
+		                       SELECT areaNum
+		                       FROM (
+		                           SELECT * FROM (
+		                               SELECT areaNum,
+		                                   (6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+                              				-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+		                                   AS distance
+		                                   FROM area ar
+		                               ) WHERE distance &lt;= 5    
+		                           )
+		                       ) THEN 1
+		              ELSE 0 END = 1
+            	AND	CASE WHEN #{pcNum} = 0 THEN 1
+		                 WHEN pc.pcNum = #{pcNum} THEN 1
+		            ELSE 0 END = 1
+		      ) T1
+		      WHERE T1.RANK &lt;= 6
+	</select>
+	
+	<!-- 검색 리스트 -->
+	<select id="searchProductList" parameterType="map" resultType="com.sp.mango.product.Product">
+		SELECT * FROM (
+    		SELECT ROWNUM rnum, tb.* FROM (
+        	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
+		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, m.userImgSaveFileName
+        		FROM product p
+        		JOIN area a ON p.areaNum = a.areaNum
+        		JOIN pCategory pc ON p.pcNum = pc.pcNum
+        		JOIN member m ON p.userId = m.userId
+        		LEFT OUTER JOIN (
+            		SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+            		GROUP BY pNum
+        		) c ON p.pNum = c.pNum
+      		    LEFT OUTER JOIN (
+					SELECT USERID,  LISTAGG(KEYWORD, '|')  WITHIN GROUP(ORDER BY USERID) AS KEYWORD
+					FROM KEYWORD
+					GROUP BY USERID
+				)K ON K.USERID = #{userId} <!-- 접속 유저 ID -->
+				LEFT OUTER JOIN (
+					SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+					FROM BLOCKEDUSER
+					GROUP BY USERID
+				)BLOCKED ON BLOCKED.USERID = #{userId} <!-- 접속 유저 ID -->
+        		WHERE CASE WHEN #{maLat} = 0 AND #{maLon} = 0 THEN 1
+		                   WHEN p.areaNum IN (
+		                       SELECT areaNum
+		                       FROM (
+		                           SELECT * FROM (
+		                               SELECT areaNum,
+		                                   (6371*acos(ROUND(cos(#{maLat}*3.14159265358979/180)*cos(aLat*3.14159265358979/180)*cos(aLon*3.14159265358979/180
+                              				-#{maLon}*3.14159265358979/180)+sin(#{maLat}*3.14159265358979/180)*sin(aLat*3.14159265358979/180),30)))
+		                                   AS distance
+		                                   FROM area ar
+		                               ) WHERE distance &lt;= 5    
+		                           )
+		                       ) THEN 1
+		              ELSE 0 END = 1
+            	AND	CASE WHEN #{pcNum} = 0 THEN 1
+		                 WHEN pc.pcNum = #{pcNum} THEN 1
+		            ELSE 0 END = 1
+		        <!-- 1. 검색어 조건-->
+		        AND CASE WHEN #{searchKeyword} IS NULL THEN 1
+		                 WHEN pSubject LIKE CONCAT(CONCAT('%', #{searchKeyword}), '%') THEN 1
+		            ELSE 0 END = 1
+		        <!-- 2. 차단 유저 게시물 안보기 조건 -->
+		        AND CASE WHEN blocked.blockedId is null THEN 1
+		                 WHEN not regexp_like(p.userId, blocked.blockedId) THEN 1
+		            ELSE 0 END = 1
+        		ORDER BY pUpdate_date DESC
+    		) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+		order by pUpdate_date DESC
+	</select>
+	
+	
+	<!-- 프로필 사진 가져오기 -->
+	<select id="userProfile" parameterType="String" resultType="com.sp.mango.product.Product">
+		SELECT userImgSaveFileName
+		FROM member
+		WHERE userId = #{userId};
 	</select>
 	
 	<!-- 조회수 증가 --> 
@@ -203,7 +363,20 @@
 		SELECT (pRegDate + 3) pUpOkDate FROM product WHERE pNum = #{pNum}
 	</select>
 
-
+	<!-- 거래 쪽지 보내기 -->
+	<insert id="sendMsg" parameterType="map">
+   		INSERT INTO note (noteNum, sendId, receiveId, noteContent, noteRegDate, isSendDelete, isRecDelete)
+			VALUES (note_seq.NEXTVAL, #{sendId}, #{receiveId}, #{noteContent}, SYSDATE, 'F','F')
+   	</insert>
+   	
+   	<!-- 
+   	<select id="getUserId" parameterType="map" resultType="com.sp.mango.product.Product">
+	   	SELECT p.userId, m.userNickName 
+	   	FROM product p
+	   	JOIN member m ON p.userId = m.userId
+	   	WHERE pNum = #{pNum}
+   	</select>
+	 -->
 
 
 	<!-- 관리자 : 카테고리 추가 -->

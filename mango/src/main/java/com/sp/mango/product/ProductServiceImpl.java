@@ -7,8 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
+import com.sp.mango.mypage.Note;
 
-@Service("product.productServiceImpl")
+@Service("product.productService")
 public class ProductServiceImpl implements ProductService{
 	@Autowired
 	private CommonDAO dao;
@@ -192,6 +193,19 @@ public class ProductServiceImpl implements ProductService{
 		
 		return memberList;
 	}
+	
+	@Override
+	public List<Product> popularList(Map<String, Object> map) {
+		List<Product> popularList = null;
+		
+		try {
+			popularList = dao.selectList("product.popularList", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return popularList;
+	}
 
 	@Override
 	public void updateHitCount(int pNum) throws Exception {
@@ -330,6 +344,29 @@ public class ProductServiceImpl implements ProductService{
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void sendMsg(Note dto) throws Exception {
+		try {
+			dao.insertData("product.sendMsg", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public String userImgSaveFileName(String userId) {
+		String userImgSaveFileName = "";
+		
+		try {
+			userImgSaveFileName = dao.selectOne("product.userProfile", userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return userImgSaveFileName;
 	}
 
 

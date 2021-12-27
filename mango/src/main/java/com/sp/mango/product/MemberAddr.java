@@ -96,5 +96,11 @@ public class MemberAddr {
 	public void setaLon(double aLon) {
 		this.aLon = aLon;
 	}
+	@Override
+	public String toString() {
+		return "MemberAddr [maNum=" + maNum + ", maZip=" + maZip + ", maAddr1=" + maAddr1 + ", maAddr2=" + maAddr2
+				+ ", userId=" + userId + ", maLat=" + maLat + ", maLon=" + maLon + ", areaNum=" + areaNum + ", area1="
+				+ area1 + ", area2=" + area2 + ", area3=" + area3 + ", aLat=" + aLat + ", aLon=" + aLon + "]";
+	}
 	
 }

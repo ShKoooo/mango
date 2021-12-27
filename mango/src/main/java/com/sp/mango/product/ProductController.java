@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.mongodb.DuplicateKeyException;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
+import com.sp.mango.mypage.Note;
 
 @Controller("product.productController")
 @RequestMapping("/product/*")
@@ -36,6 +37,8 @@ public class ProductController {
 			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
 			@RequestParam(value = "pcNum", defaultValue = "0") int pcNum,
 			@RequestParam(value = "opt", defaultValue = "0") int opt,
+			@RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
+			@RequestParam(value = "isKeyword", defaultValue = "0") String isKeyword,
 			HttpServletRequest req,
 			Model model
 			) throws Exception {
@@ -55,17 +58,26 @@ public class ProductController {
 		List<MemberAddr> listMemberAddr = null;
 		int memAddrCount = 0;
 		
+		String userId = "";
 		if (info != null) {
+			userId = info.getUserId();
 			map.put("membership", info.getMembership());
+			
 			listMemberAddr = service.listMemberAddr(info.getUserId());
 			memAddrCount = service.memAddrCount(info.getUserId());
 			
 			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) { 
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
+				maLat = listMemberAddr.get(0).getaLat();
+				maLon = listMemberAddr.get(0).getaLon();
 			}
 		}		
 		map.put("pcNum", pcNum);
+		map.put("userId", userId);
+		
+		map.put("searchKeyword", searchKeyword);
+		map.put("isKeyword", isKeyword);
 		
 		int dataCount = service.dataCount(map);
 		int total_page = 0;
@@ -109,6 +121,9 @@ public class ProductController {
 		model.addAttribute("page", current_page);
 		model.addAttribute("list", list);
 		model.addAttribute("pcNum", pcNum);
+		model.addAttribute("maLat", maLat);
+		model.addAttribute("maLon", maLon);
+		model.addAttribute("isKeyword", isKeyword);
 		
 		// model.addAttribute("paging", paging);
 		model.addAttribute("articleUrl", articleUrl);
@@ -117,6 +132,8 @@ public class ProductController {
 		
 		model.addAttribute("listCategory", listCategory);
 		model.addAttribute("opt", opt);
+		
+		model.addAttribute("modeList", "list");
 
 		return ".product.list";
 	}
@@ -131,6 +148,8 @@ public class ProductController {
 			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
 			@RequestParam(value = "pcNum", defaultValue = "0") int pcNum,
 			@RequestParam(value = "opt", defaultValue = "0") int opt,
+			@RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
+			@RequestParam(value = "isKeyword", defaultValue = "0") String isKeyword,
 			HttpSession session
 			) throws Exception {
 		
@@ -145,12 +164,18 @@ public class ProductController {
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
 		
+		String userId = "";
 		if (info != null) {
+			userId = info.getUserId();
 			map.put("membership", info.getMembership());
 			listMemberAddr = service.listMemberAddr(info.getUserId());
 		}		
 		map.put("pcNum", pcNum);
-
+		map.put("userId", userId);
+		
+		map.put("searchKeyword", searchKeyword);
+		map.put("isKeyword", isKeyword);
+		
 		dataCount = service.dataCount(map);
 		int total_page = myUtil.pageCount(rows, dataCount);
 		if (current_page > total_page) {
@@ -224,11 +249,21 @@ public class ProductController {
 			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
 			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
 			@RequestParam(value = "opt", defaultValue = "0") int opt,
+			@RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
+			@RequestParam(value = "isPorular", defaultValue = "") String isPorular,
 			HttpSession session,
 			Model model
 			) throws Exception {
 		
+		
 		String query = "page=" + page + "&pcNum=" + pcNum;
+		if(!searchKeyword.equals("")) {
+			query+= "&searchKeyword=" + searchKeyword;
+		}
+		if(!isPorular.equals("")) {
+			query+= "&isPorular=" + isPorular;
+		}
+			
 		
 		service.updateHitCount(pNum);
 		
@@ -257,8 +292,7 @@ public class ProductController {
 			
 			listPreport = service.listPreport();
 			
-			query = "page=" + page + "&pcNum=" + pcNum 
-						+ "&maLat=" + maLat + "&maLon=" + maLon + "&opt=" + opt;
+			query += "&maLat=" + maLat + "&maLon=" + maLon + "&opt=" + opt;
 		}
 		
 		int productWishCount = service.productWishCount(pNum);
@@ -272,6 +306,8 @@ public class ProductController {
 		model.addAttribute("listPreport", listPreport);
 		model.addAttribute("pcNum", pcNum);
 		model.addAttribute("pUpOkDate", pUpOkDate);
+		model.addAttribute("searchKeyword", searchKeyword);
+		model.addAttribute("isPorular", isPorular);
 		
 		return ".product.article";
 	}
@@ -419,5 +455,122 @@ public class ProductController {
 		}
 		
 		return "redirect:/product/list"; 
+	}
+	
+	@RequestMapping("sendMsg")
+	public String sendMsg(
+			Note dto,
+			@RequestParam int pNum,
+			HttpSession session) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");	
+		
+		try {
+			dto.setSendId(info.getUserId());
+			
+			Product vo = service.readProduct(pNum);
+			String nContent = "안녕하세요 "+vo.getpSubject()+"를 구매하고 싶어서 쪽지남깁니다.";
+			dto.setReceiveId(vo.getUserId());
+			dto.setNoteContent(nContent);
+		
+			service.sendMsg(dto);
+		} catch (Exception e) {
+		}
+		
+		return ".mypage.note";
+	}
+	
+	@RequestMapping("popular")
+	public String popularList(
+			@RequestParam(value = "page", defaultValue = "1") int current_page,
+			@RequestParam(value = "maLat", defaultValue = "0") double maLat,
+			@RequestParam(value = "maLon", defaultValue = "0") double maLon,
+			@RequestParam(value = "pcNum", defaultValue = "0") int pcNum,
+			@RequestParam(value = "opt", defaultValue = "0") int opt,
+			HttpServletRequest req,
+			Model model
+			) throws Exception {
+		
+		HttpSession session = req.getSession();
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		String cp = req.getContextPath();
+		
+		int rows = 6; // 한 화면에 보여주는 게시물 수
+	
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("info", info!=null);
+		map.put("maLat", maLat);
+		map.put("maLon", maLon);
+		
+		List<MemberAddr> listMemberAddr = null;
+		int memAddrCount = 0;
+		
+		if (info != null) {
+			map.put("membership", info.getMembership());
+			listMemberAddr = service.listMemberAddr(info.getUserId());
+			memAddrCount = service.memAddrCount(info.getUserId());
+			
+			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) { 
+				map.put("maLat", listMemberAddr.get(0).getaLat());
+				map.put("maLon", listMemberAddr.get(0).getaLon());
+			}
+		}		
+		map.put("pcNum", pcNum);
+		
+		int dataCount = service.dataCount(map);
+		int total_page = 0;
+
+		if (dataCount != 0) {
+			total_page = myUtil.pageCount(rows, dataCount);
+		}
+		
+		// 다른 사람이 자료를 삭제하여 전체 페이지수가 변화 된 경우
+		if (total_page < current_page) {
+			current_page = total_page;
+		}
+		
+		// 리스트에 출력할 데이터 가져오기
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
+		
+		
+		// 리스트
+		List<Product> list = service.popularList(map);
+		
+		if(info != null) { 
+			if(opt == 0 && listMemberAddr.size() > 0) {
+				opt = listMemberAddr.get(0).getAreaNum();
+			}
+		}
+
+		String isPorular = "1";
+		// String listUrl = cp + "/product/list";
+		String articleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page+"&isPorular="+isPorular;
+				
+		// String paging = myUtil.paging(current_page, total_page, listUrl);
+		
+		
+		model.addAttribute("listMemberAddr", listMemberAddr);
+		model.addAttribute("memAddrCount", memAddrCount);
+
+		model.addAttribute("dataCount", dataCount);
+		model.addAttribute("total_page", total_page);
+		model.addAttribute("page", current_page);
+		model.addAttribute("list", list);
+		model.addAttribute("pcNum", pcNum);
+		
+		// model.addAttribute("paging", paging);
+		model.addAttribute("articleUrl", articleUrl);
+		
+		List<Product> listCategory = service.listCategory();
+		
+		model.addAttribute("listCategory", listCategory);
+		model.addAttribute("opt", opt);
+		model.addAttribute("isPorular", isPorular);
+		
+		return ".product.popular";
 	}
 }

@@ -45,6 +45,7 @@ public class Product {
 	private double manner; // 글쓴이의 매너온도
 	private int pUp; // 끌올 횟수
 	
+	private String userImgSaveFileName; // 프로필 사진
 	
 	public int getpNum() {
 		return pNum;
@@ -229,5 +230,13 @@ public class Product {
 	}
 	public void setpUp(int pUp) {
 		this.pUp = pUp;
-	}	
+	}
+	
+	public String getUserImgSaveFileName() {
+		return userImgSaveFileName;
+	}
+	public void setUserImgSaveFileName(String userImgSaveFileName) {
+		this.userImgSaveFileName = userImgSaveFileName;
+	}
+	
 }

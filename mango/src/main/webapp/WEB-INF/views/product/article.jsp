@@ -102,6 +102,19 @@ function updateDate() {
     }
 }
 
+function clickListBtn() {
+	var locationInfo = 'product/list';
+	if(($("#searchKeyword").val() || "") != ""){
+		locationInfo = 'search/productList';
+	}else if(($("#isPorular").val() || "") != ""){
+		locationInfo = 'product/popular';
+	}
+	
+	var url = '${pageContext.request.contextPath}/' + locationInfo + '?${query}';
+
+	location.href=url;
+}
+
 // 글을 작성한지 3일 후에 끌올 가능하게 만들기
 $(function(){
 	var today = new Date();
@@ -175,6 +188,8 @@ $(function(){
 								</div>
 	               
 	                            <span>매너온도</span>
+	                            <input type="hidden" id="searchKeyword" value="${searchKeyword}">
+	                            <input type="hidden" id="isPorular" value="${isPorular}">
                             </div>
                             
                             <p>${dto.pContent}</p>
@@ -204,7 +219,7 @@ $(function(){
                                 </li>
                                 <li>
                                 	<c:if test="${dto.pStatus=='판매중'}">
-                                		<i class="fa fa-envelope-o"></i><a href="">거래 쪽지 보내기</a>
+                                		<i class="fa fa-envelope-o"></i><a href="${pageContext.request.contextPath}/product/sendMsg?pNum=${dto.pNum}">거래 쪽지 보내기</a>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='예약중'}">
                                 		<i class="bi bi-calendar-check-fill"></i><a href="">거래가 예약된 매물입니다</a>
@@ -271,7 +286,7 @@ $(function(){
 				    		</c:choose>
 				    	</c:if>
 	                        <span style="float: right;">
-	                        	<button type="button" class="btn btn-light" name="upButton" onclick="location.href='${pageContext.request.contextPath}/product/list?${query}';">리스트</button>
+	                        	<button type="button" class="btn btn-light" name="upButton" onclick="clickListBtn()">리스트</button>
 	                        </span>
                         </div>
                     </div>
