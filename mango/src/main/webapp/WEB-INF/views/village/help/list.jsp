@@ -17,13 +17,15 @@
 a:hover {
 	text-decoration : none;
 }
+.container {
+	width: 1170px;
+}
 </style>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
 
 <script type="text/javascript">
 function searchList() {
-	var f = document.searchForm;
+	var f = document.searchVillageForm;
 	f.submit();
 }
 
@@ -35,7 +37,7 @@ $(function() {
 		var maLon = $("#selectArea option:selected").attr("data-maLon");
 		var areaNum = $(this).val();
 
-		var f = document.searchForm;
+		var f = document.searchVillageForm;
 		f.maLat.value = maLat;
 		f.maLon.value = maLon;
 		f.areaNum.value = $(this).val();
@@ -114,7 +116,7 @@ $(function() {
 					</div>
 					
 					<div class="col-6 text-center">
-						<form class="row" name="searchForm" action="${pageContext.request.contextPath}/village/help/list" method="post">
+						<form class="row" name="searchVillageForm" action="${pageContext.request.contextPath}/village/help/list" method="post">
 							<div class="col-auto p-1">
 								<select name="condition" class="form-select">
 									<option value="all" ${condition=="all"?":selected='selected'":""}>제목+내용</option>

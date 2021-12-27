@@ -8,34 +8,31 @@
 	margin-top : 60px;
 	margin-bottom: 60px;
 }
-
 .page-item.active .page-link {
 	background-color : #f69730;
 	border-color : #f69730;
 }
-
 a:hover {
 	text-decoration : none;
 }
-</style>
 
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
+.container {
+	width: 1170px;
+}
+</style>
 
 <script type="text/javascript">
 function searchList() {
-	var f = document.searchForm;
+	var f = document.searchVillageForm;
 	f.submit();
 }
-
-
 $(function() {
 	$("#selectArea").change( function() {
 		// 주소 바꿨을 때 좌표 영역에 값 세팅
 		var maLat = $("#selectArea option:selected").attr("data-maLat");
 		var maLon = $("#selectArea option:selected").attr("data-maLon");
-		var areaNum = $(this).val();
 
-		var f = document.searchForm;
+		var f = document.searchVillageForm;
 		f.maLat.value = maLat;
 		f.maLon.value = maLon;
 		f.areaNum.value = $(this).val();
@@ -69,8 +66,12 @@ $(function() {
 								<a class="btn btn-outline-dark" href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium; text-decoration: none; margin-left: 2.5px; float:left;">내 동네 설정</a>
 							</c:if>
 						</c:if>
+						<div>
+							<input type="hidden" name="maLat" id="maLat" value="${vo.maLat}">
+							<input type="hidden" name="maLon" id="maLon" value="${vo.maLon}">
+						</div>
 					</div>
-				
+
 				<table class="table table-hover board-list">
 					<thead>
 						<tr style="text-align: center;">
@@ -84,7 +85,7 @@ $(function() {
 							<th class="bw-70">조회수</th>
 						</tr>
 					</thead>
-					
+
 					<tbody>
 						<c:forEach var="dto" items="${list}">
 							<tr style="text-align: center">
@@ -103,18 +104,18 @@ $(function() {
 						</c:forEach>
 					</tbody>
 				</table>
-				
+
 				<div class="page-box">
 					${dataCount == 0? "등록된 게시물이 없습니다." : paging}
 				</div>
-				
+
 				<div class="row board-list-footer">
 					<div class="col">
 						<button type="button" class="btn btn-light" onclick="window.location.reload()">새로고침</button>
 					</div>
-					
+
 					<div class="col-6 text-center">
-						<form class="row" name="searchForm" action="${pageContext.request.contextPath}/village/with/list" method="post">
+						<form class="row" name="searchVillageForm" action="${pageContext.request.contextPath}/village/with/list" method="post">
 							<div class="col-auto p-1">
 								<select name="condition" class="form-select">
 									<option value="all" ${condition=="all"?":selected='selected'":""}>제목+내용</option>
@@ -134,7 +135,7 @@ $(function() {
 							</div>
 						</form>
 					</div>
-					
+
 					<div class="col text-end">
 						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/with/write';">글쓰기</button>
 					</div>
@@ -143,4 +144,4 @@ $(function() {
 		</div>
 	</div>
 	</div>	
-</div>
+</div> 

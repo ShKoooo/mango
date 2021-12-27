@@ -1,4 +1,4 @@
-package com.sp.mango.village.qna;
+package com.sp.mango.village.news;
 
 import java.util.List;
 import java.util.Map;
@@ -12,16 +12,16 @@ import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
 
-@Service("village.qna.villageQnaService")
-public class VillageQnaServiceImpl implements VillageQnaService{
+@Service("village.news.villageNewsService")
+public class VillageNewsServiceImpl implements VillageNewsService{
 
 	@Autowired
 	private CommonDAO dao;
 	
 	@Override
-	public void insertBoard(VillageQna dto) throws Exception {
+	public void insertBoard(VillageNews dto) throws Exception {
 		try {
-			dao.insertData("qna.insertBoard", dto);
+			dao.insertData("news.insertBoard", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -29,11 +29,11 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	}
 
 	@Override
-	public List<VillageQna> memberListBoard(Map<String, Object> map) {
-		List<VillageQna> memberList = null;
+	public List<VillageNews> memberListBoard(Map<String, Object> map) {
+		List<VillageNews> memberList = null;
 		
 		try {
-			memberList = dao.selectList("qna.memberListBoard", map);
+			memberList = dao.selectList("news.memberListBoard", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -45,7 +45,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("qna.dataCount", map);
+			result = dao.selectOne("news.dataCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -53,11 +53,11 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	}
 
 	@Override
-	public VillageQna readBoard(int vNum) {
-		VillageQna dto = null;
+	public VillageNews readBoard(int vNum) {
+		VillageNews dto = null;
 		
 		try {
-			dto = dao.selectOne("qna.readBoard", vNum);
+			dto = dao.selectOne("news.readBoard", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +67,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void updateHitCount(int vNum) throws Exception {
 		try {
-			dao.updateData("qna.updateHitCount", vNum);
+			dao.updateData("news.updateHitCount", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -75,9 +75,9 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	}
 
 	@Override
-	public void updateBoard(VillageQna dto) throws Exception {
+	public void updateBoard(VillageNews dto) throws Exception {
 		try {
-			dao.updateData("qna.updateBoard", dto);
+			dao.updateData("news.updateBoard", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -87,12 +87,12 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void deleteBoard(int vNum, String userId, int membership) throws Exception {
 		try {
-			VillageQna dto = readBoard(vNum);
+			VillageNews dto = readBoard(vNum);
 			if(dto == null || (membership < 51 && ! dto.getUserId().equals(userId))) {
 				return;
 			}
 			
-			dao.deleteData("qna.deleteBoard", vNum);
+			dao.deleteData("news.deleteBoard", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}	}
@@ -102,7 +102,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		List<MemberAddr> listMemberAddr = null;
 		
 		try {
-			listMemberAddr = dao.selectList("qna.listMemberAddr", userId);
+			listMemberAddr = dao.selectList("news.listMemberAddr", userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -114,7 +114,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("qna.memAddrCount", userId);
+			result = dao.selectOne("news.memAddrCount", userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -124,7 +124,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void insertBoardLike(Map<String, Object> map) throws Exception {
 		try {
-			dao.insertData("qna.insertBoardLike", map);
+			dao.insertData("news.insertBoardLike", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -134,7 +134,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void deleteBoardLike(Map<String, Object> map) throws Exception {
 		try {
-			dao.deleteData("qna.deleteBoardLike", map);
+			dao.deleteData("news.deleteBoardLike", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -146,7 +146,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("qna.boardLikeCount", vNum);
+			result = dao.selectOne("news.boardLikeCount", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -158,7 +158,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		boolean result = false;
 		
 		try {
-			VillageQna dto = dao.selectOne("qna.userBoardLiked", map);
+			VillageNews dto = dao.selectOne("news.userBoardLiked", map);
 			if(dto != null) {
 				result = true;
 			}
@@ -171,7 +171,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void insertReply(Reply dto) throws Exception {
 		try {
-			dao.insertData("qna.insertReply", dto);
+			dao.insertData("news.insertReply", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -184,7 +184,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		List<Reply> list = null;
 		
 		try {
-			list = dao.selectList("qna.listReply", map);
+			list = dao.selectList("news.listReply", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -196,7 +196,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("qna.replyCount", map);
+			result = dao.selectOne("news.replyCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -206,7 +206,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void deleteReply(Map<String, Object> map) throws Exception {
 		try {
-			dao.deleteData("qna.deleteReply", map);
+			dao.deleteData("news.deleteReply", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -219,7 +219,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		List<Reply> list = null;
 		
 		try {
-			list = dao.selectList("qna.listReplyAnswer", vrAnswer);
+			list = dao.selectList("news.listReplyAnswer", vrAnswer);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -231,7 +231,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("qna.replyAnswerCount", vrAnswer);
+			result = dao.selectOne("news.replyAnswerCount", vrAnswer);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -241,7 +241,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void insertReplyLike(Map<String, Object> map) throws Exception {
 		try {
-			dao.insertData("qna.insertReplyLike", map);
+			dao.insertData("news.insertReplyLike", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -253,7 +253,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		Map<String, Object> countMap = null;
 		
 		try {
-			countMap = dao.selectOne("qna.replyLikeCount", map);
+			countMap = dao.selectOne("news.replyLikeCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -265,7 +265,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		List<VillageReport> listVreport = null;
 		
 		try {
-			listVreport = dao.selectList("qna.listVreport");
+			listVreport = dao.selectList("news.listVreport");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -275,7 +275,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void insertVreport(VillageReport dto) throws Exception {
 		try {
-			dao.insertData("qna.insertVreport", dto);
+			dao.insertData("news.insertVreport", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -287,7 +287,7 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 		List<ReplyReport> listVRreport = null;
 		
 		try {
-			listVRreport = dao.selectList("qna.listVRreport");
+			listVRreport = dao.selectList("news.listVRreport");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -297,12 +297,11 @@ public class VillageQnaServiceImpl implements VillageQnaService{
 	@Override
 	public void insertVRreport(ReplyReport dto) throws Exception {
 		try {
-			dao.insertData("qna.insertVRreport", dto);
+			dao.insertData("news.insertVRreport", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
 	}
-
 
 }

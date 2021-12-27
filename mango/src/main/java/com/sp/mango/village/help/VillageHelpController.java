@@ -64,6 +64,7 @@ public class VillageHelpController {
 		map.put("keyword", keyword);
 		map.put("info", info!=null);
 		
+		// 회원이 선택한 주소의 위도와 경도
 		List<MemberAddr> listMemberAddr = null;
 		int memAddrCount = 0;
 		
@@ -78,6 +79,7 @@ public class VillageHelpController {
 			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) {
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
+				memAddrCount = service.memAddrCount(info.getUserId());
 			}
 		}
 		
@@ -86,27 +88,33 @@ public class VillageHelpController {
 			total_page = myUtil.pageCount(rows, dataCount);
 		}
 		
+		
+		// 다른 사람이 자료 삭제했을 때 전체 페이지 수 변화
 		if(total_page < current_page) {
 			current_page = total_page;
 		}
 		
+		// 리스트에 출력할 데이터
 		int start = (current_page - 1) * rows + 1;
 		int end = current_page * rows;
 		map.put("start", start);
 		map.put("end", end);
 		
+		// 글 리스트
 		List<VillageHelp> list = null;
 		
 		if (info != null) {
 			list = service.memberListBoard(map);
 		}
 		
+		// 리스트 번호
 		int listNum, n = 0;
 		for(VillageHelp dto : list) {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
 			n++;
 			
+			// 리플 갯수 불러오기
 			Map<String, Object> rplyMap = new HashMap<String, Object>();
 			rplyMap.put("vNum",  dto.getvNum());
 			dto.setReplyCount(service.replyCount(rplyMap));
@@ -186,6 +194,7 @@ public class VillageHelpController {
 		
 		service.updateHitCount(vNum);
 		
+		// 글 내용 가져오기
 		VillageHelp dto = service.readBoard(vNum);
 		if(dto == null) {
 			return "redirect:/village/help/list?" + query;
@@ -196,18 +205,21 @@ public class VillageHelpController {
 		map.put("keyword", keyword);
 		map.put("vNum", vNum);
 		
+		// 게시글 좋아요
 		map.put("userId", info.getUserId());
 		boolean userBoardLiked = service.userBoardLiked(map);
 		
 		List<VillageReport> listVreport = null;
 		List<ReplyReport> listVRreport = null;
 		
+		// 게시글 신고
 		if(info != null)  {
 			map.put("userId", info.getUserId());
 			
 			listVreport = service.listVreport();
 		}
 		
+		// 댓글 신고
 		if(info != null) {
 			map.put("userId", info.getUserId());
 			
@@ -280,6 +292,7 @@ public class VillageHelpController {
 		return "redirect:/village/help/list?"+query;
 	}
 	
+	// 게시글 좋아요 추가, 삭제
 	@RequestMapping(value = "insertBoardLike", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> insertBoardLike(@RequestParam int vNum,
@@ -314,6 +327,7 @@ public class VillageHelpController {
 		return model;
 	}
 	
+	// 댓글 리스트 출력
 	@RequestMapping(value = "listReply")
 	public String listReply(@RequestParam int vNum,
 			@RequestParam(value="pageNo", defaultValue="1") int current_page,
@@ -354,6 +368,7 @@ public class VillageHelpController {
 		return "village/help/listReply";
 	}
 	
+	// 댓글 및 답글 등록
 	@RequestMapping(value = "insertReply", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> insertReply(Reply dto, HttpSession session) {
@@ -440,6 +455,8 @@ public class VillageHelpController {
 		return model;
 	}
 	
+	@RequestMapping(value = "countReplyLike", method = RequestMethod.POST)
+	@ResponseBody
 	public Map<String, Object> countReplyLike(@RequestParam Map<String, Object> paramMap,
 			HttpSession session) {
 		

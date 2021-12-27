@@ -78,6 +78,7 @@ public class VillageWithController {
 			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) {
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
+				memAddrCount = service.memAddrCount(info.getUserId());
 			}
 		}
 		
@@ -440,6 +441,8 @@ public class VillageWithController {
 		return model;
 	}
 	
+	@RequestMapping(value = "countReplyLike", method = RequestMethod.POST)
+	@ResponseBody
 	public Map<String, Object> countReplyLike(@RequestParam Map<String, Object> paramMap,
 			HttpSession session) {
 		

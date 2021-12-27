@@ -1,6 +1,5 @@
-package com.sp.mango.village.eat;
+package com.sp.mango.village.news;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -27,15 +26,16 @@ import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
 
-@Controller("village.eat.VillageEatController")
-@RequestMapping("/village/eat/*")
-public class VillageEatController {
+@Controller("village.news.VillageNewsController")
+@RequestMapping("/village/news/*")
+public class VillageNewsController {
+	
 	@Autowired
-	private VillageEatService service;
+	private VillageNewsService service;
 	@Autowired
 	private MyUtil myUtil;
-	
-	@RequestMapping(value="list")
+
+	@RequestMapping(value = "list")
 	public String list(@RequestParam(value = "page", defaultValue = "1") int current_page,
 			@RequestParam(defaultValue = "all") String condition,
 			@RequestParam(defaultValue = "") String keyword,
@@ -70,15 +70,14 @@ public class VillageEatController {
 		map.put("maLat", maLat);
 		map.put("maLon", maLon);
 		
-		if (info != null) {
-			map.put("membership",  info.getMembership());
+		if (info!=null) {
+			map.put("membership", info.getMembership());
 			listMemberAddr = service.listMemberAddr(info.getUserId());
 			memAddrCount = service.memAddrCount(info.getUserId());
 			
-			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) {
+			if(listMemberAddr.size() > 0 && maLat == 0 && maLon == 0) {
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
-				memAddrCount = service.memAddrCount(info.getUserId());
 			}
 		}
 		
@@ -87,7 +86,7 @@ public class VillageEatController {
 			total_page = myUtil.pageCount(rows, dataCount);
 		}
 		
-		if (total_page < current_page) {
+		if(total_page < current_page) {
 			current_page = total_page;
 		}
 		
@@ -96,33 +95,33 @@ public class VillageEatController {
 		map.put("start", start);
 		map.put("end", end);
 		
-		List<VillageEat> list = null;
+		List<VillageNews> list = null;
 		
 		if (info != null) {
 			list = service.memberListBoard(map);
 		}
 		
 		int listNum, n = 0;
-		for (VillageEat dto : list) {
+		for(VillageNews dto : list) {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
 			n++;
 			
 			Map<String, Object> rplyMap = new HashMap<String, Object>();
-			rplyMap.put("vNum", dto.getvNum());
+			rplyMap.put("vNum",  dto.getvNum());
 			dto.setReplyCount(service.replyCount(rplyMap));
 		}
 		
 		String query = "";
-		String listUrl = cp + "/village/eat/list";
-		String articleUrl = cp + "/village/eat/article?page="+current_page;
-		if(keyword.length()!=0) {
+		String listUrl = cp + "/village/news/list";
+		String articleUrl = cp + "/village/news/article?page="+current_page;
+		if (keyword.length()!=0) {
 			query = "condition="+condition+"&keyword="+URLEncoder.encode(keyword, "UTF-8");
 		}
 		
 		if(query.length() != 0) {
-			listUrl = cp + "/village/eat/list?"+query;
-			articleUrl = cp + "/village/eat/article?page=" + current_page + "&" + query;
+			listUrl = cp + "/village/news/list?"+query;
+			articleUrl = cp + "/village/news/article?page="+current_page+"&"+query;
 		}
 		
 		String paging = myUtil.paging(current_page, total_page, listUrl);
@@ -141,7 +140,7 @@ public class VillageEatController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("areaNum", areaNum);
 		
-		return ".village.eat.list";
+		return ".village.news.list";
 	}
 	
 	@RequestMapping(value = "write", method = RequestMethod.GET)
@@ -152,24 +151,22 @@ public class VillageEatController {
 		model.addAttribute("mode", "write");
 		model.addAttribute("listMemberAddr", listMemberAddr);
 		
-		return ".village.eat.write";
+		return ".village.news.write";
 	}
 	
-	@RequestMapping(value = "village/eat/write", method = RequestMethod.POST)
-	public String writeSubmit(VillageEat dto, HttpSession session) throws Exception {
+	@RequestMapping(value = "village/news/write", method = RequestMethod.POST)
+	public String writeSubmit (VillageNews dto, HttpSession session) throws Exception {
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
-		
-		String root = session.getServletContext().getRealPath("/");
-		String pathname = root + "uploads" + File.separator + "eat";
 		
 		try {
 			dto.setUserId(info.getUserId());
-			service.insertBoard(dto, pathname);
+			service.insertBoard(dto);
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/eat/list";
+		return "redirect:/village/news/list";
 	}
+	
 	
 	@RequestMapping(value = "article")
 	public String article(@RequestParam int vNum,
@@ -179,20 +176,19 @@ public class VillageEatController {
 			HttpSession session,
 			Model model) throws Exception {
 		
-		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-		keyword = URLDecoder.decode(keyword, "UTF-8");
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		keyword = URLDecoder.decode(keyword, "utf-8");
 		
 		String query = "page=" + page;
 		if (keyword.length() != 0) {
-			query += "&condition=" + condition + 
-					"&keyword=" + URLEncoder.encode(keyword, "UTF-8");
+			query += "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "utf-8");
 		}
 		
 		service.updateHitCount(vNum);
 		
-		VillageEat dto = service.readBoard(vNum);
-		if (dto == null) {
-			return "redirce:/village/eat/list?" + query;
+		VillageNews dto = service.readBoard(vNum);
+		if(dto == null) {
+			return "redirect:/village/news/list?" + query;
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -206,7 +202,7 @@ public class VillageEatController {
 		List<VillageReport> listVreport = null;
 		List<ReplyReport> listVRreport = null;
 		
-		if(info != null) {
+		if(info != null)  {
 			map.put("userId", info.getUserId());
 			
 			listVreport = service.listVreport();
@@ -217,7 +213,6 @@ public class VillageEatController {
 			
 			listVRreport = service.listVRreport();
 		}
-		
 		model.addAttribute("dto", dto);
 		model.addAttribute("userBoardLiked", userBoardLiked);
 		model.addAttribute("page", page);
@@ -225,7 +220,7 @@ public class VillageEatController {
 		model.addAttribute("listVreport", listVreport);
 		model.addAttribute("listVRreport", listVRreport);
 		
-		return ".village.eat.article";
+		return ".village.news.article";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.GET)
@@ -233,11 +228,11 @@ public class VillageEatController {
 			@RequestParam String page,
 			HttpSession session,
 			Model model) throws Exception {
-		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-	
-		VillageEat dto = service.readBoard(vNum);
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		VillageNews dto = service.readBoard(vNum);
 		if(dto == null || ! info.getUserId().equals(dto.getUserId())) {
-			return "redirect:/village/eat/list?page=" + page;
+			return "redirect:/village/news/list?page=" + page;
 		}
 		
 		List<MemberAddr> listMemberAddr = service.listMemberAddr(info.getUserId());
@@ -247,12 +242,11 @@ public class VillageEatController {
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
 		
-		return ".village.eat.write";
+		return ".village.news.write";
 	}
 	
-	
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String updateSubmit(VillageEat dto,
+	public String updateSubmit(VillageNews dto,
 			@RequestParam String page,
 			HttpSession session) throws Exception {
 		
@@ -264,7 +258,7 @@ public class VillageEatController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/eat/list?page="+page;
+		return "redirect:/village/news/list?page="+page;
 	}
 	
 	@RequestMapping(value = "delete")
@@ -283,7 +277,7 @@ public class VillageEatController {
 		
 		service.deleteBoard(vNum, info.getUserId(), info.getMembership());
 		
-		return "redirect:/village/eat/list?"+query;
+		return "redirect:/village/news/list?"+query;
 	}
 	
 	@RequestMapping(value = "insertBoardLike", method = RequestMethod.POST)
@@ -357,10 +351,10 @@ public class VillageEatController {
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
-		return "village/eat/listReply";
+		return "village/news/listReply";
 	}
 	
-	@RequestMapping(value = "insertReply", method=RequestMethod.POST)
+	@RequestMapping(value = "insertReply", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> insertReply(Reply dto, HttpSession session) {
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
@@ -393,7 +387,7 @@ public class VillageEatController {
 		map.put("state", state);
 		return map;
 	}
-
+	
 	@RequestMapping(value = "listReplyAnswer")
 	public String listReplyAnswer(@RequestParam int vrAnswer, Model model) throws Exception {
 		List<Reply> listReplyAnswer = service.listReplyAnswer(vrAnswer);
@@ -403,7 +397,7 @@ public class VillageEatController {
 		}
 		
 		model.addAttribute("listReplyAnswer", listReplyAnswer);
-		return "village/eat/listReplyAnswer";
+		return "village/news/listReplyAnswer";
 	}
 	
 	@RequestMapping(value = "countReplyAnswer")
@@ -462,7 +456,6 @@ public class VillageEatController {
 		return model;
 	}
 	
-	
 	@RequestMapping(value = "report")
 	public String insertVreport(VillageReport dto, 
 			@RequestParam int vNum,
@@ -476,8 +469,7 @@ public class VillageEatController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/eat/article?page="+page+"&vNum="+vNum;
-	
+		return "redirect:/village/news/article?page="+page+"&vNum="+vNum;
 	}
 	
 	@RequestMapping(value = "reportReply")
@@ -490,14 +482,13 @@ public class VillageEatController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			
-			// #{userId}, #{vreplyNum}, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR}
-			System.out.println(":::::: replyNum = "+dto.getVreplyNum()); // 0 (부모키오류..)
-			
 			service.insertVRreport(dto); // TODO
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/eat/article?page="+page+"&vNum="+vNum;
+		return "redirect:/village/news/article?page="+page+"&vNum="+vNum;
 	}
 }
+
+
+

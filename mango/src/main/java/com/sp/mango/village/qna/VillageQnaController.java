@@ -1,6 +1,5 @@
 package com.sp.mango.village.qna;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -23,9 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.MemberAddr;
+import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
-import com.sp.mango.village.Reply;
 
 @Controller("village.qna.VillageQnaController")
 @RequestMapping("/village/qna/*")
@@ -79,6 +78,7 @@ public class VillageQnaController {
 			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) { 
 				map.put("maLat", listMemberAddr.get(0).getaLat());
 				map.put("maLon", listMemberAddr.get(0).getaLon());
+				memAddrCount = service.memAddrCount(info.getUserId());
 			}
 		}
 		
@@ -167,12 +167,9 @@ public class VillageQnaController {
 	public String writeSubmit(VillageQna dto, HttpSession session) throws Exception {
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
-		String root = session.getServletContext().getRealPath("/");
-		String pathname = root + "uploads" + File.separator + "qna";
-		
 		try {
 			dto.setUserId(info.getUserId());
-			service.insertBoard(dto, pathname);
+			service.insertBoard(dto);
 		} catch (Exception e) {
 		}
 		
@@ -232,10 +229,8 @@ public class VillageQnaController {
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("userBoardLiked", userBoardLiked);
-		
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
-		
 		model.addAttribute("listVreport", listVreport);
 		model.addAttribute("listVRreport", listVRreport);
 		
@@ -359,7 +354,7 @@ public class VillageQnaController {
 		map.put("end", end);
 		
 		List<Reply> listReply = service.listReply(map);
-		
+
 		for(Reply dto : listReply) {
 			dto.setVrContent(dto.getVrContent().replaceAll("\n", "<br>"));
 		}
@@ -511,10 +506,6 @@ public class VillageQnaController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			
-			// #{userId}, #{vreplyNum}, #{vrrReasonNum}, #{vrReportContent, jdbcType=VARCHAR}
-			System.out.println(":::::: replyNum = "+dto.getVreplyNum()); // 0 (부모키오류..)
-			
 			service.insertVRreport(dto); // TODO
 		} catch (Exception e) {
 		}
