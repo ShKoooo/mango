@@ -212,9 +212,22 @@ $(function(){
 	});
 	
 });
+</script>
 
+<script type="text/javascript">
+function searchFaq() {
+	var f = document.searchFaqForm;
 	
-
+	var str = f.search.value.trim();
+	if(!str) {
+		alert("검색어를 입력 해주세요");
+		f.search.focus();
+		return;
+	}
+	
+	f.action = "${pageContext.request.contextPath}/csQna/qna";
+	f.submit();
+}
 </script>
 
 <div class="content-wrapper">
@@ -223,21 +236,25 @@ $(function(){
 	        <div class="section-header col-md-12 margin-top">
 	            <h2 style="font-weight: bold;">고객 센터</h2>
 	            <span>Customer Service Center</span>
-	        </div> <!-- /.section-header -->
-	    </div> <!-- /.row -->
+	        </div> 
+	    </div> 
 	    <div class="row">
-	        <div class="col-md-6 service-item service-left" style="width: 100%;">
-	            <div class="box-content">
-	                <div class="service-icon">
-	                    <i class="li_search"></i>
-	                </div>
-	                <div class="service-content">
-	                    <h4 style="font-weight: bold; padding-right: 255px;">망고마켓 이용에 <b class="blue bold">궁</b><b class="green bold">금</b>하신게 있으신가요 ?</h4>
-	                    <input class="searchBox" type="text" placeholder="검색">
-	                </div>
-	            </div> <!-- /.box-content -->
-	        </div> <!-- /.service-item -->
-
+		    <form name="searchFaqForm" method="post">
+		        <div class="col-md-6 service-item service-left" style="width: 100%;">
+		            <div class="box-content">
+		                <div class="service-icon">
+		                    <a href="javascript:searchFaq();" style="text-decoration-line: none;"><i class="li_search"></i></a>
+		                </div>
+		                
+	                	<div class="service-content">
+		                    <h4 style="font-weight: bold; padding-right: 255px;">망고마켓 이용에 <b class="blue bold">궁</b><b class="green bold">금</b>하신게 있으신가요 ?</h4>
+		                    <input class="searchBox" name="search" id="search" type="text" placeholder="검색">
+	                	</div>
+		                
+		            </div> 
+		        </div>
+			</form>
+			
 	        <div class="col-md-6 service-item service-left">
 	            <div class="box-content">
 	                <div class="service-icon">
@@ -247,8 +264,8 @@ $(function(){
 	                    <h4 id="sub-title">공지 사항</h4>
 	                    <p>망고 마켓의 주요 공지 사항들을 확인 합니다.<br><br>Check notice of Mango Market</p>
 	                </div>
-	            </div> <!-- /.box-content -->
-	        </div> <!-- /.service-item -->
+	            </div> 
+	        </div> 
 	        <div class="col-md-6 service-item service-right">
 	            <div class="box-content">
 	                <div class="service-icon">
@@ -258,8 +275,8 @@ $(function(){
 	                    <h4 id="sub-title">자주 물어보는 질문들</h4>
 	                    <p>1대1 문의 전에 자주 물어보는 질문들을 확인 해보세요.<br><br>Frequently Asked Questions on Mango Market.</p>
 	                </div>
-	            </div> <!-- /.box-content -->
-	        </div> <!-- /.service-item -->
+	            </div> 
+	        </div> 
 	        <div class="col-md-6 service-item service-left">
 	            <div class="box-content">
 	                <div class="service-icon">
@@ -280,10 +297,10 @@ $(function(){
 	                    <h4 id="sub-title">이용 가이드</h4>
 	                    <p>망고 마켓이 처음이라면?<br><br>If first time Using Mango Market</p>
 	                </div>		
-	            </div> <!-- /.box-content -->
-	        </div> <!-- /.service-item -->
-	    </div> <!-- /.row -->
-	</div> <!-- /.inner-content -->
+	            </div> 
+	        </div> 
+	    </div>
+	</div>
 	
 	<div class="psersonal">
 		<button class="psersonalButton" type="button" style="">
@@ -327,6 +344,6 @@ $(function(){
 				<button type="button" id="personalBackBtn">돌아가기</button>
 			</div>
 		</div>
-</div> <!-- /.content-wrapper -->
+</div> 
 
 

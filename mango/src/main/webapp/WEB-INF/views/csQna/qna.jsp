@@ -46,6 +46,13 @@ function ajaxFun(url, method, query, dataType, fn) {
 }
 
 $(function(){
+	var search = "${search}";
+
+	if(search != "") {
+		var f=document.faqSearchForm;
+		f.search.value = search;
+	}
+	
 	listPage(1);
 	
 	 $("button[role='tab']").on("click", function(e){
@@ -61,7 +68,9 @@ function listPage(page) {
 	
 	var url="${pageContext.request.contextPath}/csQna/list";
 	var query="pageNo="+page+"&categoryNum="+categoryNum;
+	var search = $("#mySearch").val();
 	
+	query = query + "&search=" + search;
 	var selector = "#nav-content";
 	
 	var fn = function(data){
@@ -120,3 +129,7 @@ function deleteFaq(faqNum, page) {
 		  <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">3번탭</div>
 		</div>
 </div>
+
+<form name="faqSearchForm" method="post">
+	<input type="hidden" name="search" id="mySearch" value="">
+</form>

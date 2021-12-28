@@ -7,6 +7,12 @@
 		VALUES (faq_seq.NEXTVAL, #{faqSubject}, #{faqContent}, #{userId}, SYSDATE, #{categoryNum})
 	</insert>
 	
+	<sql id="where-list">
+		( INSTR(faqSubject, #{search}) &gt; 0
+			OR INSTR(faqContent, #{search}) &gt; 0
+		)
+	</sql>
+	
 	<select id="listCategory" parameterType="map" resultType="com.sp.mango.csQna.Qna">
 	SELECT categoryNum, category 
 		FROM faqCategory 
@@ -21,6 +27,9 @@
 		<where>
 			<if test="categoryNum != 0">
 				( c.categoryNum = #{categoryNum} )
+			</if>
+			<if test="search != null and search != '' ">
+				AND <include refid="where-list" />
 			</if>
 		</where> 
 	</select>
@@ -37,6 +46,9 @@
 				<where>
 					<if test="categoryNum!=0">
 						( c.categoryNum = #{categoryNum} )
+					</if>
+					<if test="search != null and search != '' ">
+						AND <include refid="where-list" />
 					</if>
 				</where>
 				ORDER BY faqNum DESC 

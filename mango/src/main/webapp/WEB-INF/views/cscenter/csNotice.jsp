@@ -30,26 +30,24 @@ table tbody tr {
 		</div>
 		
 		<div class="body-main">
-			<table class="table table-hover">
+			<table class="table table-hover" style="width: 90%; margin: 0px auto;">
 			  <thead>
 			    <tr>
-			      <th scope="col">번호</th>
-			      <th scope="col" colspan="2">제목</th>
-			      <th scope="col">작성일</th>
+			      <th scope="col" colspan="3" style="text-align: left; padding-left: 20px;">제목</th>
+			      <th scope="col" style="text-align: right; padding-right: 20px;">작성일</th>
 			    </tr>
 			  </thead>
 			  
 			  <tbody>
 			  	<c:forEach var="dto" items="${list}">
 				    <tr>
-				      <th scope="row" style="font-weight: normal;">${dto.noticeNum }</th>
-				      <td colspan="2">
+				      <td colspan="3" style="text-align: left; padding-left: 22px;">
 				      	<a href="${articleUrl}&noticeNum=${dto.noticeNum}">${dto.nSubject }</a>
 				      	<c:if test="${dto.gap < 1}">
 							<span class="badge rounded-pill text-danger">New</span>
 						</c:if>
 				      </td>
-				      <td>${dto.nRegDate }</td>
+				      <td style="text-align: right; padding-right: 22px;">${dto.nRegDate }</td>
 				    </tr>
 		    	</c:forEach>
 			  </tbody>

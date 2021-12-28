@@ -1,5 +1,7 @@
 package com.sp.mango.csQna;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ public class QnaController {
 	@RequestMapping(value = "qna")
 	public String main(
 			@RequestParam(value = "pageNo", defaultValue = "1") int current_page,
+			@RequestParam(defaultValue = "") String search,
 			Model model
 			) throws Exception {
 		
@@ -42,6 +45,7 @@ public class QnaController {
 		model.addAttribute("listCategory", listCategory);
 		model.addAttribute("categoryNum", 0);
 		model.addAttribute("pageNo", current_page);
+		model.addAttribute("search", search);
 		
 		
 		return ".csQna.qna";
@@ -90,6 +94,7 @@ public class QnaController {
 			@RequestParam(value = "pageNo", defaultValue = "1") int current_page,
 			@RequestParam(defaultValue = "0") int categoryNum,
 			HttpServletRequest req,
+			@RequestParam(defaultValue = "") String search,
 			Model model
 			) throws Exception {
 		
@@ -97,7 +102,12 @@ public class QnaController {
 		int total_page = 0;
 		int dataCount = 0;
 		
+		if(req.getMethod().equalsIgnoreCase("GET")) {
+			search = URLDecoder.decode(search, "utf-8");
+		}
+		
 		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("search", search);
 		map.put("categoryNum", categoryNum);
 		
 		dataCount = service.dataCount(map);
@@ -124,6 +134,10 @@ public class QnaController {
 			// dto.setFaqContent(myUtil.htmlSymbols(dto.getFaqContent()));
 		}
 		
+		if(search.length() != 0) {
+			search = URLEncoder.encode(search, "utf-8");
+		}
+		
 		String paging = myUtil.pagingMethod(current_page, total_page, "listPage");
 		
 		model.addAttribute("list", list);
@@ -132,6 +146,7 @@ public class QnaController {
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		model.addAttribute("categoryNum", categoryNum);
+		model.addAttribute("search", search);
 		
 		return "csQna/list";
 	}
