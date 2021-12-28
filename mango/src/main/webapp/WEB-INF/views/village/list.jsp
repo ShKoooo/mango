@@ -90,25 +90,6 @@ $(function() {
 		<div class="col-12">
 			<div class="row">
 				<div class="col-md-12 project-item">
-					<c:if test="${! empty sessionScope.member}">
-				    	<div style="width: 120px; float: right;">
-							<c:if test="${! empty listMemberAddr || memAddrCount == 2}">
-								<select name="areaNum" id="selectArea" class="form-select" id="inputGroupSelect01"> 
-									<c:forEach var="vo" items="${listMemberAddr}">
-										<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.area3}</option>
-									</c:forEach>
-								</select>                
-							</c:if>
-				                	
-				            <c:if test="${empty listMemberAddr || memAddrCount < 2}">
-								<a href="${pageContext.request.contextPath}/member/address" style="border: 1px solid medium;">내 동네 설정하기</a>
-							</c:if>
-				        </div>
-				        <div>
-							<input type="hidden" name="maLat" id="maLat" value="${vo.maLat}">
-							<input type="hidden" name="maLon" id="maLon" value="${vo.maLon}">
-						</div>
-			       	</c:if>
 					<ul class="nav nav-tabs">
 					  <li class="nav-item">
 					    <a class="nav-link active" data-bs-toggle="tab" href="#qna">동네 질문</a>
@@ -122,32 +103,49 @@ $(function() {
 					  <li class="nav-item">
 					    <a class="nav-link" data-bs-toggle="tab" href="#withme">같이해요</a>
 					  </li>
+					  <li class="nav-item">
+					    <a class="nav-link" data-bs-toggle="tab" href="#news">동네 소식</a>
+					  </li>
 					</ul>
 
 					
 					<!-- Tab panes -->
 					<div class="tab-content">
 					  <div class="tab-pane container active" id="qna">
-						<table class="table table-hover board-list">
-							<tbody>
-								<c:forEach var="qnadto" items="${listqna}">
-									<tr style="text-align: center">
-										<td>1</td>
-										<td style="text-align: left;">
-											<a href="${articleUrl}&vNum=${qnadto.vNum}&areaNum=${areaNum}" class="text-reset">제목</a>
-											<c:if test="${qnadto.replyCount!=0}">(${qnadto.replyCount})</c:if>
-										</td>
-										<td> 이름 </td>
-										<td> 작성일 </td>
-										<td> 조회수 </td>
-									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
-					</div>
-					  <div class="tab-pane container " id="eat">동네맛집게시판 리스트</div>
-					  <div class="tab-pane container " id="helpme">해주세요게시판 리스트</div>
-					  <div class="tab-pane container " id="withme">같이해요게시판 리스트</div>
+						<c:forEach var="qna" items="${listQna}" varStatus="status">
+							<div class="row">
+								${qna.subject}
+							</div>
+						</c:forEach>
+					  </div>
+					  <div class="tab-pane container " id="eat">
+					 	<c:forEach var="eat" items="${listEat}" varStatus="status">
+							<div class="row">
+								${eat.subject}
+							</div>
+						</c:forEach>
+					  </div>
+					  <div class="tab-pane container " id="helpme">
+					  	<c:forEach var="help" items="${listHelp}" varStatus="status">
+							<div class="row">
+								${help.subject}
+							</div>
+						</c:forEach>
+					  </div>
+					  <div class="tab-pane container " id="withme">
+					  	<c:forEach var="with" items="${listWith}" varStatus="status">
+							<div class="row">
+								${with.subject}
+							</div>
+						</c:forEach>
+					  </div>
+					  <div class="tab-pane container " id="news">
+					  	<c:forEach var="news" items="${listNews}" varStatus="status">
+							<div class="row">
+								${news.subject}
+							</div>
+						</c:forEach>
+					  </div>
 					</div>
 				</div>
 			</div>
@@ -168,26 +166,17 @@ $(function() {
 					<div class="carousel-item active">
 						<div class="row">
 						
-							<div class="col-md-3 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">동네 소식 제목</a></h2>
-									<p> 동네 소식 내용 </p>
-								</div>
-							</div> 
-							
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
+								<c:forEach var="lost" items="${listLost1}" varStatus="status">
 								<div class="proeject-thumb">
-									<img class="img-fluid" src="https://source.unsplash.com/mBM4gHAj4XE" alt="">
+									<img class="img-fluid" src="${lost.thumbnail}" alt="">
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="">분실 실종 제목</a></h2>
-									<p> 분실 실종 내용 </p>
+									<h2><a href="${pageContext.request.contextPath}/village/lost/article?vNum=${lost.vNum}">${lost.subject}</a></h2>
 								</div>
+								</c:forEach>
 							</div>
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/SsKf1L6rWJk" alt="">
 								</div>
@@ -197,7 +186,7 @@ $(function() {
 								</div>
 							</div>
 							
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
 								</div>
@@ -212,26 +201,18 @@ $(function() {
 					<div class="carousel-item">
 						<div class="row">
 						
-							<div class="col-md-3 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">동네 소식 제목22</a></h2>
-									<p> 동네 소식 내용22 </p>
-								</div>
-							</div> 
-							
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
+								<c:forEach var="lost" items="${listLost2}" varStatus="status">
 								<div class="proeject-thumb">
-									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
+									<img class="img-fluid" src="${lost.thumbnail}" alt="">
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="">분실 실종 제목22</a></h2>
-									<p> 분실 실종 내용222 </p>
+									<h2><a href="${pageContext.request.contextPath}/village/lost/article?vNum=${lost.vNum}">${lost.subject}</a></h2>
 								</div>
+								</c:forEach>
 							</div>
-							<div class="col-md-3 project-item">
+
+							<div class="col-md-4 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -241,7 +222,7 @@ $(function() {
 								</div>
 							</div>
 							
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
 								</div>
@@ -256,17 +237,7 @@ $(function() {
 					<div class="carousel-item">
 						<div class="row">
 							
-							<div class="col-md-3 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">동네 소식 제목3</a></h2>
-									<p> 동네 소식 내용3 </p>
-								</div>
-							</div> 
-							
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
 								<div class="proeject-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -275,7 +246,7 @@ $(function() {
 									<p> 분실 실종 내용3 </p>
 								</div>
 							</div>
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
 								</div>
@@ -285,7 +256,7 @@ $(function() {
 								</div>
 							</div>
 							
-							<div class="col-md-3 project-item">
+							<div class="col-md-4 project-item">
 								<div class="project-thumb">
 									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
 								</div>

@@ -115,7 +115,8 @@ $(function() {
 					</div>
 
 					<div class="col-6 text-center">
-						<form class="row" name="searchVillageForm" action="${pageContext.request.contextPath}/village/with/list" method="post">
+						<form class="row" name="searchVillageForm" action="${pageContext.request.contextPath}/village/with/list" method="post"
+							style="width: 600px;">
 							<div class="col-auto p-1">
 								<select name="condition" class="form-select">
 									<option value="all" ${condition=="all"?":selected='selected'":""}>제목+내용</option>

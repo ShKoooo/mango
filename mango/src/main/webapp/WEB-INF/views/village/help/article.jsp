@@ -331,6 +331,14 @@ function sendReport() {
 	}
 }
 
+$(document).ready(function(){
+	// 신고 모달의 close를 눌렀을 시, 내용 초기화
+	$("#closeBtn").click(function(){
+		$("#vReportF").each(function(){
+			this.reset();
+		});
+	});
+});
 
 </script>
 
@@ -418,7 +426,7 @@ function sendReport() {
 					        <h5 class="modal-title" id="exampleModalLabel">신고하기</h5>
 					        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					      </div>
-					      <form name="vReportForm" method="post">
+					      <form name="vReportForm" id="vReportF" method="post">
 					      <div class="modal-body">
 							 	<div class="mb-3">
 						      		<label for="recipient-name" class="col-form-label">신고 항목</label><br>
@@ -433,7 +441,7 @@ function sendReport() {
 							    </div>
 						  </div>
 					      <div class="modal-footer">
-					        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+					        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 					        <button type="button" class="btn btn-primary" onclick="sendReport();">전송</button>
 					      </div>
 					      </form>
@@ -478,7 +486,7 @@ function sendReport() {
         <h5 class="modal-title" id="exampleModalLabel">신고하기</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <form name="vrReportForm" method="post">
+      <form name="vrReportForm" id="vrReportF" method="post">
       <div class="modal-body">
 		 	<div class="mb-3">
 	      		<label for="recipient-name" class="col-form-label">신고 항목</label><br>
@@ -493,7 +501,7 @@ function sendReport() {
 		    </div>
 	  </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
         <button type="button" class="btn btn-primary" onclick="sendReplyReport();">전송</button>
         <input type="hidden" name="vreplyNum" id = "myVReplyNum" value="0">
         <input type="hidden" name="vNum" value="${dto.vNum}">
@@ -536,6 +544,15 @@ function sendReplyReport() {
 		alert("신고가 접수되었습니다.");
 	}
 }
+
+$(document).ready(function(){
+	// 신고 모달의 close를 눌렀을 시, 내용 초기화
+	$("#closeBtn").click(function(){
+		$("#vrReportF").each(function(){
+			this.reset();
+		});
+	});
+});
 </script>
 
 <script type="text/javascript">

@@ -338,9 +338,6 @@ $(document).ready(function(){
 		$("#vReportF").each(function(){
 			this.reset();
 		});
-		$("#vrReportF").each(function(){
-			this.reset();
-		});
 	});
 });
 
@@ -549,6 +546,15 @@ function sendReplyReport() {
 		alert("신고가 접수되었습니다.");
 	}
 }
+
+$(document).ready(function(){
+	// 신고 모달의 close를 눌렀을 시, 내용 초기화
+	$("#closeBtn").click(function(){
+		$("#vrReportF").each(function(){
+			this.reset();
+		});
+	});
+});
 </script>
 
 <script type="text/javascript">
