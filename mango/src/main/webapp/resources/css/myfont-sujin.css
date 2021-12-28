@@ -1,0 +1,16 @@
+﻿@charset "UTF-8";
+
+@font-face {
+    font-family: 'ImcreSoojin';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.3/ImcreSoojin.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.myfont-sujin {
+	font-family: 'ImcreSoojin';
+}
+
+.myfont-jalnan {
+	font-family: '여기어때 잘난체';
+}
