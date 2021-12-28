@@ -66,6 +66,13 @@
 
 
 <script type="text/javascript">
+
+function enterkey() {
+    if (window.event.keyCode == 13) {
+    	sendModelLogin();
+    }
+}
+	
 	function dialogLogin() {
 	    $("form[name=modelLoginForm] input[name=userId]").val("");
 	    $("form[name=modelLoginForm] input[name=userPwd]").val("");
@@ -106,7 +113,7 @@
 			</div>
 			<div class="modal-body">
                 <div class="p-3">
-                    <form name="modelLoginForm" action="" method="post" class="row g-3">
+                    <form name="modelLoginForm" method="post" class="row g-3">
                     	<div class="mt-0">
                     		 <p class="form-control-plaintext">계정으로 로그인 하세요</p>
                     	</div>
@@ -114,7 +121,7 @@
                             <input type="text" name="userId" class="form-control" placeholder="아이디">
                         </div>
                         <div>
-                            <input type="password" name="userPwd" class="form-control" placeholder="패스워드">
+                            <input onkeypress="enterkey();" type="password" name="userPwd" class="form-control" placeholder="패스워드">
                         </div>
                         <div>
                             <div class="form-check">
