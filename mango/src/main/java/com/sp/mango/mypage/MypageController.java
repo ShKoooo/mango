@@ -1236,15 +1236,12 @@ public class MypageController {
 		}
 		String userId = memberInfo.getUserId();
 		
-		System.out.println(":::: "+product+giftycon+vbbs+vbbsReply);
 		if (!product.equals("true")&&
 				!giftycon.equals("true")&&
 				!vbbs.equals("true")&&
 				!vbbsReply.equals("true") ) {
 			product = giftycon = vbbs = vbbsReply = "true";
 		}
-		
-		System.out.println(":::: "+product+giftycon+vbbs+vbbsReply);
 		
 		String cp = req.getContextPath();
 		
@@ -1303,6 +1300,142 @@ public class MypageController {
 		}
 		
 		return ".mypage.activity";
+	}
+	
+	@RequestMapping("account")
+	public String account(
+			@RequestParam(value="page", defaultValue="1") int current_page,
+			@RequestParam(defaultValue="true") String chkSel,
+			@RequestParam(defaultValue="true") String chkBuy,
+			@RequestParam(defaultValue="true") String chkPrd,
+			@RequestParam(defaultValue="true") String chkGfc,
+			@RequestParam(defaultValue="false") String acStartDate,
+			@RequestParam(defaultValue="false") String acEndDate,
+			HttpSession session,
+			Model model,
+			HttpServletRequest req
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		if (memberInfo == null) {
+			return "redirect:/member/login";
+		}
+		String userId = memberInfo.getUserId();
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userId", userId);
+		
+		if (!chkSel.equals("true")&&!chkBuy.equals("true")) {
+			chkSel = chkBuy = "true";
+		}
+		
+		if (!chkPrd.equals("true")&&!chkGfc.equals("true")) {
+			chkPrd = chkGfc = "true";
+		}
+		
+		List<Account> list = null;
+		
+		String cp = req.getContextPath();
+		
+		int rows = 10;
+		int total_page = 0;
+		int dataCount = 0;
+		String listUrl = "";
+		String paging = "";
+		
+		try {
+			String chkbs = "";
+			String chkpg = "";
+			if(!chkSel.equals(chkBuy)) {
+				if (chkSel.equals("true")) {
+					chkbs="sell";
+				} else { 
+					chkbs = "buy";
+				}
+				map.put("chkbs", chkbs);
+			}
+			if(!chkPrd.equals(chkGfc)) {
+				if (chkPrd.equals("true")) {
+					chkpg="product";
+				} else {
+					chkpg = "gifty";
+				}
+				map.put("chkpg", chkpg);
+			}
+			
+			if (!acStartDate.equals("false")) {
+				map.put("acStartDate", acStartDate);
+			}
+			if (!acEndDate.equals("false")) {
+				map.put("acEndDate", acEndDate);
+			}
+			// TODO : Mapper 수정, account.jsp 수정 (value 추가?)
+			
+			System.out.println(":::: buy or sell : "+chkbs);
+			System.out.println(":::: prd or gifty : "+chkpg);
+			
+			dataCount = service.countAccount(map);
+			
+			if (dataCount != 0) {
+				total_page = myUtil.pageCount(rows, dataCount);
+			}
+			
+			if (total_page < current_page) {
+				current_page = total_page;
+			}
+			
+			int start = (current_page - 1) * rows + 1;
+			int end = current_page * rows;
+			
+			map.put("start",start);
+			map.put("end",end);
+						
+			listUrl = cp + "/mypage/account";
+			String query = "chkSel="+chkSel+"&chkBuy="+chkBuy+"&chkPrd="+chkPrd+"&chkGfc="+chkGfc;
+			listUrl += "?"+query;
+			paging = myUtil.paging(current_page, total_page, listUrl);
+			
+			// TODO : account.jsp dto에 맞게 수정 및 체크박스 추가
+			
+			list = service.listAccount(map);
+			
+			for (Account dto : list) {
+				if (dto.getUserId().equals(dto.getSellerId())) {
+					dto.setBsType("sell");
+				} else {
+					dto.setBsType("buy");
+				}
+				
+				if (dto.getSubject().length()> 11) {
+					dto.setSubject(dto.getSubject().substring(0,11)+"...");
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		model.addAttribute("dataCount",dataCount);
+		model.addAttribute("list",list);
+		model.addAttribute("paging",paging);
+		model.addAttribute("listUrl",listUrl);
+		model.addAttribute("chkSel",chkSel);
+		model.addAttribute("chkBuy",chkBuy);
+		model.addAttribute("chkPrd",chkPrd);
+		model.addAttribute("chkGfc",chkGfc);
+		model.addAttribute("page", current_page);
+		if (!acStartDate.equals("false")) {
+			acStartDate = acStartDate.substring(0,4)+"-"
+					+acStartDate.substring(4,6)+"-"
+					+acStartDate.substring(6);
+			model.addAttribute("acStartDate",acStartDate);
+		}
+		if (!acEndDate.equals("false")) {
+			acEndDate = acEndDate.substring(0,4)+"-"
+					+acEndDate.substring(4,6)+"-"
+					+acEndDate.substring(6);
+			model.addAttribute("acEndDate",acEndDate);
+		}
+		
+		return ".mypage.account";
 	}
 }
 

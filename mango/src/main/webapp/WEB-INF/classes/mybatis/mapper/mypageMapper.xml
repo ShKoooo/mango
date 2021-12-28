@@ -449,4 +449,73 @@
 		SELECT vcNum FROM village_bbs WHERE vNum = #{vNum}
 	</select>
 	
+	<select id="countAccount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt FROM ( 
+			SELECT NVL2(a.pNum,'product','giftycon') pgType, myAcNum, a.userId, target_id, income, expenses, itemName, NVL2(a.pNum,a.pNum,a.gNum) num, m.userNickName,
+				NVL2(a.pNum,p.pSubject,g.gSubject) subject, NVL2(a.pNum,p.pSoldDate,g.gSoldDate) soldDate, NVL2(a.pNum, p.userId, g.userId) sellerId
+			FROM myAccount a
+			JOIN member m ON a.target_id = m.userId
+			LEFT OUTER JOIN product p ON a.pNum = p.pNum
+			LEFT OUTER JOIN giftycon g ON a.gNum = g.gNum
+			WHERE a.userId = #{userId}
+			<if test="chkpg == 'product'">
+				AND NVL2(a.pNum,'product','giftycon') = 'product'
+			</if>
+			<if test="chkpg == 'gifty'">
+				AND NVL2(a.pNum,'product','giftycon') = 'giftycon'
+			</if>
+			<if test="acStartDate != null and acStartDate != '' and acStartDate != 'false' ">
+				AND TO_CHAR(NVL2(a.pNum,p.pSoldDate,g.gSoldDate),'YYYYMMDD') &gt;= #{acStartDate}
+			</if>
+			<if test="acEndDate != null and acEndDate != '' and acEndDate != 'false' ">
+				AND TO_CHAR(NVL2(a.pNum,p.pSoldDate,g.gSoldDate),'YYYYMMDD') &lt;= #{acEndDate}
+			</if>
+		<if test="chkbs == 'sell' ">
+			) WHERE userId = sellerId
+		</if>
+		<if test="chkbs == 'buy' ">
+			) WHERE userId != sellerId
+		</if>
+		<if test="chkbs == null or chkbs == '' ">
+			)
+		</if>
+	</select>
+	
+	<select id="listAccount" parameterType="map" resultType="com.sp.mango.mypage.Account">
+		SELECT * FROM (
+		    SELECT ROWNUM rnum, tb.* FROM(
+			    <if test="chkbs != null and chkbs != '' ">
+			    	SELECT * FROM (
+			    </if>
+					SELECT NVL2(a.pNum,'product','giftycon') pgType, myAcNum, a.userId, target_id, income, expenses, itemName, NVL2(a.pNum,a.pNum,a.gNum) num, m.userNickName,
+					    NVL2(a.pNum,p.pSubject,g.gSubject) subject, NVL2(a.pNum,p.pSubject,g.gSubject) fullSubject,
+					    NVL2(a.pNum,p.pSoldDate,g.gSoldDate) soldDate, NVL2(a.pNum, p.userId, g.userId) sellerId
+					FROM myAccount a
+					JOIN member m ON a.target_id = m.userId
+					LEFT OUTER JOIN product p ON a.pNum = p.pNum
+					LEFT OUTER JOIN giftycon g ON a.gNum = g.gNum
+					WHERE a.userId = #{userId}
+					<if test="chkpg == 'product'">
+						AND NVL2(a.pNum,'product','giftycon') = 'product'
+					</if>
+					<if test="chkpg == 'gifty'">
+						AND NVL2(a.pNum,'product','giftycon') = 'giftycon'
+					</if>
+					<if test="acStartDate != null and acStartDate != '' and acStartDate != 'false' ">
+						AND TO_CHAR(NVL2(a.pNum,p.pSoldDate,g.gSoldDate),'YYYYMMDD') &gt;= #{acStartDate}
+					</if>
+					<if test="acEndDate != null and acEndDate != '' and acEndDate != 'false' ">
+						AND TO_CHAR(NVL2(a.pNum,p.pSoldDate,g.gSoldDate),'YYYYMMDD') &lt;= #{acEndDate}
+					</if>
+					ORDER BY soldDate DESC
+				<if test="chkbs == 'sell' ">
+					) WHERE userId = sellerId
+				</if>
+				<if test="chkbs == 'buy' ">
+					) WHERE userId != sellerId
+				</if>	
+		    ) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}					
+	</select>
+	
 </mapper>

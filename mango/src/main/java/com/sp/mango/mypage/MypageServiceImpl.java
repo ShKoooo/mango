@@ -487,4 +487,30 @@ public class MypageServiceImpl implements MypageService {
 		return list;
 	}
 
+	@Override
+	public int countAccount(Map<String, Object> map) throws Exception {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.countAccount",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<Account> listAccount(Map<String, Object> map) throws Exception {
+		List<Account> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listAccount",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+		
+		return list;
+	}
+
 }

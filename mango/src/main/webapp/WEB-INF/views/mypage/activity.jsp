@@ -62,7 +62,7 @@ $(function() {
 });
 
 $(function() {
-	$("body").on("click",".myBtnReresh", function() {
+	$("body").on("click",".myBtnRefresh", function() {
 		var product = $("#product").is(":checked").toString();
 		var giftycon = $("#giftycon").is(":checked").toString();
 		var vbbs = $("#vbbs").is(":checked").toString();
@@ -112,7 +112,7 @@ $(function() {
 							</div>
 						</div>
 						<div class="col-auto ms-6">
-							<button class="btn btn-outline-primary myBtnReresh">
+							<button class="btn btn-outline-primary myBtnRefresh">
 								<i class="icofont-refresh"></i>
 							</button>
 						</div>

@@ -339,7 +339,7 @@ $(function() {
 			
 			<div class="row mb-3">
 				<h4>
-					<a href="#">
+					<a href="${pageContext.request.contextPath}/mypage/account">
 						<i class="icofont-money"></i> 가계부
 					</a>
 				</h4>

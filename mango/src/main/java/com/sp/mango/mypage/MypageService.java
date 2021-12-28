@@ -53,4 +53,7 @@ public interface MypageService {
 	
 	public int countActivity(Map<String,Object> map) throws Exception;
 	public List<Activity> listActivity(Map<String,Object> map) throws Exception;
+	
+	public int countAccount(Map<String,Object> map) throws Exception;
+	public List<Account> listAccount(Map<String,Object> map) throws Exception;
 }
