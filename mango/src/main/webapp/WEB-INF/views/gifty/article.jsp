@@ -3,6 +3,23 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+<style>
+
+.img-viewer {
+	cursor: pointer;
+	border: 1px solid #ccc;
+	width: 45px;
+	height: 45px;
+	border-radius: 45px;
+	padding: 0;
+	background-image: url("${pageContext.request.contextPath}/resources/images/note-person-icon2.png");
+	position: relative;
+	z-index: 9999;
+	background-repeat : no-repeat;
+	background-size : cover;
+}
+
+</style>
 
 <script type="text/javascript">
 function login() {
@@ -86,7 +103,7 @@ function deleteGifty() {
 function sendReport() {
 	if(confirm("한 번 신고한 상품/게시물은 신고를 철회할 수 없습니다.\n정말 신고하시겠습니까?")) {
 		var f = document.gReportForm;
-		var query = "gNum=${dto.gNum}&page=${page}&gcNum=${gcNum}"
+		var query = "gNum=${dto.gNum}&page=${page}&group=${group}"
 		
 		f.action = "${pageContext.request.contextPath}/gifty/report?" + query;
 	    f.submit();
@@ -137,7 +154,23 @@ $(function(){
 			});
 	}
 });
+
+function sendReview() {
+	if(confirm("리뷰 요청 쪽지를 보내시겠습니까??")) {
+		var f = document.gReviewForm;
+		var query = "gNum=${dto.gNum}&page=${page}&group=${group}"
 		
+		f.action = "${pageContext.request.contextPath}/gifty/reviewReq?" + query;
+	    f.submit();
+	    
+	    alert("리뷰 요청 쪽지를 전송하였습니다!");
+	}
+}
+
+		
+function clickInfo() {
+	alert("거래 쪽지를 전송했습니다! 쪽지함에서 확인해주세요~!");
+}
 		
 
 </script>
@@ -157,10 +190,18 @@ $(function(){
                     </div> <!-- /.section-header -->
                 </div> <!-- /.row -->
                 <div class="project-detail row">
+                	<div class="project-slider col-md-12">
+                        <img width="1000px" height="600px" src="${dto.gImgSaveFileName}" alt="Slide 1">
+                        <img src="" alt="Slide 2">
+                        <img src="" alt="Slide 1">
+                        <a href="#" class="slidesjs-previous slidesjs-navigation">&lt;</a> 
+                        <a href="#" class="slidesjs-next slidesjs-navigation">&gt;</a>
+                    </div>
+                
                     <div class="project-infos col-md-12">
                         <div class="box-content">
                             <h2 class="project-title">${dto.gSubject}</h2>
-                            <span class="project-subtitle">${dto.userNickName}</span>
+                            <span class="project-subtitle"><a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">${dto.userNickName}</a></span>
                             <div style="float: right;">
 	                            <span>${dto.manner} ℃</span>
 	                            <div class="progress">
@@ -169,6 +210,18 @@ $(function(){
 								  <span>매너온도</span>
                             </div>
                             <span>조회수 : ${dto.gHitCount}</span>
+                            
+                            <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">
+	                            	<c:if test="${not empty dto.userImgSaveFileName}">
+										<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+											class="img-fluid img-thumbnail img-viewer">
+									</c:if>
+									<c:if test="${empty dto.userImgSaveFileName}">
+										<img
+											class="img-fluid img-thumbnail img-viewer">
+									</c:if>
+								</a>
+                            
                             <p class="editor">${dto.gContent}</p>
                             <ul class="project-meta">
                             	<c:if test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
@@ -200,6 +253,9 @@ $(function(){
                                 	</c:if>
                                 	<c:if test="${dto.gStatus eq '거래완료'}">
                                 		<i class="bi bi-check2-circle"></i><span>판매완료</span>
+                                	</c:if>
+                                	<c:if test="${sessionScope.member.userId==dto.userId}">
+                                		&nbsp;<i class="bi bi-check2-circle"></i><a href="${pageContext.request.contextPath}/gifty/sellInfo?gNum=${dto.gNum}"><span>거래완료</span></a>
                                 	</c:if>
                                 </li>
                            
@@ -256,7 +312,45 @@ $(function(){
 				    			</c:if>
 					    		</c:when>
 				    		</c:choose>
-					    </c:if>		
+				    	</c:if>		
+				    			<c:if test="${! empty sessionScope.member && sessionScope.member.userId==dto.userId}">
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">거래완료</button>
+									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <h5 class="modal-title" id="exampleModalLabel">리뷰 요청하기</h5>
+									        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									      </div>
+									      <form name="gReviewForm" id="gReviewF" method="post">
+									      <div class="modal-body">
+									          <div class="mb-3">
+									            <label for="recipient-name" class="col-form-label">구매자</label><br>
+									            <!--  
+									            <input type="text" class="form-control" id="recipient-name">
+									            -->
+									            <br>
+									            <select name="target_id" id="target_id">
+								            	<option value="">선택</option>
+									            <c:forEach var="dto" items="${listTargetId}">
+									            	<option value="${dto.sendId}">${dto.userNickName}</option>
+												</c:forEach>
+								            </select>
+									          </div>
+									          <<div class="mb-3">
+								            <label for="message-text" class="col-form-label">판매 금액</label><span style="color: gray; font-size: 13px;"> (금액 변동시 직접 기입해주세요.)</span>
+								           	<input type="text" name="income" class="form-control" id="recipient-name" value="${dto.gPrice}">
+								          </div>
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								        <button type="button" class="repbtn btn btn-primary" onclick="sendReview();">Send</button>
+								      </div>
+									      </form>
+									    </div>
+									  </div>
+									</div>
+								</c:if>
 	                        <span style='float: right;'>
 	                        	<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/gifty/list?${query}';">리스트</button>
 	                        </span>

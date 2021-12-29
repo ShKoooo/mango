@@ -268,4 +268,64 @@ public class GiftyServiceImpl implements GiftyService {
 		
 	}
 
+	@Override
+	public List<Gifty> listPop(Map<String, Object> map) {
+		List<Gifty> list = null;
+		
+		try {
+			list = dao.selectList("gifty.listPop", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public String userImgSaveFileName(int gNum) throws Exception {
+		String userImgSaveFileName = "";
+		
+		try {
+			//userImgSaveFileName = dao.selectOne("gifty.userPic", gNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		return userImgSaveFileName;
+	}
+
+	@Override
+	public void insertMyAccount(Gifty dto) throws Exception {
+		try {
+			dao.insertData("gifty.insertMyAccount1", dto);
+			dao.insertData("gifty.insertMyAccount2", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public List<Gifty> listTargetId(Map<String, Object> map) {
+		List<Gifty> list = null;
+		
+		try {
+			list = dao.selectList("gifty.listTargetId", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	@Override
+	public void insertGreview(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("gifty.insertGreview", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
 }

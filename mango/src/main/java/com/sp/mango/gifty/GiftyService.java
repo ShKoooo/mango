@@ -36,4 +36,15 @@ public interface GiftyService {
 	// 쪽지 보내기
 	public void sendMsg(Note dto) throws Exception;
 	public void getUserId(int gnum);
+	
+	// 관심글보기
+	public List<Gifty> listPop(Map<String, Object> map);
+
+	public String userImgSaveFileName(int gNum) throws Exception;
+
+	public List<Gifty> listTargetId(Map<String, Object> map);
+	
+	public void insertMyAccount(Gifty dto) throws Exception;
+
+	public void insertGreview(Map<String, Object> map) throws Exception;
 }

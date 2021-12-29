@@ -12,7 +12,7 @@
     
     <insert id="insertGifty" parameterType="com.sp.mango.gifty.Gifty">
     	INSERT INTO giftycon (gNum, userId, gSubject, gRegdate, gExpdate, gHitCount, gPrice, gContent, gStatus, gUpdate_date, gSoldDate, gcNum, gIsProposable)
-					VALUES (#{gNum}, #{userId}, #{gSubject}, SYSDATE, #{gExpdate, jdbcType=VARCHAR}, 0, #{gPrice, jdbcType=VARCHAR}, #{gContent, jdbcType=VARCHAR}, #{gStatus, jdbcType=VARCHAR}, SYSDATE, #{gSoldDate, jdbcType=VARCHAR}, #{gcNum}, #{gIsProposable, jdbcType=VARCHAR})
+			VALUES (#{gNum}, #{userId}, #{gSubject}, SYSDATE, #{gExpdate, jdbcType=VARCHAR}, 0, #{gPrice, jdbcType=VARCHAR}, #{gContent, jdbcType=VARCHAR}, #{gStatus, jdbcType=VARCHAR}, SYSDATE, #{gSoldDate, jdbcType=VARCHAR}, #{gcNum}, #{gIsProposable, jdbcType=VARCHAR})
     </insert>
     
     <insert id="insertGiftyImg" parameterType="com.sp.mango.gifty.Gifty">
@@ -23,15 +23,15 @@
     <sql id="where-list">
 		<choose>
 			<when test="condition == 'all' ">
-			   ( INSTR(subject, #{keyword}) &gt; 0
-		          OR DBMS_LOB.INSTR(content, #{keyword}) &gt; 0 )
+			   ( INSTR(gSubject, #{keyword}) &gt; 0
+		          OR DBMS_LOB.INSTR(gContent, #{keyword}) &gt; 0 )
 			</when>
-			<when test="condition == 'reg_date' ">
-			   ( TO_CHAR(reg_date, 'YYYYMMDD') = #{keyword}
-		          OR TO_CHAR(reg_date, 'YYYY-MM-DD') = #{keyword} )
+			<when test="condition == 'gRegdate' ">
+			   ( TO_CHAR(gRegdate, 'YYYYMMDD') = #{keyword}
+		          OR TO_CHAR(gRegdate, 'YYYY-MM-DD') = #{keyword} )
 			</when>
 			<when test="condition == 'gContent'">
-			    DBMS_LOB.INSTR(content, #{keyword}) &gt; 0
+			    DBMS_LOB.INSTR(gContent, #{keyword}) &gt; 0
 			</when>
 			<otherwise>
 			    INSTR(${condition}, #{keyword}) &gt; 0
@@ -62,18 +62,27 @@
 			SELECT ROWNUM rnum, tb.* FROM (
 				SELECT gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
 					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD HH:MI:SS') gRegdate, g.gcNum,
-					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, gUpdate_date, gUp
+					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, gUpdate_date, gUp, m.userImgSaveFileName
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId
 				JOIN giftyCategory gc ON g.gcNum = gc.gcNum
+				LEFT OUTER JOIN  (
+                    SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+                    FROM BLOCKEDUSER
+                    GROUP BY USERID
+				)BLOCKED ON BLOCKED.USERID = #{userId}
 				<where>
+				 	CASE WHEN blocked.blockedId is null THEN 1
+		                 WHEN not regexp_like(g.userId, blocked.blockedId) THEN 1
+		            ELSE 0 END = 1
 					<if test="group!=0">
-						gc.gcNum = #{group}
+						AND gc.gcNum = #{group}
 					</if>
 					<if test="keyword!=null and keyword!='' ">
 						AND <include refid="where-list"/>
 					</if>
 				</where> 
+				AND gSoldDate IS NULL 
 				ORDER BY gUpdate_date DESC  
 			) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
@@ -144,7 +153,7 @@
 	</select>
 	
 	<insert id="insertGreport" parameterType="com.sp.mango.gifty.GiftyReport">
-		INSERT INTO reportGifty(repGiftyNum, rgReasonNum, reqGiftyContent, reqGiftyRegDate, reqGiftyChecked, gNum, userId)
+		INSERT INTO reportGifty(repGiftyNum, RGREASONNUM, REPGIFTYCONTENT, REPGIFTYREGDATE, REPGIFTYCHECKED, gNum, userId)
 			VALUES(reportGifty_seq.NEXTVAL, #{rgReasonNum}, #{reqGiftyContent, jdbcType=VARCHAR}, SYSDATE, 'F', #{gNum}, #{userId})
 	</insert>
 	
@@ -162,6 +171,10 @@
 			VALUES (note_seq.NEXTVAL, #{sendId}, #{receiveId}, #{noteContent}, SYSDATE, 'F','F')
    </insert>
    
+   <update id="updateGstatus" parameterType="com.sp.mango.gifty.Gifty">
+   		UPDATE giftycon SET gStatus = '거래중' WHERE gNum = #{gNum}
+   </update>
+   <!-- 
    <select id="getUserId" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
    	SELECT g.userId, m.userNickName 
    	FROM giftycon g
@@ -169,5 +182,68 @@
    	WHERE gNum = #{gNum}
    
    </select>
+    -->
+   <select id="listPop" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
+   	SELECT * FROM (
+   		SELECT ROWNUM rnum, tb.* FROM (
+				SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
+					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD HH:MI:SS') gRegdate, g.gcNum,
+					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, g.gUpdate_date, g.gUp,
+                     NVL(gWishCount, 0) gWishCount, popPoint
+				FROM giftycon g
+				JOIN member m ON g.userId = m.userId
+				LEFT OUTER JOIN (
+		             SELECT gNum, COUNT(giftyWishNum) gWishCount FROM gifty_WishList
+		             GROUP BY gNum
+		        ) c ON g.gNum = c.gNum
+				LEFT OUTER JOIN (
+					SELECT g.gNum, ((NVL(gWishCount, 0) * 2) + (gHitCount * 0.1)) popPoint
+					FROM giftycon g
+	                LEFT OUTER JOIN (
+		                SELECT gNum, COUNT(giftyWishNum) gWishCount FROM gifty_WishList
+		                GROUP BY gNum
+		            ) c ON g.gNum = c.gNum
+				) pop ON g.gNum = pop.gNum
+				<choose>
+				<when test="group==1">
+					ORDER BY popPoint DESC
+				</when>
+				<when test="group==2">
+					ORDER BY gWishCount DESC
+				</when>
+				</choose>
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+   </select>
+   
+   <select id="userPic" parameterType="Integer" resultType="String">
+   		SELECT userImgSaveFileName
+   		FROM member m
+   		JOIN giftycon g ON m.userId = g.userId
+   		WHERE gNum = #{gNum}
+   </select>
+
+	<select id="listTargetId" parameterType="String" resultType="com.sp.mango.gifty.Gifty">
+		select DISTINCT sendId, userNickName 
+			from note n
+			JOIN member m ON n.sendId = m.userId 
+			WHERE receiveid = #{userId}
+	</select>
+	
+	<insert id="insertMyAccount1" parameterType="com.sp.mango.gifty.Gifty">
+		INSERT INTO myaccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, GNUM)
+			VALUES(myaccount_seq.NEXTVAL, #{userId}, #{target_id}, #{income}, 0, #{gNum})
+	</insert>
+	<insert id="insertMyAccount2" parameterType="com.sp.mango.gifty.Gifty">
+		INSERT INTO myaccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, GNUM)
+			VALUES(myaccount_seq.NEXTVAL, #{target_id}, #{userId}, 0, #{income}, #{gNum})
+	</insert>
+	
+	<insert id="insertGreview" parameterType="com.sp.mango.gifty.Gifty">
+		INSERT INTO gReview (gNum, buyerId, sellerId, grContent, mannerStar)
+			VALUES(#{gNum}, #{buyerId}, #{sellerId}, #{grContent}, #{mannerStar})
+	</insert>
+	
+	
 
 </mapper>
