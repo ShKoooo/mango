@@ -5,7 +5,7 @@
 
 <script type="text/javascript">
 function searchWard() {
-	var f = document.searchForm;
+	var f = document.productSearchForm;
 	f.submit();
 }
 
@@ -63,7 +63,7 @@ function searchWard() {
 							<a id="search-icon" class="btn-left fa fa-search" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
 						</p>
 						<div class="collapse" id="collapseExample">
-							<form class="d-flex" name="searchForm" method="post" action="${pageContext.request.contextPath}/search/productList">
+							<form class="d-flex" name="productSearchForm" method="post" action="${pageContext.request.contextPath}/search/productList">
 								<input class="form-control me-2" type="text" name="searchKeyword" value="${searchKeyword}" placeholder=" 어떤 매물을 찾으시나요  ?" aria-label="Search">
 								<button class="btn btn-outline-success" type="button" onclick="searchWard()">Search</button>
 							</form>
