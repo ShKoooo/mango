@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
+import com.sp.mango.greview.Greview;
 import com.sp.mango.mypage.Note;
 
 
@@ -318,9 +319,9 @@ public class GiftyServiceImpl implements GiftyService {
 	}
 
 	@Override
-	public void insertGreview(Map<String, Object> map) throws Exception {
+	public void insertGreview(Greview dto) throws Exception {
 		try {
-			dao.insertData("gifty.insertGreview", map);
+			dao.insertData("gifty.insertGreview", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

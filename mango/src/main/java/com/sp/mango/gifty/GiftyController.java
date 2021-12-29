@@ -640,8 +640,8 @@ public class GiftyController {
 			HttpServletRequest req
 			) throws Exception {
 		
-		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");			
-		String userId = info.getUserId();
+		// MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");			
+		// String userId = info.getUserId();
 		
 		// GET방식일 경우
 		//if (req.getMethod().equalsIgnoreCase("get")) {
@@ -667,13 +667,12 @@ public class GiftyController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			
 			service.insertMyAccount(dto);
 			
 			noteDto.setSendId(dto.getUserId());
 			Gifty vo = service.readGifty(gNum);
 			String rContent = "안녕하세요 "+vo.getgSubject()+"에 대한 리뷰를 남겨주세요";
-				rContent += "<a href='http://localhost:9090/mango/greview/write?gNum="+gNum+"'>리뷰작성하기</a>";// + <a href='http://localhost:9090/mango/greview/write?gNum=${dto.gNum}'>리뷰작성하기</a>
+				rContent += "<a href='http://localhost:9090/mango/gifty/writeReview?gNum="+gNum+"'>리뷰작성하기</a>";// + <a href='http://localhost:9090/mango/greview/write?gNum=${dto.gNum}'>리뷰작성하기</a>
 			noteDto.setReceiveId(dto.getTarget_id()); // 설정 필요!!!!!!!!@@@@@@@@@@@@@@
 			noteDto.setNoteContent(rContent);
 		
@@ -688,9 +687,13 @@ public class GiftyController {
 	}
 	
 	@RequestMapping(value = "writeReview", method =  RequestMethod.GET)
-	public String writeForm() throws Exception {
+	public String writeForm(
+			@RequestParam int gNum,
+			Model model
+			) throws Exception {
+		Gifty dto = service.readGifty(gNum);
 		
-		
+		model.addAttribute("dto", dto);
 		
 		return ".gifty.grwrite";
 	}	
@@ -709,7 +712,7 @@ public class GiftyController {
 			giftydto = service.readGifty(gNum);
 			dto.setSellerId(giftydto.getUserId());
 			
-			
+			service.insertGreview(dto);
 			
 		} catch (Exception e) {
 			// TODO: handle exception

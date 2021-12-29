@@ -3,6 +3,7 @@ package com.sp.mango.gifty;
 import java.util.List;
 import java.util.Map;
 
+import com.sp.mango.greview.Greview;
 import com.sp.mango.mypage.Note;
 
 public interface GiftyService {
@@ -46,5 +47,5 @@ public interface GiftyService {
 	
 	public void insertMyAccount(Gifty dto) throws Exception;
 
-	public void insertGreview(Map<String, Object> map) throws Exception;
+	public void insertGreview(Greview dto) throws Exception;
 }

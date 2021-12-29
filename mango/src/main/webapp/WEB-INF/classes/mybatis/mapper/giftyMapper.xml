@@ -241,7 +241,7 @@
 	
 	<insert id="insertGreview" parameterType="com.sp.mango.gifty.Gifty">
 		INSERT INTO gReview (gNum, buyerId, sellerId, grContent, mannerStar)
-			VALUES(#{gNum}, #{buyerId}, #{sellerId}, #{grContent}, #{mannerStar})
+			VALUES(#{gNum}, #{buyerId}, #{sellerId}, #{grContent, jdbcType=VARCHAR}, #{mannerstar})
 	</insert>
 	
 	
