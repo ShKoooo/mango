@@ -1,5 +1,6 @@
 package com.sp.mango.product;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,30 @@ public class ProductServiceImpl implements ProductService{
 		// 게시물 가져오기
 		try {
 			dto = dao.selectOne("product.readProduct", pNum);
+			
+			String pContent = dto.getpContent();
+			String pContent2 = "";
+			
+			int idxStart = 0;
+			int idxEnd = 0;
+			List<Integer> listIdxStart = new ArrayList<Integer>();
+			List<Integer> listIdxEnd = new ArrayList<Integer>();
+			
+			for (int i=0; i<pContent.length(); i++) {
+				idxStart = pContent.indexOf("<figure class=\"image\">", i);
+				idxEnd = pContent.indexOf("</figure>",i);
+				
+				if (idxStart == -1 || idxEnd == -1) {
+					break;
+				} else {
+					listIdxStart.add(i);
+					listIdxEnd.add(i);
+					
+					pContent2 = pContent.substring(0,idxStart+1) + pContent.substring(idxEnd+8);
+					pContent = pContent2;
+					i = 0;
+				}
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -358,17 +383,19 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public String userImgSaveFileName(int pNum) {
+		
 		String userImgSaveFileName = "";
+		// List <String>
 		
 		try {
-			userImgSaveFileName = dao.selectOne("product.userProfile", pNum);
+			// userImgSaveFileName = dao.selectOne("product.userProfile", pNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return userImgSaveFileName;
 	}
-
+	
 	@Override
 	public void insertPreview(Preview dto) throws Exception {
 		try {
@@ -377,6 +404,20 @@ public class ProductServiceImpl implements ProductService{
 			e.printStackTrace();
 			throw e;
 		}
+	}
+
+	@Override
+	public List<Product> receiveNoteList(String userId) {
+		// 받은 쪽지 리스트
+		List<Product> receiveNoteList = null;
+		
+		try {
+			receiveNoteList = dao.selectList("product.receiveNoteList", userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return receiveNoteList;
 	}
 
 

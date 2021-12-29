@@ -47,6 +47,10 @@ public class Product {
 	
 	private String userImgSaveFileName; // 프로필 사진
 	
+	private String sendId; // 판매자에게 쪽지 보낸 사람 아이디
+	private String noteRegDate; // 쪽지 보낸 날짜
+	private String isSendDelete; // 보낸 사람 삭제 여부
+	
 	public int getpNum() {
 		return pNum;
 	}
@@ -237,6 +241,25 @@ public class Product {
 	}
 	public void setUserImgSaveFileName(String userImgSaveFileName) {
 		this.userImgSaveFileName = userImgSaveFileName;
+	}
+	
+	public String getSendId() {
+		return sendId;
+	}
+	public void setSendId(String sendId) {
+		this.sendId = sendId;
+	}
+	public String getNoteRegDate() {
+		return noteRegDate;
+	}
+	public void setNoteRegDate(String noteRegDate) {
+		this.noteRegDate = noteRegDate;
+	}
+	public String getIsSendDelete() {
+		return isSendDelete;
+	}
+	public void setIsSendDelete(String isSendDelete) {
+		this.isSendDelete = isSendDelete;
 	}
 	
 }

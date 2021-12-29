@@ -117,7 +117,7 @@
     		SELECT ROWNUM rnum, tb.* FROM (
         	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
 		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
-		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, m.userImgSaveFileName
+		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, m.userImgSaveFileName, pContent
         		FROM product p
         		JOIN area a ON p.areaNum = a.areaNum
         		JOIN pCategory pc ON p.pcNum = pc.pcNum
@@ -222,7 +222,7 @@
 	</select>
 	
 	<!-- 프로필 사진 가져오기 -->
-	<select id="userProfile" parameterType="Integer" resultType="com.sp.mango.product.Product">
+	<select id="userProfile" parameterType="Integer" resultType="String">
 		<!--  
 		SELECT userImgSaveFileName
 		FROM member
@@ -326,6 +326,30 @@
 		INSERT INTO pReview (pNum, buyerId, sellerId, prContent, mannerStar, prdStar)
 		VALUES (#{pNum}, #{buyerId}, #{sellerId}, #{prContent, jdbcType=VARCHAR}, 
 				#{mannerStar}, #{prdStar})
+	</insert>
+
+	<!-- 리뷰 요청을 위한 받은 쪽지 리스트 -->
+	<select id="receiveNoteList" parameterType="String" resultType="com.sp.mango.product.Product">
+		SELECT DISTINCT sendId, m.userNickName, noteRegDate, isSendDelete
+		FROM note n
+		JOIN member m ON n.sendId = m.userId
+		WHERE receiveId = #{userId}
+		    AND m.userId NOT IN (
+		        SELECT target_Id FROM blockeduser
+		        WHERE userId = #{userId}
+		        )
+		    AND NOT (
+		        (isSendDelete != 'F' AND noteReadDate IS NULL)
+		        OR (isRecDelete != 'F')
+		        )
+		ORDER BY userNickName;
+	</select>
+	
+	<!-- 리뷰요청 : 가계부 테이블 등록 -->
+	<insert id="insertMyAccount" parameterType="com.sp.mango.product.Product">
+		INSERT INTO myAccount(myAcNum, userId, target_id, income, expenses, itemName, pNum)
+		VALUES (#{myAccount_seq}, #{userId}, #{target_id}, #{income}, #{expenses}, #{itemName}, #{pNum})
+				
 	</insert>
 
 

@@ -183,7 +183,7 @@ function clickInfo() {
                 <div class="project-detail row">
                 	<!-- /.project-slider -->
                     <div class="project-slider col-md-12">
-                        <img src="" alt="Slide 1">
+                        <img width="1000px" height="600px" src="${dto.pImgSaveFileName}" alt="Slide 1">
                         <img src="" alt="Slide 2">
                         <img src="" alt="Slide 1">
                         <a href="#" class="slidesjs-previous slidesjs-navigation">&lt;</a> 
@@ -250,7 +250,7 @@ function clickInfo() {
                                 </li>
                                 <li>
                                 	<c:if test="${dto.pStatus=='판매중'}">
-                                		<i class="fa fa-envelope-o"></i><a onclick="clickInfo();" href="${pageContext.request.contextPath}/product/article?pNum=${dto.pNum}&page=${page}&pcNum=${pcNum}">거래 쪽지 보내기</a>
+                                		<i class="fa fa-envelope-o"></i><a onclick="clickInfo();" href="${pageContext.request.contextPath}/product/sendMsg?pNum=${dto.pNum}">거래 쪽지 보내기</a>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='예약중'}">
                                 		<i class="bi bi-calendar-check-fill"></i><a href="">거래가 예약된 매물입니다</a>
@@ -305,6 +305,42 @@ function clickInfo() {
 									</div>
 								</c:when>
 							</c:choose>
+							
+								<!-- 리뷰 요청 -->
+									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">리뷰 요청하기</button>
+									
+									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog">
+									    <div class="modal-content">
+									      <div class="modal-header">
+									        <h5 class="modal-title" id="exampleModalLabel">리뷰 요청하기</h5>
+									        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									      </div>
+									      <form name="pReportForm" id="pReportF" method="post">
+									      <div class="modal-body">
+									          <div class="mb-3">
+									            <label for="recipient-name" class="col-form-label">신고 항목</label><br>
+									            <!--  
+									            <input type="text" class="form-control" id="recipient-name">
+									            -->
+									            <c:forEach var="vo" items="${listPreport}">							
+													<input type="radio" name="rpReasonNum" value="${vo.rpReasonNum}">${vo.rpReasonName}<br>
+												</c:forEach>
+									          </div>
+									          <div class="mb-3">
+									            <label for="message-text" class="col-form-label">자세한 사유</label>
+									            <textarea class="form-control" id="message-text" name="repPrdContent"></textarea>
+									          </div>
+									      </div>
+									      <div class="modal-footer">
+									        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									        <button type="button" class="repbtn btn btn-primary" onclick="sendReport();">Send</button>
+									      </div>
+									      </form>
+									    </div>
+									  </div>
+									</div>
+									
 					    	
 							<c:choose>
 					    		<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.membership>50}">
@@ -316,6 +352,9 @@ function clickInfo() {
 					    		</c:when>
 				    		</c:choose>
 				    	</c:if>
+				    		
+				    		
+				    			
 	                        <span style="float: right;">
 	                        	<button type="button" class="btn btn-light" name="upButton" onclick="clickListBtn()">리스트</button>
 	                        </span>

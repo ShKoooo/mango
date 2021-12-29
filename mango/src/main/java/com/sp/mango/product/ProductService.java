@@ -49,5 +49,8 @@ public interface ProductService {
 	// 프로필 사진
 	public String userImgSaveFileName(int pNum);
 	
+	// 리뷰 요청을 위한 받은 쪽지 리스트
+	public List<Product> receiveNoteList(String userId);
+	
 	
 }

@@ -106,6 +106,16 @@ public class ProductController {
 				opt = listMemberAddr.get(0).getAreaNum();
 			}
 		}
+		
+		// 썸내일 사진
+	    for(Product dto : list) {
+	        List<String> imgs = myUtil.getImgSrc(dto.getpContent());
+	        if(imgs != null && imgs.size() > 0) {
+	           dto.setpImgSaveFileName(imgs.get(0));
+	        } else {
+	           dto.setpImgSaveFileName(cp+"/resources/images/noimage.png");
+	        }
+	    }
 
 		// String listUrl = cp + "/product/list";
 		String articleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page;
@@ -252,11 +262,13 @@ public class ProductController {
 			@RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
 			@RequestParam(value = "isPorular", defaultValue = "") String isPorular,
 			HttpSession session,
+			HttpServletRequest req,
 			Model model,
 			
 			Note notedto
 			) throws Exception {
 		
+		String cp = req.getContextPath();
 		
 		String query = "page=" + page + "&pcNum=" + pcNum;
 		if(!searchKeyword.equals("")) {
@@ -297,20 +309,20 @@ public class ProductController {
 			query += "&maLat=" + maLat + "&maLon=" + maLon + "&opt=" + opt;
 		}
 		
+		// 글보기 사진
+//	    for(Product dto : list) {
+	        List<String> imgs = myUtil.getImgSrc(dto.getpContent());
+	        if(imgs != null && imgs.size() > 0) {
+	           dto.setpImgSaveFileName(imgs.get(0));
+	        } else {
+	           dto.setpImgSaveFileName(cp+"/resources/images/noimage.png");
+	        }
+//	    }
+		
 		int productWishCount = service.productWishCount(pNum);
 		String pUpOkDate = service.pUpOkDate(pNum);
 		
 		String userImgSaveFileName = service.userImgSaveFileName(pNum);
-		
-		
-		// 거래 쪽지 보내기
-		notedto.setSendId(info.getUserId());
-		// String nContent = "안녕하세요 "+dto.getpSubject()+"를 구매하고 싶어서 쪽지남깁니다.";
-		String nContent = info.getUserNickName()+"님에게서 <"+dto.getpSubject()+"> 글에 대한 구매문의 쪽지가 도착했습니다 !";
-		notedto.setReceiveId(dto.getUserId());
-		notedto.setNoteContent(nContent);
-		
-		service.sendMsg(notedto);
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("userProductWished", userProductWished);
@@ -473,7 +485,7 @@ public class ProductController {
 		return "redirect:/product/list"; 
 	}
 
-/*
+
 	@RequestMapping("sendMsg")
 	public String sendMsg(
 			Note dto,
@@ -494,9 +506,9 @@ public class ProductController {
 		} catch (Exception e) {
 		}
 		
-		return ".mypage.note";
+		return "redirect:/mypage/note";
 	}
-*/
+
 	
 	@RequestMapping("popular")
 	public String popularList(
@@ -615,5 +627,24 @@ public class ProductController {
 		}
 		
 		return "redirect:/product/list";
+	}
+	
+	// 리뷰 요청하기
+	@RequestMapping(value = "reviewReq")
+	public String reviewReq(ProductReport dto,
+			@RequestParam int pNum,
+			@RequestParam String page,
+			@RequestParam int pcNum,
+			HttpSession session) throws Exception {
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			
+			service.insertPreport(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
 	}
 }

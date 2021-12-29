@@ -217,7 +217,7 @@ function printProduct(data) {
 		
 		out += "<div class='col-lg-4 mb-5'>";
 		out += "    <div class='card h-100 shadow border-0'>";
-		out += "    	<img class='card-img-top' src='' alt='' />";
+		out += "    	<img class='card-img-top' width='150px' height='280px' src='${dto.pImgSaveFileName}' alt='' />";
 		out += "		<div class='card-body p-4'>";
 		out += "			<a class='text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
 		out += "			<p class='card-text mb-0'>"+area3+"</p>";	
@@ -333,9 +333,9 @@ $(function(){
 					            <c:forEach var="dto" items="${list}">
 					            	<div class="col-lg-4 mb-5">
 					                	<div class="card h-100 shadow border-0">
-					                    	<img class="card-img-top" src="" alt="" />
+					                    	<img class="card-img-top" width="150px" height="280px" src="${dto.pImgSaveFileName}" alt="" />
 					                        	<div class="card-body p-4">
-					                            	<a class="text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
+					                            	<a class="logo text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
 					                                	<p class="card-text mb-0">${dto.area3}</p>
 					                            </div>
 					                            <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
