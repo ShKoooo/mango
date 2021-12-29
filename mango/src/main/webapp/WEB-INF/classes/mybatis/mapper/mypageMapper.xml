@@ -489,7 +489,8 @@
 			    </if>
 					SELECT NVL2(a.pNum,'product','giftycon') pgType, myAcNum, a.userId, target_id, income, expenses, itemName, NVL2(a.pNum,a.pNum,a.gNum) num, m.userNickName,
 					    NVL2(a.pNum,p.pSubject,g.gSubject) subject, NVL2(a.pNum,p.pSubject,g.gSubject) fullSubject,
-					    NVL2(a.pNum,p.pSoldDate,g.gSoldDate) soldDate, NVL2(a.pNum, p.userId, g.userId) sellerId
+					    TO_CHAR(NVL2(a.pNum,p.pSoldDate,g.gSoldDate),'YYYY-MM-DD') soldDate, NVL2(a.pNum, p.userId, g.userId) sellerId,
+					    NVL2(a.pNum,p.pSoldDate,g.gSoldDate) fullSoldDate
 					FROM myAccount a
 					JOIN member m ON a.target_id = m.userId
 					LEFT OUTER JOIN product p ON a.pNum = p.pNum
@@ -507,7 +508,7 @@
 					<if test="acEndDate != null and acEndDate != '' and acEndDate != 'false' ">
 						AND TO_CHAR(NVL2(a.pNum,p.pSoldDate,g.gSoldDate),'YYYYMMDD') &lt;= #{acEndDate}
 					</if>
-					ORDER BY soldDate DESC
+					ORDER BY fullSoldDate DESC
 				<if test="chkbs == 'sell' ">
 					) WHERE userId = sellerId
 				</if>
@@ -517,5 +518,15 @@
 		    ) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}					
 	</select>
+	
+	<select id = "listRepMemReason" resultType="com.sp.mango.mypage.RepMemberReason">
+		SELECT rmReasonNum, rmReasonName
+		FROM repMember_Reason
+	</select>
+	
+	<insert id = "insertReportMember" parameterType="map">
+		INSERT INTO reportMember (repMemNum, repMemContent, rmReasonNum, repMemRegDate, repMemChecked, userId, target_id)
+		VALUES (reportMember_seq.NEXTVAL, #{content}, #{reasonNum}, SYSDATE, 'F', #{userId}, #{target_id})
+	</insert>
 	
 </mapper>

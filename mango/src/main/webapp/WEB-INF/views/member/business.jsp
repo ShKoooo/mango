@@ -23,6 +23,10 @@
 
 .map { width:700px; height:450px; border: 1px solid #777; }
 
+.my-font-size {
+	font-size: 14px;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -241,206 +245,208 @@ $(function() {
 
 </script>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<h3>
-				<c:if test="${mode=='business' }">
-					<i class="icofont-contact-add"></i> 업체 신규 등록
-				</c:if>
-				<c:if test="${mode=='busnUpdate' }">
-					<i class="icofont-id-card"></i> 업체 정보 수정
-				</c:if>
-			</h3>
-		</div>
-		
-		<div class="alert alert-info" role="alert">
-	        <i class="bi bi-person-check-fill"></i> 망고마켓에서 ${sessionScope.member.userNickName}님의 업체를 홍보하세요!
-	    </div>
-		
-		<div class="body-main">
-			<form name="businessForm" class="businessForm" method="post" enctype="multipart/form-data">
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">	
+			<div class="section-header">
+				<h3>
+					<c:if test="${mode=='business' }">
+						<i class="icofont-contact-add"></i> 업체 신규 등록
+					</c:if>
+					<c:if test="${mode=='busnUpdate' }">
+						<i class="icofont-id-card"></i> 업체 정보 수정
+					</c:if>
+				</h3>
+			</div>
 			
-				<div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="busNickName">업체 닉네임</label>
-					<div class="col-sm-10 busNick-box">
-						<div class="row">
-							<div class="col-5 pe-1">
-								<input type="text" name="busNickName" id="busNickName" class="form-control" value="${dto.busNickName}"
-									${mode=="busnUpdate"?"readonly='readonly'":""}>
+			<div class="alert alert-info" role="alert">
+		        <i class="bi bi-person-check-fill"></i> 망고마켓에서 ${sessionScope.member.userNickName}님의 업체를 홍보하세요!
+		    </div>
+			
+			<div class="container">
+				<form name="businessForm" class="businessForm" method="post" enctype="multipart/form-data">
+				
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="busNickName">업체 닉네임</label>
+						<div class="col-sm-10 busNick-box">
+							<div class="row">
+								<div class="col-5 pe-1">
+									<input type="text" name="busNickName" id="busNickName" class="form-control" value="${dto.busNickName}"
+										${mode=="busnUpdate"?"readonly='readonly'":""}>
+								</div>
+								<div class="col-3 ps-1">
+									<c:if test="${mode=='business'}">
+										<button type="button" class="btn btn-light my-font-size" onclick="busNickCheck();">중복 확인</button>
+									</c:if>
+								</div>
+								<small class="form-control-plaintext help-block2">
+									<c:if test="${mode=='business'}">
+										욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.
+									</c:if>
+									<c:if test="${mode=='busnUpdate'}">
+										업체 닉네임 변경은 고객센터 1:1 문의를 이용해 주시기 바랍니다.
+									</c:if>
+								</small>
 							</div>
-							<div class="col-3 ps-1">
-								<c:if test="${mode=='business'}">
-									<button type="button" class="btn btn-light" onclick="busNickCheck();">중복 확인</button>
-								</c:if>
+						</div>
+					</div>
+					
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="tel1">연락처</label>
+						<div class="col-sm-10 row">
+							<div class="col-sm-3 pe-2">
+								<input type="text" name="tel1" id="tel1" class="form-control" value="${dto.tel1}" maxlength="3">
 							</div>
-							<small class="form-control-plaintext help-block2">
+							<div class="col-sm-1 px-1" style="width: 2%;">
+								<p class="form-control-plaintext text-center">-</p>
+							</div>
+							<div class="col-sm-3 px-1">
+								<input type="text" name="tel2" id="tel2" class="form-control" value="${dto.tel2}" maxlength="4">
+							</div>
+							<div class="col-sm-1 px-1" style="width: 2%;">
+								<p class="form-control-plaintext text-center">-</p>
+							</div>
+							<div class="col-sm-3 ps-1">
+								<input type="text" name="tel3" id="tel3" class="form-control" value="${dto.tel3}" maxlength="4">
+							</div>
+				        </div>
+					</div>
+					
+					<div class="row mb-3">
+				    	<label class="col-sm-2 col-form-label" for="selectEmail">이메일</label>
+				    	<div class="col-sm-10 row userEmail-box">
+							<div class="col-3 pe-0">
+								<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();" ${mode=="busnUpdate" ? "readonly='readonly' ":""}>
+									<option value="">선 택</option>
+									<option value="naver.com" ${dto.email2=="naver.com" ? "selected='selected'" : ""}>네이버 메일</option>
+									<option value="gmail.com" ${dto.email2=="gmail.com" ? "selected='selected'" : ""}>지 메일</option>
+									<option value="hanmail.net" ${dto.email2=="hanmail.net" ? "selected='selected'" : ""}>한 메일</option>
+									<option value="hotmail.com" ${dto.email2=="hotmail.com" ? "selected='selected'" : ""}>핫 메일</option>
+									<option value="direct">직접입력</option>
+								</select>
+							</div>
+							
+							<div class="col input-group">
+								<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" 
+									${mode=="busnUpdate" ? "readonly='readonly' ":""}>
+							    <span class="input-group-text p-1" style="border: none; background: none;">@</span>
+								<input type="text" name="email2" id="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
+								<div class="col-3 ps-3">
+									<c:if test="${mode=='business'}">
+										<button type="button" class="btn btn-light my-font-size" onclick="userEmailCheck();">중복 확인</button>
+									</c:if>
+								</div>
+							</div>
+							
+							<small class="form-control-plaintext help-block3">
 								<c:if test="${mode=='business'}">
-									욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.
+									&nbsp;
 								</c:if>
 								<c:if test="${mode=='busnUpdate'}">
-									업체 닉네임 변경은 고객센터 1:1 문의를 이용해 주시기 바랍니다.
+									업체 이메일 변경은 고객센터 1:1 문의를 이용해 주시기 바랍니다.
 								</c:if>
-							</small>
+							</small>	
+				        </div>
+				    </div>
+				    
+				    <div class="row mb-3">
+				    	<label class="col-sm-2 col-form-label" for="selectProfileImg">프로필 사진</label>
+				    	<div class="col-sm-10 row">
+					    	<div class="img-viewer" ></div>
+					    	<input type="file" id="selectProfileImg" name="profileImg" accept="image/*" class="form-control" style="display: none;">
+				    	</div>
+				    </div>
+				    
+				    <div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="busZip">우편번호</label>
+						<div class="col-sm-5">
+				       		<div class="input-group">
+				           		<input type="text" name="busZip" id="busZip" class="form-control" placeholder="우편번호" value="${dto.busZip}" readonly="readonly">&nbsp;&nbsp;
+			           			<button class="btn btn-light my-font-size" type="button" style="margin-left: 3px;" onclick="daumPostcode();">우편번호 검색</button>
+				           	</div>
 						</div>
 					</div>
-				</div>
-				
-				<div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="tel1">연락처</label>
-					<div class="col-sm-10 row">
-						<div class="col-sm-3 pe-2">
-							<input type="text" name="tel1" id="tel1" class="form-control" value="${dto.tel1}" maxlength="3">
-						</div>
-						<div class="col-sm-1 px-1" style="width: 2%;">
-							<p class="form-control-plaintext text-center">-</p>
-						</div>
-						<div class="col-sm-3 px-1">
-							<input type="text" name="tel2" id="tel2" class="form-control" value="${dto.tel2}" maxlength="4">
-						</div>
-						<div class="col-sm-1 px-1" style="width: 2%;">
-							<p class="form-control-plaintext text-center">-</p>
-						</div>
-						<div class="col-sm-3 ps-1">
-							<input type="text" name="tel3" id="tel3" class="form-control" value="${dto.tel3}" maxlength="4">
-						</div>
-			        </div>
-				</div>
-				
-				<div class="row mb-3">
-			    	<label class="col-sm-2 col-form-label" for="selectEmail">이메일</label>
-			    	<div class="col-sm-10 row userEmail-box">
-						<div class="col-3 pe-0">
-							<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();" ${mode=="busnUpdate" ? "readonly='readonly' ":""}>
-								<option value="">선 택</option>
-								<option value="naver.com" ${dto.email2=="naver.com" ? "selected='selected'" : ""}>네이버 메일</option>
-								<option value="gmail.com" ${dto.email2=="gmail.com" ? "selected='selected'" : ""}>지 메일</option>
-								<option value="hanmail.net" ${dto.email2=="hanmail.net" ? "selected='selected'" : ""}>한 메일</option>
-								<option value="hotmail.com" ${dto.email2=="hotmail.com" ? "selected='selected'" : ""}>핫 메일</option>
-								<option value="direct">직접입력</option>
-							</select>
-						</div>
-						
-						<div class="col input-group">
-							<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" 
-								${mode=="busnUpdate" ? "readonly='readonly' ":""}>
-						    <span class="input-group-text p-1" style="border: none; background: none;">@</span>
-							<input type="text" name="email2" id="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
-							<div class="col-3 ps-3">
-								<c:if test="${mode=='business'}">
-									<button type="button" class="btn btn-light" onclick="userEmailCheck();">중복 확인</button>
-								</c:if>
+					
+					<div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="busAddr1">주소</label>
+				        <div class="col-sm-10">
+				       		<div>
+				           		<input type="text" name="busAddr1" id="busAddr1" class="form-control" placeholder="기본 주소" value="${dto.busAddr1}" readonly="readonly">
+				           	</div>
+				       		<div style="margin-top: 5px;">
+				       			<input type="text" name="busAddr2" id="busAddr2" class="form-control" placeholder="상세 주소" value="${dto.busAddr2}">
 							</div>
 						</div>
-						
-						<small class="form-control-plaintext help-block3">
-							<c:if test="${mode=='business'}">
-								&nbsp;
-							</c:if>
-							<c:if test="${mode=='busnUpdate'}">
-								업체 이메일 변경은 고객센터 1:1 문의를 이용해 주시기 바랍니다.
-							</c:if>
-						</small>	
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			    	<label class="col-sm-2 col-form-label" for="selectProfileImg">프로필 사진</label>
-			    	<div class="col-sm-10 row">
-				    	<div class="img-viewer" ></div>
-				    	<input type="file" id="selectProfileImg" name="profileImg" accept="image/*" class="form-control" style="display: none;">
-			    	</div>
-			    </div>
-			    
-			    <div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="busZip">우편번호</label>
-					<div class="col-sm-5">
-			       		<div class="input-group">
-			           		<input type="text" name="busZip" id="busZip" class="form-control" placeholder="우편번호" value="${dto.busZip}" readonly="readonly">&nbsp;&nbsp;
-		           			<button class="btn btn-light" type="button" style="margin-left: 3px;" onclick="daumPostcode();">우편번호 검색</button>
-			           	</div>
-					</div>
-				</div>
-				
-				<div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="busAddr1">주소</label>
-			        <div class="col-sm-10">
-			       		<div>
-			           		<input type="text" name="busAddr1" id="busAddr1" class="form-control" placeholder="기본 주소" value="${dto.busAddr1}" readonly="readonly">
-			           	</div>
-			       		<div style="margin-top: 5px;">
-			       			<input type="text" name="busAddr2" id="busAddr2" class="form-control" placeholder="상세 주소" value="${dto.busAddr2}">
+						<input type="hidden" name="area1" id="area1" value = "${dto.area1}">
+						<input type="hidden" name="area2" id="area2" value = "${dto.area2}">
+						<input type="hidden" name="area3" id="area3" value = "${dto.area3}">
+				    </div>
+				    
+				    <div class="row mb-3">
+				    	<div class="col-md-2">&nbsp;</div>
+				    	<div class="col-md-4">
+						    <button type="button" class="btn btn-light my-font-size" onclick="mapSearch();">지도에서 찾기</button>
+				    	</div>
+				    </div>
+				    
+				    <div class="row">
+				    	<div class="col-auto me-auto">&nbsp;</div>
+				    	<div class="col-auto">
+						    <div id="map" class="map row mb-3 mx-auto"></div>
+				    	</div>
+				    </div>
+				    <div id="map2" class="map row mb-3" style="display: none;"></div>
+				    
+				    <input type="hidden" name="bpLat" id = "bpLat" value="${dto.bpLat}">
+				    <input type="hidden" name="bpLon" id = "bpLon" value="${dto.bpLon}">
+				    <input type="hidden" name="areaNum" id = "areaNum" value="${dto.areaNum}">
+				    
+				    <input type="hidden" name="aLat" id = "aLat" value="${dto.aLat}">
+				    <input type="hidden" name="aLon" id = "aLon" value="${dto.aLon}">
+				    <input type="hidden" name="bcodeCut" id = "bcodeCut" value="${dto.bcodeCut}">
+				    <input type="hidden" name="bcodeSigungu" id = "bcodeSigungu" value="${dto.bcodeSigungu}">
+					
+					<div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="agree">약관 동의</label>
+						<div class="col-sm-8" style="padding-top: 5px;">
+							<input type="checkbox" id="agree" name="agree"
+								class="form-check-input"
+								checked="checked"
+								style="margin-left: 0;"
+								onchange="form.sendButton.disabled = !checked">
+							<label class="form-check-label">
+								<a href="#" class="text-decoration-none">이용약관</a>에 동의합니다.
+							</label>
 						</div>
-					</div>
-					<input type="hidden" name="area1" id="area1" value = "${dto.area1}">
-					<input type="hidden" name="area2" id="area2" value = "${dto.area2}">
-					<input type="hidden" name="area3" id="area3" value = "${dto.area3}">
-			    </div>
-			    
-			    <div class="row mb-3">
-			    	<div class="col-md-2">&nbsp;</div>
-			    	<div class="col-md-4">
-					    <button type="button" class="btn btn-light" onclick="mapSearch();">지도에서 찾기</button>
-			    	</div>
-			    </div>
-			    
-			    <div class="row">
-			    	<div class="col-auto me-auto">&nbsp;</div>
-			    	<div class="col-auto">
-					    <div id="map" class="map row mb-3 mx-auto"></div>
-			    	</div>
-			    </div>
-			    <div id="map2" class="map row mb-3" style="display: none;"></div>
-			    
-			    <input type="hidden" name="bpLat" id = "bpLat" value="${dto.bpLat}">
-			    <input type="hidden" name="bpLon" id = "bpLon" value="${dto.bpLon}">
-			    <input type="hidden" name="areaNum" id = "areaNum" value="${dto.areaNum}">
-			    
-			    <input type="hidden" name="aLat" id = "aLat" value="${dto.aLat}">
-			    <input type="hidden" name="aLon" id = "aLon" value="${dto.aLon}">
-			    <input type="hidden" name="bcodeCut" id = "bcodeCut" value="${dto.bcodeCut}">
-			    <input type="hidden" name="bcodeSigungu" id = "bcodeSigungu" value="${dto.bcodeSigungu}">
-				
-				<div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="agree">약관 동의</label>
-					<div class="col-sm-8" style="padding-top: 5px;">
-						<input type="checkbox" id="agree" name="agree"
-							class="form-check-input"
-							checked="checked"
-							style="margin-left: 0;"
-							onchange="form.sendButton.disabled = !checked">
-						<label class="form-check-label">
-							<a href="#" class="text-decoration-none">이용약관</a>에 동의합니다.
-						</label>
-					</div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <div class="text-center">
-			            <button type="button" name="sendButton" class="btn btn-primary" onclick="memberOk();"> ${mode=="business"?"신규등록":"정보수정"} <i class="bi bi-check2"></i></button>
-			            <button type="reset" class="btn btn-light">다시입력</button>
-			            <c:if test="${mode=='business'}">
-				            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 등록취소 <i class="bi bi-x"></i></button>
-			            </c:if>
-			            <c:if test="${mode=='busnUpdate'}">
-				            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 수정취소 <i class="bi bi-x"></i></button>
-			            </c:if>
-			            <c:if test="${mode=='business'}">
-			            	<input type="hidden" name="userNickValid" id="userNickValid" value="false">
-							<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
-			            </c:if>
-			            <c:if test="${mode=='busnUpdate'}">
-			            	<input type="hidden" name="userNickValid" id="userNickValid" value="true">
-							<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
-			            </c:if>
+				    </div>
+				    
+				    <div class="row mb-3">
+				        <div class="text-center">
+				            <button type="button" name="sendButton" class="btn btn-primary" onclick="memberOk();"> ${mode=="business"?"신규등록":"정보수정"} <i class="bi bi-check2"></i></button>
+				            <button type="reset" class="btn btn-light">다시입력</button>
+				            <c:if test="${mode=='business'}">
+					            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 등록취소 <i class="bi bi-x"></i></button>
+				            </c:if>
+				            <c:if test="${mode=='busnUpdate'}">
+					            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 수정취소 <i class="bi bi-x"></i></button>
+				            </c:if>
+				            <c:if test="${mode=='business'}">
+				            	<input type="hidden" name="userNickValid" id="userNickValid" value="false">
+								<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
+				            </c:if>
+				            <c:if test="${mode=='busnUpdate'}">
+				            	<input type="hidden" name="userNickValid" id="userNickValid" value="true">
+								<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
+				            </c:if>
+			            </div>
 		            </div>
-	            </div>
-	            
-	            <c:if test="${mode=='busnUpdate'}">
-					<input type="hidden" name="busImgSaveFileName" value="${dto.busImgSaveFileName}">
-				</c:if>
-			</form>
-		</div>
+		            
+		            <c:if test="${mode=='busnUpdate'}">
+						<input type="hidden" name="busImgSaveFileName" value="${dto.busImgSaveFileName}">
+					</c:if>
+				</form>
+			</div>
+		</div>	
 	</div>
 </div>
 

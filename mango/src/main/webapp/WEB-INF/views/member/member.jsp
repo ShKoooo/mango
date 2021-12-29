@@ -20,6 +20,10 @@
 	background-repeat : no-repeat;
 	background-size : cover;
 }
+
+.my-font-size {
+	font-size: 14px;
+}
 </style>
 
 <script type="text/javascript">
@@ -299,212 +303,214 @@ $(function() {
 
 </script>
 
-<div class="container">
+<div class="content-wrapper">
 	<div class="body-container">
-		<div class="body-title">
-			<h3>
-				<c:if test="${mode=='member'}">
-					<i class="icofont-users"></i> 회원가입				
-				</c:if>
-				<c:if test="${mode=='update'}">
-					<i class="icofont-refresh"></i> 정보수정					
-				</c:if>
-			</h3>
-		</div>
-		
-		<div class="alert alert-info" role="alert">
-	        <i class="bi bi-person-check-fill"></i> 회원가입? 망설이지 말고 GO!
-	    </div>
-	    
-	    <div class="body-main">
-	    	<form name="memberForm" class="memberForm" method="post" enctype="multipart/form-data">
-	    		
-	    		<div class="row mb-3">
-			    	<label class="col-sm-2 col-form-label" for="selectProfileImg">프로필 사진</label>
-			    	<div class="col-sm-10 row">
-				    	<div class="img-viewer" ></div>
-				    	<input type="file" id="selectProfileImg" name="profileImg" accept="image/*" class="form-control" style="display: none;">
-			    	</div>
-			    </div>
-	    	
-	    		<div class="row mb-3">
-	    			<label class="col-sm-2 col-form-label" for="userId">아이디</label>
-	    			<div class="col-sm-10 userId-box">
-	    				<div class="row">
-	    					<div class="col-5 pe-1">
-								<input type="text" name="userId" id="userId" class="form-control" value="${dto.userId}" 
-										${mode=="update" ? "readonly='readonly' ":""}
-										placeholder="아이디">
-							</div>
-							<div class="col-3 ps-1">
-								<c:if test="${mode=='member'}">
-									<button type="button" class="btn btn-light" onclick="userIdCheck();">아이디 중복 확인</button>
-								</c:if>
-							</div>
-	    				</div>
-						<c:if test="${mode=='member'}">
-							<small class="form-control-plaintext help-block1">아이디는 5~10자 이내이며, 첫글자는 영문자로 시작해야 합니다.</small>
-						</c:if>
-	    			</div>
-	    		</div>
-	    		
-	    		<div class="row mb-3">
-	    			<label class="col-sm-2 col-form-label" for="userNickName">닉네임</label> <!-- 나이 및 닉 변경기간 체크는 memberOk()에서.. -->
-	    			<div class="col-sm-10 userNick-box">
-	    				<div class="row">
-	    					<div class="col-5 pe-1">
-    							<input type="text" name="userNickName" id="userNickName" class="form-control" value="${dto.userNickName}" placeholder="닉네임"
-    								${nickChangeable=="false" ? "readonly='readonly' ":""}>
-							</div>
-							<div class="col-3 ps-1">
-								<c:if test="${mode=='member' || (mode=='update' && nickChangeable=='true')}">
-									<button type="button" class="btn btn-light" onclick="userNickCheck();">닉네임 중복 확인</button>
-								</c:if>
-							</div>
-	    				</div>
-						<small class="form-control-plaintext help-block2">
-							${nickChangeable=="true"?
-								"욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.":
-								"닉네임을 변경하고 30일이 지난 이후 변경할 수 있습니다."}
-						</small>
-	    			</div>
-	    		</div>
-	    		
-	    		<div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="userPwd">패스워드</label>
-					<div class="col-sm-10">
-			            <input type="password" name="userPwd" id="userPwd" class="form-control" autocomplete="off" placeholder="패스워드" value="${dto.userPwd}">
-			            <small class="form-control-plaintext">패스워드는 5~10자이며 하나 이상의 숫자나 특수문자가 포함되어야 합니다.</small>
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="userPwd2">패스워드 확인</label>
-			        <div class="col-sm-10">
-			            <input type="password" name="userPwd2" id="userPwd2" class="form-control" autocomplete="off" placeholder="패스워드 확인" value="${dto.userPwd}">
-			            <small class="form-control-plaintext">패스워드를 한번 더 입력해주세요.</small>
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="userName">이름</label>
-			        <div class="col-sm-10">
-			            <input type="text" name="userName" id="userName" class="form-control" value="${dto.userName}" 
-			            		${mode=="update" ? "readonly='readonly' ":""}
-			            		placeholder="이름">
-			        </div>
-			    </div>
-			 
-			    <div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="birth">생년월일</label>
-			        <div class="col-sm-10">
-			            <input type="date" name="birth" id="birth" class="form-control" value="${dto.birth}" placeholder="생년월일"
-			            	${mode=="update" ? "readonly='readonly' ":""}>
-			            <small class="form-control-plaintext">생년월일은 2000-01-01 형식으로 입력 합니다.</small>
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			    	<label class="col-sm-2 col-form-label" for="selectEmail">이메일</label>
-			    	<div class="col-sm-10 row userEmail-box">
-						<div class="col-3 pe-0">
-							<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();" ${mode=="update" ? "readonly='readonly' ":""}>
-								<option value="">선 택</option>
-								<option value="naver.com" ${dto.email2=="naver.com" ? "selected='selected'" : ""}>네이버 메일</option>
-								<option value="gmail.com" ${dto.email2=="gmail.com" ? "selected='selected'" : ""}>지 메일</option>
-								<option value="hanmail.net" ${dto.email2=="hanmail.net" ? "selected='selected'" : ""}>한 메일</option>
-								<option value="hotmail.com" ${dto.email2=="hotmail.com" ? "selected='selected'" : ""}>핫 메일</option>
-								<option value="direct">직접입력</option>
-							</select>
-						</div>
-						
-						<div class="col input-group">
-							<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" 
-								${mode=="update" ? "readonly='readonly' ":""}>
-						    <span class="input-group-text p-1" style="border: none; background: none;">@</span>
-							<input type="text" name="email2" id="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
-							<div class="col-3 ps-3">
-								<c:if test="${mode=='member'}">
-									<button type="button" class="btn btn-light" onclick="userEmailCheck();">중복 확인</button>
-								</c:if>
-							</div>
-						</div>
-						
-						<small class="form-control-plaintext help-block3">&nbsp;</small>	
-			        </div>
-			    </div>
-			    
-			    <div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="tel1">전화번호</label>
-			        <div class="col-sm-10 row">
-						<div class="col-sm-3 pe-2">
-							<input type="text" name="tel1" id="tel1" class="form-control" value="${dto.tel1}" maxlength="3">
-						</div>
-						<div class="col-sm-1 px-1" style="width: 2%;">
-							<p class="form-control-plaintext text-center">-</p>
-						</div>
-						<div class="col-sm-3 px-1">
-							<input type="text" name="tel2" id="tel2" class="form-control" value="${dto.tel2}" maxlength="4">
-						</div>
-						<div class="col-sm-1 px-1" style="width: 2%;">
-							<p class="form-control-plaintext text-center">-</p>
-						</div>
-						<div class="col-sm-3 ps-1">
-							<input type="text" name="tel3" id="tel3" class="form-control" value="${dto.tel3}" maxlength="4">
-						</div>
-			        </div>
-			    </div>
-		
-			    <div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="agree">약관 동의</label>
-					<div class="col-sm-8" style="padding-top: 5px;">
-						<input type="checkbox" id="agree" name="agree"
-							class="form-check-input"
-							checked="checked"
-							style="margin-left: 0;"
-							onchange="form.sendButton.disabled = !checked">
-						<label class="form-check-label">
-							<a href="#" class="text-decoration-none">이용약관</a>에 동의합니다.
-						</label>
-					</div>
-			    </div>
-			     
-			    <div class="row mb-3">
-			        <div class="text-center">
-			            <button type="button" name="sendButton" class="btn btn-primary" onclick="memberOk();"> ${mode=="member"?"회원가입":"정보수정"} <i class="bi bi-check2"></i></button>
-			            <c:if test="${mode=='member'}">
-				            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/';"> 가입취소 <i class="bi bi-x"></i></button>
-			            </c:if>
-			            <c:if test="${mode=='update'}">
-				            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 수정취소 <i class="bi bi-x"></i></button>
-			            </c:if>
-			            <c:if test="${mode=='member'}">
-							<input type="hidden" name="userIdValid" id="userIdValid" value="false">
-							<input type="hidden" name="userNickValid" id="userNickValid" value="false">
-							<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
-			            </c:if>
-			            <c:if test="${mode=='update'}">
-			            	<input type="hidden" name="userIdValid" id="userIdValid" value="true">
-							<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
-							<c:if test="${nickChangeable=='false'}">
-								<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
-							</c:if>
-							<c:if test="${nickChangeable=='true'}">
-								<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
-							</c:if>
-			            </c:if>
-			            <c:if test=""></c:if>
-			        </div>
-			    </div>
+		<div class="inner-container container">	
+			<div class="section-header">
+				<h3>
+					<c:if test="${mode=='member'}">
+						<i class="icofont-users"></i> 회원가입				
+					</c:if>
+					<c:if test="${mode=='update'}">
+						<i class="icofont-refresh"></i> 정보수정					
+					</c:if>
+				</h3>
+			</div>
 			
-			    <div class="row">
-					<p class="form-control-plaintext text-center">${message}</p>
-			    </div>
-			    
-			    <c:if test="${mode=='update'}">
-					<input type="hidden" name="userImgSaveFileName" value="${dto.userImgSaveFileName}">
-				</c:if>
-	    	</form>
-	    </div>
+			<div class="alert alert-info" role="alert">
+		        <i class="bi bi-person-check-fill"></i> 회원가입? 망설이지 말고 GO!
+		    </div>
+		    
+		    <div class="container">
+		    	<form name="memberForm" class="memberForm" method="post" enctype="multipart/form-data">
+		    		
+		    		<div class="row mb-3">
+				    	<label class="col-sm-2 col-form-label" for="selectProfileImg">프로필 사진</label>
+				    	<div class="col-sm-10 row">
+					    	<div class="img-viewer" ></div>
+					    	<input type="file" id="selectProfileImg" name="profileImg" accept="image/*" class="form-control" style="display: none;">
+				    	</div>
+				    </div>
+		    	
+		    		<div class="row mb-3">
+		    			<label class="col-sm-2 col-form-label" for="userId">아이디</label>
+		    			<div class="col-sm-10 userId-box">
+		    				<div class="row">
+		    					<div class="col-5 pe-1">
+									<input type="text" name="userId" id="userId" class="form-control" value="${dto.userId}" 
+											${mode=="update" ? "readonly='readonly' ":""}
+											placeholder="아이디">
+								</div>
+								<div class="col-3 ps-1">
+									<c:if test="${mode=='member'}">
+										<button type="button" class="btn btn-light my-font-size" onclick="userIdCheck();">아이디 중복 확인</button>
+									</c:if>
+								</div>
+		    				</div>
+							<c:if test="${mode=='member'}">
+								<small class="form-control-plaintext help-block1">아이디는 5~10자 이내이며, 첫글자는 영문자로 시작해야 합니다.</small>
+							</c:if>
+		    			</div>
+		    		</div>
+		    		
+		    		<div class="row mb-3">
+		    			<label class="col-sm-2 col-form-label" for="userNickName">닉네임</label> <!-- 나이 및 닉 변경기간 체크는 memberOk()에서.. -->
+		    			<div class="col-sm-10 userNick-box">
+		    				<div class="row">
+		    					<div class="col-5 pe-1">
+	    							<input type="text" name="userNickName" id="userNickName" class="form-control" value="${dto.userNickName}" placeholder="닉네임"
+	    								${nickChangeable=="false" ? "readonly='readonly' ":""}>
+								</div>
+								<div class="col-3 ps-1">
+									<c:if test="${mode=='member' || (mode=='update' && nickChangeable=='true')}">
+										<button type="button" class="btn btn-light my-font-size" onclick="userNickCheck();">닉네임 중복 확인</button>
+									</c:if>
+								</div>
+		    				</div>
+							<small class="form-control-plaintext help-block2">
+								${nickChangeable=="true"?
+									"욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.":
+									"닉네임을 변경하고 30일이 지난 이후 변경할 수 있습니다."}
+							</small>
+		    			</div>
+		    		</div>
+		    		
+		    		<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="userPwd">패스워드</label>
+						<div class="col-sm-10">
+				            <input type="password" name="userPwd" id="userPwd" class="form-control" autocomplete="off" placeholder="패스워드" value="${dto.userPwd}">
+				            <small class="form-control-plaintext">패스워드는 5~10자이며 하나 이상의 숫자나 특수문자가 포함되어야 합니다.</small>
+				        </div>
+				    </div>
+				    
+				    <div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="userPwd2">패스워드 확인</label>
+				        <div class="col-sm-10">
+				            <input type="password" name="userPwd2" id="userPwd2" class="form-control" autocomplete="off" placeholder="패스워드 확인" value="${dto.userPwd}">
+				            <small class="form-control-plaintext">패스워드를 한번 더 입력해주세요.</small>
+				        </div>
+				    </div>
+				    
+				    <div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="userName">이름</label>
+				        <div class="col-sm-10">
+				            <input type="text" name="userName" id="userName" class="form-control" value="${dto.userName}" 
+				            		${mode=="update" ? "readonly='readonly' ":""}
+				            		placeholder="이름">
+				        </div>
+				    </div>
+				 
+				    <div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="birth">생년월일</label>
+				        <div class="col-sm-10">
+				            <input type="date" name="birth" id="birth" class="form-control" value="${dto.birth}" placeholder="생년월일"
+				            	${mode=="update" ? "readonly='readonly' ":""}>
+				            <small class="form-control-plaintext">생년월일은 2000-01-01 형식으로 입력 합니다.</small>
+				        </div>
+				    </div>
+				    
+				    <div class="row mb-3">
+				    	<label class="col-sm-2 col-form-label" for="selectEmail">이메일</label>
+				    	<div class="col-sm-10 row userEmail-box">
+							<div class="col-3 pe-0">
+								<select name="selectEmail" id="selectEmail" class="form-select" onchange="changeEmail();" ${mode=="update" ? "readonly='readonly' ":""}>
+									<option value="">선 택</option>
+									<option value="naver.com" ${dto.email2=="naver.com" ? "selected='selected'" : ""}>네이버 메일</option>
+									<option value="gmail.com" ${dto.email2=="gmail.com" ? "selected='selected'" : ""}>지 메일</option>
+									<option value="hanmail.net" ${dto.email2=="hanmail.net" ? "selected='selected'" : ""}>한 메일</option>
+									<option value="hotmail.com" ${dto.email2=="hotmail.com" ? "selected='selected'" : ""}>핫 메일</option>
+									<option value="direct">직접입력</option>
+								</select>
+							</div>
+							
+							<div class="col input-group">
+								<input type="text" name="email1" id="email1" class="form-control" maxlength="30" value="${dto.email1}" 
+									${mode=="update" ? "readonly='readonly' ":""}>
+							    <span class="input-group-text p-1" style="border: none; background: none;">@</span>
+								<input type="text" name="email2" id="email2" class="form-control" maxlength="30" value="${dto.email2}" readonly="readonly">
+								<div class="col-3 ps-3">
+									<c:if test="${mode=='member'}">
+										<button type="button" class="btn btn-light my-font-size" onclick="userEmailCheck();">중복 확인</button>
+									</c:if>
+								</div>
+							</div>
+							
+							<small class="form-control-plaintext help-block3">&nbsp;</small>	
+				        </div>
+				    </div>
+				    
+				    <div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="tel1">전화번호</label>
+				        <div class="col-sm-10 row">
+							<div class="col-sm-3 pe-2">
+								<input type="text" name="tel1" id="tel1" class="form-control" value="${dto.tel1}" maxlength="3">
+							</div>
+							<div class="col-sm-1 px-1" style="width: 2%;">
+								<p class="form-control-plaintext text-center">-</p>
+							</div>
+							<div class="col-sm-3 px-1">
+								<input type="text" name="tel2" id="tel2" class="form-control" value="${dto.tel2}" maxlength="4">
+							</div>
+							<div class="col-sm-1 px-1" style="width: 2%;">
+								<p class="form-control-plaintext text-center">-</p>
+							</div>
+							<div class="col-sm-3 ps-1">
+								<input type="text" name="tel3" id="tel3" class="form-control" value="${dto.tel3}" maxlength="4">
+							</div>
+				        </div>
+				    </div>
+			
+				    <div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="agree">약관 동의</label>
+						<div class="col-sm-8" style="padding-top: 5px;">
+							<input type="checkbox" id="agree" name="agree"
+								class="form-check-input"
+								checked="checked"
+								style="margin-left: 0;"
+								onchange="form.sendButton.disabled = !checked">
+							<label class="form-check-label">
+								<a href="#" class="text-decoration-none">이용약관</a>에 동의합니다.
+							</label>
+						</div>
+				    </div>
+				     
+				    <div class="row mb-3">
+				        <div class="text-center">
+				            <button type="button" name="sendButton" class="btn btn-primary" onclick="memberOk();"> ${mode=="member"?"회원가입":"정보수정"} <i class="bi bi-check2"></i></button>
+				            <c:if test="${mode=='member'}">
+					            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/';"> 가입취소 <i class="bi bi-x"></i></button>
+				            </c:if>
+				            <c:if test="${mode=='update'}">
+					            <button type="button" class="btn btn-danger" onclick="location.href='${pageContext.request.contextPath}/mypage/main';"> 수정취소 <i class="bi bi-x"></i></button>
+				            </c:if>
+				            <c:if test="${mode=='member'}">
+								<input type="hidden" name="userIdValid" id="userIdValid" value="false">
+								<input type="hidden" name="userNickValid" id="userNickValid" value="false">
+								<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
+				            </c:if>
+				            <c:if test="${mode=='update'}">
+				            	<input type="hidden" name="userIdValid" id="userIdValid" value="true">
+								<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
+								<c:if test="${nickChangeable=='false'}">
+									<input type="hidden" name="userEmailValid" id="userEmailValid" value="true">
+								</c:if>
+								<c:if test="${nickChangeable=='true'}">
+									<input type="hidden" name="userEmailValid" id="userEmailValid" value="false">
+								</c:if>
+				            </c:if>
+				            <c:if test=""></c:if>
+				        </div>
+				    </div>
+				
+				    <div class="row">
+						<p class="form-control-plaintext text-center">${message}</p>
+				    </div>
+				    
+				    <c:if test="${mode=='update'}">
+						<input type="hidden" name="userImgSaveFileName" value="${dto.userImgSaveFileName}">
+					</c:if>
+		    	</form>
+		    </div>
+		</div>
 	</div>
 </div>

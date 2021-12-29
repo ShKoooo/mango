@@ -84,13 +84,14 @@ $(function() {
 	Highcharts.chart('thermoContainer', {
 	  	chart: {
 	    	type: 'bar',
-	    	height: 160
+	    	height: 160,
+	    	backgroundColor: '#EFEFEF'
 	  	},
 	  	title: {
 	    	text: null
 	  	},
 	  	xAxis: {
-			categories: ['나'],
+			categories: [''],
 	    	title: {
 	        	text: null
     		}
@@ -107,11 +108,12 @@ $(function() {
 	    	valueSuffix: ' deg'
 	  	},
 	  	series: [{
-	    	name: '나의 체온 : '+values[0]+' 도',
+	    	name: '나의 체온 ',
 	    	data: values,
 	    	pointWidth: 15,
 	    	color: rgb
-	  	}]
+	  	}],
+	  	credits: false
 	});
 });
 
@@ -127,131 +129,152 @@ $(function() {
 		window.open(url,'_blank');
 	});
 });
+
+$(function() {
+	$("body").on("click",".myBtnRep", function() {
+		var userNick = "${userNick}";
+		userNick = encodeURIComponent(userNick);
+		
+		var query = "userNick="+userNick;
+		var url = "${pageContext.request.contextPath}/mypage/report?"+query;
+		// console.log(url);
+		location.href = url;
+	});
+});
 </script>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<div class="row">
-				<div class="col-auto me-auto">
-					<h3><i class="bi bi-app"></i> ${userNick} 님 </h3>
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">
+			<div class="section-header">
+				<div class="row">
+					<div class="col-auto me-auto">
+						<h3>${userNick} 님 </h3>
+					</div>
+					<div class="col-auto text-right">
+						<button type="button" title="쪽지" class="btn btn-outline-primary me-2" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${userNick}'">
+							<i class="icofont-paper-plane"></i>
+						</button>
+						<button type="button" title="신고" class="btn btn-outline-danger myBtnRep">
+							<i class="icofont-ui-block"></i>
+						</button>
+					</div>
 				</div>
-				<div class="col-auto text-right">
-					<button type="button" title="쪽지" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${userNick}'"><i class="icofont-paper-plane"></i></button>
-				</div>
-			</div>
-		</div>
-		
-		<div class="body-main">
-			<div class="row mb-6">
-				<h4><i class="icofont-thermometer"></i> 매너 온도</h4>
-				<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
 			</div>
 			
-			<div class="row mb-3">
-				<h4><i class="icofont-star"></i> 평가</h4>
-			</div>
-			<c:if test="${empty ratingList}">
-				<div class="border bg-light mb-3 p-3 text-center">
-					평가가 없습니다.
-				</div>		
-			</c:if>
-			<c:if test="${not empty ratingList}">
-				<div class="row mb-4">
-					<div class="col">
-						(평균별점)
-						&nbsp;&nbsp;
-						${avgPrdStar==""?"":"품질: "}${avgPrdStar}
-						&nbsp;&nbsp;
-						${avgManStar==""?"":"매너: "}${avgManStar}
-					</div>
-					<div class="col text-right">
-						<select name="typeName" id="typeName">
-							<option value="all" ${typeName=="all"?"selected='selected'":""}>전체</option>
-							<option value="product" ${typeName=="product"?"selected='selected'":""}>중고상품</option>
-							<option value="giftycon" ${typeName=="giftycon"?"selected='selected'":""}>기프티콘</option>
-						</select>
-					</div>
+			<div class="container">
+				<div class="row mb-6">
+					<h4><i class="icofont-thermometer"></i> 매너 온도</h4>
+					<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
 				</div>
+				
 				<div class="row mb-3">
-					<c:forEach var="dto" items="${ratingList}">
-						<div class="row mb-3">
-							<div class="col-md-3">
-								<div class="row">
-									<c:if test="${not empty dto.userImgSaveFileName}">
-										<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
-											class="img-fluid img-thumbnail img-viewer">
-									</c:if>
-									<c:if test="${empty dto.userImgSaveFileName}">
-										<img
-											class="img-fluid img-thumbnail img-viewer">
-									</c:if>
-								</div>
-								<div class="row mt-1">
-									${dto.buyerNick}
-								</div>
-							</div>
-							<div class="col-md-9">
-								<div class="row">
-									<div class="col-auto me-auto">
-										<c:if test="${dto.pgType == 'product'}">
-											(중고상품)
+					<h4><i class="icofont-star"></i> 평가</h4>
+				</div>
+				<c:if test="${empty ratingList}">
+					<div class="border bg-light mb-3 p-3 text-center">
+						평가가 없습니다.
+					</div>		
+				</c:if>
+				<c:if test="${not empty ratingList}">
+					<div class="row mb-4">
+						<div class="col">
+							(평균별점)
+							&nbsp;&nbsp;
+							${avgPrdStar==""?"":"품질: "}${avgPrdStar}
+							&nbsp;&nbsp;
+							${avgManStar==""?"":"매너: "}${avgManStar}
+						</div>
+						<div class="col text-right">
+							<select name="typeName" id="typeName">
+								<option value="all" ${typeName=="all"?"selected='selected'":""}>전체</option>
+								<option value="product" ${typeName=="product"?"selected='selected'":""}>중고상품</option>
+								<option value="giftycon" ${typeName=="giftycon"?"selected='selected'":""}>기프티콘</option>
+							</select>
+						</div>
+					</div>
+					<div class="row mb-3">
+						<c:forEach var="dto" items="${ratingList}">
+							<div class="row mb-3">
+								<div class="col-md-3">
+									<div class="row">
+										<c:if test="${not empty dto.userImgSaveFileName}">
+											<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+												class="img-fluid img-thumbnail img-viewer">
 										</c:if>
-										<c:if test="${dto.pgType == 'giftycon'}">
-											(기프티콘)
+										<c:if test="${empty dto.userImgSaveFileName}">
+											<img
+												class="img-fluid img-thumbnail img-viewer">
 										</c:if>
-										&nbsp;&nbsp;
-										${dto.subject}
 									</div>
-									<div class="col-auto text-right">
-										<c:if test="${dto.pgType == 'product'}">
-											품질&nbsp;
-											<c:if test="${dto.prdStar>=5}">
+									<div class="row mt-1">
+										${dto.buyerNick}
+									</div>
+								</div>
+								<div class="col-md-9">
+									<div class="row">
+										<div class="col-auto me-auto">
+											<c:if test="${dto.pgType == 'product'}">
+												(중고상품)
+											</c:if>
+											<c:if test="${dto.pgType == 'giftycon'}">
+												(기프티콘)
+											</c:if>
+											&nbsp;&nbsp;
+											${dto.subject}
+										</div>
+										<div class="col-auto text-right">
+											<c:if test="${dto.pgType == 'product'}">
+												품질&nbsp;
+												<c:if test="${dto.prdStar>=5}">
+													★★★★★
+												</c:if>
+												<c:if test="${dto.prdStar==4}">
+													★★★★
+												</c:if>
+												<c:if test="${dto.prdStar==3}">
+													★★★
+												</c:if>
+												<c:if test="${dto.prdStar==2}">
+													★★
+												</c:if>
+												<c:if test="${dto.prdStar<=1}">
+													★
+												</c:if>
+												&nbsp;|&nbsp;
+											</c:if>
+											
+											매너&nbsp;
+											<c:if test="${dto.mannerStar>=5}">
 												★★★★★
 											</c:if>
-											<c:if test="${dto.prdStar==4}">
+											<c:if test="${dto.mannerStar==4}">
 												★★★★
 											</c:if>
-											<c:if test="${dto.prdStar==3}">
+											<c:if test="${dto.mannerStar==3}">
 												★★★
 											</c:if>
-											<c:if test="${dto.prdStar==2}">
+											<c:if test="${dto.mannerStar==2}">
 												★★
 											</c:if>
-											<c:if test="${dto.prdStar<=1}">
+											<c:if test="${dto.mannerStar<=1}">
 												★
-											</c:if>
-											&nbsp;|&nbsp;
-										</c:if>
-										
-										매너&nbsp;
-										<c:if test="${dto.mannerStar>=5}">
-											★★★★★
-										</c:if>
-										<c:if test="${dto.mannerStar==4}">
-											★★★★
-										</c:if>
-										<c:if test="${dto.mannerStar==3}">
-											★★★
-										</c:if>
-										<c:if test="${dto.mannerStar==2}">
-											★★
-										</c:if>
-										<c:if test="${dto.mannerStar<=1}">
-											★
-										</c:if>						
+											</c:if>						
+										</div>
+									</div>
+									<div class="row m-2">
+										${dto.reviewContent}
 									</div>
 								</div>
-								<div class="row m-2">
-									${dto.reviewContent}
-								</div>
+								<hr>
 							</div>
-							<hr>
-						</div>
-					</c:forEach>
-				</div>
-				${paging}
-			</c:if>
+						</c:forEach>
+					</div>
+					${paging}
+				</c:if>
+			</div>
+			
 		</div>
+		
 	</div>
 </div>

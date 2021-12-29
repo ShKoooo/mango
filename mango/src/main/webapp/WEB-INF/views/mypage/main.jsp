@@ -100,13 +100,14 @@ $(function() {
 	Highcharts.chart('thermoContainer', {
 	  	chart: {
 	    	type: 'bar',
-	    	height: 160
+	    	height: 160,
+	    	backgroundColor: '#EFEFEF'
 	  	},
 	  	title: {
 	    	text: null
 	  	},
 	  	xAxis: {
-			categories: ['나'],
+			categories: [''],
 	    	title: {
 	        	text: null
     		}
@@ -123,11 +124,12 @@ $(function() {
 	    	valueSuffix: ' deg'
 	  	},
 	  	series: [{
-	    	name: '나의 체온 : '+values[0]+' 도',
+	    	name: '나의 체온 ',
 	    	data: values,
 	    	pointWidth: 15,
 	    	color: rgb
-	  	}]
+	  	}],
+	  	credits: false
 	});
 });
 
@@ -187,188 +189,190 @@ $(function() {
 
 </script>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<h3><i class="bi bi-app"></i> 마이 페이지 </h3>
-		</div>
-		
-		<div class="body-main">
-			<div class="row mb-3">
-				<h4>
-					<a href="${pageContext.request.contextPath}/member/pwd?mode=update">
-						<i class="icofont-edit"></i> 회원 정보수정
-					</a>
-				</h4>
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">
+			<div class="myfont-jalnan section-header">
+				<h3 class="myfont-jalnan"> <span class="myfont-jalnan">마이 페이지</span> </h3>
 			</div>
-			<div class="row mb-3">
-				<h4><i class="icofont-thermometer"></i> 나의 매너 온도</h4>
-				<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
-			</div>
-			<div class="row mb-3">
+			
+			<div class="container">
 				<div class="row mb-3">
-					<h4><i class="icofont-location-pin"></i> 주소 목록</h4>
+					<h4>
+						<a href="${pageContext.request.contextPath}/member/pwd?mode=update">
+							<i class="icofont-edit"></i> 회원 정보수정
+						</a>
+					</h4>
 				</div>
-				<c:if test="${empty addrList}">
-					<div class="border bg-light mb-3 p-3 text-center">등록한 주소 목록이 없습니다.</div>
-				</c:if>
-				<c:if test="${not empty addrList}">
-					<div class="row mb-1 mx-3">
-						<table class="table">
-							<thead class="table-light">
-								<tr>
-									<th class="col-8">등록 지역</th>
-									<th class="col-1">&nbsp;</th>
-								</tr>
-							</thead>
-							<tbody>
-								<c:forEach var="addrDto" items="${addrList}">
-									<tr data-maNum = '${addrDto.maNum}'>
-										<td class="col-8">${addrDto.area1}&nbsp;${addrDto.area2}&nbsp;${addrDto.area3}</td>
+				<div class="row mb-3">
+					<h4><i class="icofont-thermometer"></i> 나의 매너 온도</h4>
+					<div id="thermoContainer" data-deg="${mannerDto.mannerDeg}"></div>
+				</div>
+				<div class="row mb-3">
+					<div class="row mb-3">
+						<h4><i class="icofont-location-pin"></i> 주소 목록</h4>
+					</div>
+					<c:if test="${empty addrList}">
+						<div class="border bg-light mb-3 p-3 text-center">등록한 주소 목록이 없습니다.</div>
+					</c:if>
+					<c:if test="${not empty addrList}">
+						<div class="row mb-1 mx-3">
+							<table class="table">
+								<thead class="table-light">
+									<tr>
+										<th class="col-8">등록 지역</th>
+										<th class="col-1">&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+									<c:forEach var="addrDto" items="${addrList}">
+										<tr data-maNum = '${addrDto.maNum}'>
+											<td class="col-8">${addrDto.area1}&nbsp;${addrDto.area2}&nbsp;${addrDto.area3}</td>
+											<td class="col-1">
+												<button type="button" class="btn btn-outline-danger btn-delAddr" name="deleteAddr"><i class="icofont-close"></i></button>
+											</td>
+										</tr>
+									</c:forEach>
+								</tbody>
+							</table>
+						</div>
+					</c:if>
+					
+					<div class="row">
+						<div class="col-md-12 text-right">
+							<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/address'">
+								주소 등록
+							</button>
+						</div>
+					</div>
+						
+				</div>
+				<div class="row mb-3">
+					<div class="row mb-3">
+						<h4>
+							<i class="icofont-briefcase-2"></i> 비즈니스 프로필
+						</h4>
+					</div>
+					
+					<c:if test="${empty businessDto}">
+						<div class="border bg-light mb-3 p-3 text-center">망고마켓에서 ${sessionScope.member.userNickName}님의 업체를 홍보하세요!</div>
+					</c:if>
+					<c:if test="${not empty businessDto}">
+						<div class="row mb-1 mx-3">
+							<table class="table">
+								<thead class="table-light">
+									<tr>
+										<th class="col-3">업체 닉네임</th>
+										<th class="col-5">등록 지역</th>
+										<th class="col-1">&nbsp;</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="col-3">${businessDto.busNickName}</td>
+										<td class="col-5">${businessDto.area1}&nbsp;${businessDto.area2}&nbsp;${businessDto.area3}</td>
 										<td class="col-1">
-											<button type="button" class="btn btn-outline-danger btn-delAddr" name="deleteAddr"><i class="icofont-close"></i></button>
+											<button type="button" class="btn btn-outline-danger btn-delBusn" name="deleteBusn"><i class="icofont-close"></i></button>
 										</td>
 									</tr>
-								</c:forEach>
-							</tbody>
-						</table>
+								</tbody>
+							</table>
+						</div>
+					</c:if>
+					
+					<div class="row">
+						<div class="col-md-12 text-right">
+							<c:if test="${empty businessDto}">
+								<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/business'">
+									업체 등록
+								</button>
+							</c:if>
+							<c:if test="${not empty businessDto}">
+								<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/pwd?mode=busnUpdate'">
+									프로필 수정
+								</button>
+							</c:if>
+						</div>
 					</div>
-				</c:if>
+					
+				</div>
 				
-				<div class="row">
-					<div class="col-md-12 text-right">
-						<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/address'">
-							주소 등록
-						</button>
+				<div class="row mb-3">
+					<div class="col-md-4">
+						<h4>
+							<i class="icofont-read-book-alt"></i> 관심 유저
+						</h4>
+					</div>
+					<div class="col-md-4">
+						<h4>
+							<a href="${pageContext.request.contextPath}/mypage/mypick">
+								${countPick}&nbsp;명
+							</a>
+						</h4>
 					</div>
 				</div>
-					
-			</div>
-			<div class="row mb-3">
+				<div class="row mb-3">
+					<div class="col-md-4">
+						<h4>
+							<i class="icofont-not-allowed"></i> 차단 유저
+						</h4>
+					</div>
+					<div class="col-md-4">
+						<h4>
+							<a href="${pageContext.request.contextPath}/mypage/myblock">
+								${countBlock}&nbsp;명
+							</a>
+						</h4>
+					</div>
+				</div>
+				<div class="row mb-3">
+					<div class="col-md-4">
+						<h4>
+							<i class="icofont-like"></i> 관심 키워드
+						</h4>
+					</div>
+					<div class="col-md-4">
+						<h4>
+							<a href="${pageContext.request.contextPath}/mypage/mykeyword">
+								${countKeyword}&nbsp;개
+							</a>
+						</h4>
+					</div>
+				</div>
+				
 				<div class="row mb-3">
 					<h4>
-						<i class="icofont-briefcase-2"></i> 비즈니스 프로필
-					</h4>
-				</div>
-				
-				<c:if test="${empty businessDto}">
-					<div class="border bg-light mb-3 p-3 text-center">망고마켓에서 ${sessionScope.member.userNickName}님의 업체를 홍보하세요!</div>
-				</c:if>
-				<c:if test="${not empty businessDto}">
-					<div class="row mb-1 mx-3">
-						<table class="table">
-							<thead class="table-light">
-								<tr>
-									<th class="col-3">업체 닉네임</th>
-									<th class="col-5">등록 지역</th>
-									<th class="col-1">&nbsp;</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td class="col-3">${businessDto.busNickName}</td>
-									<td class="col-5">${businessDto.area1}&nbsp;${businessDto.area2}&nbsp;${businessDto.area3}</td>
-									<td class="col-1">
-										<button type="button" class="btn btn-outline-danger btn-delBusn" name="deleteBusn"><i class="icofont-close"></i></button>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</c:if>
-				
-				<div class="row">
-					<div class="col-md-12 text-right">
-						<c:if test="${empty businessDto}">
-							<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/business'">
-								업체 등록
-							</button>
-						</c:if>
-						<c:if test="${not empty businessDto}">
-							<button class="btn btn-primary" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/member/pwd?mode=busnUpdate'">
-								프로필 수정
-							</button>
-						</c:if>
-					</div>
-				</div>
-				
-			</div>
-			
-			<div class="row mb-3">
-				<div class="col-md-4">
-					<h4>
-						<i class="icofont-read-book-alt"></i> 관심 유저
-					</h4>
-				</div>
-				<div class="col-md-4">
-					<h4>
-						<a href="${pageContext.request.contextPath}/mypage/mypick">
-							${countPick}&nbsp;명
+						<a href="${pageContext.request.contextPath}/mypage/account">
+							<i class="icofont-money"></i> 가계부
 						</a>
 					</h4>
 				</div>
-			</div>
-			<div class="row mb-3">
-				<div class="col-md-4">
+				
+				<div class="row mb-3">
 					<h4>
-						<i class="icofont-not-allowed"></i> 차단 유저
-					</h4>
-				</div>
-				<div class="col-md-4">
-					<h4>
-						<a href="${pageContext.request.contextPath}/mypage/myblock">
-							${countBlock}&nbsp;명
+						<a href="${pageContext.request.contextPath}/mypage/activity">
+							<i class="icofont-history"></i> 내 활동
 						</a>
 					</h4>
 				</div>
-			</div>
-			<div class="row mb-3">
-				<div class="col-md-4">
+				
+				<div class="row mb-3">
 					<h4>
-						<i class="icofont-like"></i> 관심 키워드
-					</h4>
-				</div>
-				<div class="col-md-4">
-					<h4>
-						<a href="${pageContext.request.contextPath}/mypage/mykeyword">
-							${countKeyword}&nbsp;개
+						<a href="${pageContext.request.contextPath}/mypage/myrating">
+							<i class="icofont-ui-rating"></i> 내 평가
 						</a>
 					</h4>
 				</div>
+				
+				<div class="row mb-3">
+					<h4>
+						<a href="${pageContext.request.contextPath}/mypage/note">
+							<i class="icofont-chat"></i> 쪽지
+						</a>
+					</h4>
+				</div>
+				
 			</div>
-			
-			<div class="row mb-3">
-				<h4>
-					<a href="${pageContext.request.contextPath}/mypage/account">
-						<i class="icofont-money"></i> 가계부
-					</a>
-				</h4>
-			</div>
-			
-			<div class="row mb-3">
-				<h4>
-					<a href="${pageContext.request.contextPath}/mypage/activity">
-						<i class="icofont-history"></i> 내 활동
-					</a>
-				</h4>
-			</div>
-			
-			<div class="row mb-3">
-				<h4>
-					<a href="${pageContext.request.contextPath}/mypage/myrating">
-						<i class="icofont-ui-rating"></i> 내 평가
-					</a>
-				</h4>
-			</div>
-			
-			<div class="row mb-3">
-				<h4>
-					<a href="${pageContext.request.contextPath}/mypage/note">
-						<i class="icofont-chat"></i> 쪽지
-					</a>
-				</h4>
-			</div>
-			
 		</div>
 	</div>
 </div>

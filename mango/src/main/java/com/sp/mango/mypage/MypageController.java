@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -1368,7 +1369,6 @@ public class MypageController {
 			if (!acEndDate.equals("false")) {
 				map.put("acEndDate", acEndDate);
 			}
-			// TODO : Mapper 수정, account.jsp 수정 (value 추가?)
 			
 			System.out.println(":::: buy or sell : "+chkbs);
 			System.out.println(":::: prd or gifty : "+chkpg);
@@ -1393,8 +1393,6 @@ public class MypageController {
 			String query = "chkSel="+chkSel+"&chkBuy="+chkBuy+"&chkPrd="+chkPrd+"&chkGfc="+chkGfc;
 			listUrl += "?"+query;
 			paging = myUtil.paging(current_page, total_page, listUrl);
-			
-			// TODO : account.jsp dto에 맞게 수정 및 체크박스 추가
 			
 			list = service.listAccount(map);
 			
@@ -1436,6 +1434,90 @@ public class MypageController {
 		}
 		
 		return ".mypage.account";
+	}
+	
+	@RequestMapping("report")
+	public String reportForm(
+			HttpSession session,
+			Model model,
+			HttpServletRequest req,
+			@RequestParam String userNick
+			) throws Exception {
+		userNick = URLDecoder.decode(userNick,"UTF-8");
+		List<RepMemberReason> list = null;
+		
+		try {
+			list = service.listRepMemReason();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+		model.addAttribute("reasonList",list);
+		model.addAttribute("userNick",userNick);
+		return ".mypage.report";
+	}
+	
+	@RequestMapping("reportSubmit")
+	public String reportSubmit(
+			@RequestParam String userNick,
+			@RequestParam String content,
+			@RequestParam int reasonNum,
+			final RedirectAttributes reAttr,
+			HttpSession session,
+			HttpServletRequest req
+			) throws Exception {
+		MemberSessionInfo memberInfo = (MemberSessionInfo) session.getAttribute("member");
+		String userId = memberInfo.getUserId();
+		
+		String encodedNick = userNick;
+		
+		if (req.getMethod().equalsIgnoreCase("get")) {
+			userNick = URLDecoder.decode(userNick,"utf-8");
+			content = URLDecoder.decode(content,"utf-8");
+		}
+		
+		String target_id = service.readUserIdByNickName(userNick);
+		if (target_id == null || target_id.equals("")) {
+			String goBack = "/mypage/yourpage?userNickName=" +encodedNick;
+			reAttr.addFlashAttribute("title","신고 실패");
+			reAttr.addFlashAttribute("message","신고 접수를 실패했습니다.<br>관리자에게 문의하세요.");
+			reAttr.addFlashAttribute("goBack",goBack);
+			return "redirect:/mypage/complete";
+		}
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("userNick", userNick);
+		map.put("content", content);
+		map.put("reasonNum", reasonNum);
+		map.put("userId", userId);
+		map.put("target_id", target_id);
+		
+		try {
+			service.insertReportMember(map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			String goBack = "/mypage/yourpage?userNickName=" +encodedNick;
+			reAttr.addFlashAttribute("title","신고 실패");
+			reAttr.addFlashAttribute("message","신고 접수를 실패했습니다.<br>관리자에게 문의하세요.");
+			reAttr.addFlashAttribute("goBack",goBack);
+			return "redirect:/mypage/complete";
+		}
+		
+		String goBack = "/mypage/yourpage?userNickName="+encodedNick;
+		reAttr.addFlashAttribute("title","신고 완료");
+		reAttr.addFlashAttribute("message","신고 접수가 완료되었습니다");
+		reAttr.addFlashAttribute("goBack",goBack);
+		return "redirect:/mypage/complete";
+	}
+	
+	@RequestMapping("complete")
+	public String complete (
+			@ModelAttribute("message") String message
+			) {
+		if (message == null || message.length() == 0 ) return "redirect:/";
+		
+		return ".mypage.complete";
 	}
 }
 

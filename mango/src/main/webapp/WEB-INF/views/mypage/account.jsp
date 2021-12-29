@@ -91,117 +91,119 @@ $(function() {
 
 </script>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<h3><i class="bi bi-app"></i> 거래내역 </h3>
-		</div>
-		
-		<div class="body-main">
-			<div class="row mb-3">
-				<div class="form-check">
-					<div class="row md-5">
-						<div class="col-auto me-auto">
-							<div class="row mb-3 pb-1">
-								<div class="col-auto mx-3">
-									<input class="form-check-input align-middle" type="checkbox" value="chkSel" id="chkSel"
-										${chkSel=="true"?"checked='checked'":""}>
-									<label class="form-check-label align-middle" for="chkSel">&nbsp;판매</label>
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">
+			<div class="section-header">
+				<h3> 거래내역 </h3>
+			</div>
+			
+			<div class="container">
+				<div class="row mb-3">
+					<div class="form-check">
+						<div class="row md-5">
+							<div class="col-auto me-auto">
+								<div class="row mb-3 pb-1">
+									<div class="col-auto mx-3">
+										<input class="form-check-input align-middle" type="checkbox" value="chkSel" id="chkSel"
+											${chkSel=="true"?"checked='checked'":""}>
+										<label class="form-check-label align-middle" for="chkSel">&nbsp;판매</label>
+									</div>
+									<div class="col-auto mx-3">
+										<input class="form-check-input align-middle" type="checkbox" value="chkBuy" id="chkBuy"
+											${chkBuy=="true"?"checked='checked'":""}>
+										<label class="form-check-label align-middle" for="chkBuy">&nbsp;구매</label>
+									</div>
+									<div class="col-auto mx-3">
+										<input class="form-check-input align-middle" type="checkbox" value="chkPrd" id="chkPrd"
+											${chkPrd=="true"?"checked='checked'":""}>
+										<label class="form-check-label align-middle" for="chkPrd">&nbsp;중고물품</label>
+									</div>
+									<div class="col-auto mx-3">
+										<input class="form-check-input align-middle" type="checkbox" value="chkGfc" id="chkGfc"
+											${chkGfc=="true"?"checked='checked'":""}>
+										<label class="form-check-label align-middle" for="chkGfc">&nbsp;기프티콘</label>
+									</div>
 								</div>
-								<div class="col-auto mx-3">
-									<input class="form-check-input align-middle" type="checkbox" value="chkBuy" id="chkBuy"
-										${chkBuy=="true"?"checked='checked'":""}>
-									<label class="form-check-label align-middle" for="chkBuy">&nbsp;구매</label>
-								</div>
-								<div class="col-auto mx-3">
-									<input class="form-check-input align-middle" type="checkbox" value="chkPrd" id="chkPrd"
-										${chkPrd=="true"?"checked='checked'":""}>
-									<label class="form-check-label align-middle" for="chkPrd">&nbsp;중고물품</label>
-								</div>
-								<div class="col-auto mx-3">
-									<input class="form-check-input align-middle" type="checkbox" value="chkGfc" id="chkGfc"
-										${chkGfc=="true"?"checked='checked'":""}>
-									<label class="form-check-label align-middle" for="chkGfc">&nbsp;기프티콘</label>
+								<div class="row mb-3">
+									<div class="col-auto me-auto pe-3">
+										시작일&nbsp;&nbsp;<input type="date" class="acStartDate myBox" id = "acStartDate" value="${acStartDate}">
+									</div>
+									<div class="col-auto pe-3">
+										종료일&nbsp;&nbsp;<input type="date" class="acEndDate myBox" id = "acEndDate" value="${acEndDate}">
+									</div>
+									<div class="col-auto" id="AcMsgPrint">
+									</div>
 								</div>
 							</div>
-							<div class="row mb-3">
-								<div class="col-auto me-auto pe-3">
-									시작일&nbsp;&nbsp;<input type="date" class="acStartDate myBox" id = "acStartDate" value="${acStartDate}">
-								</div>
-								<div class="col-auto pe-3">
-									종료일&nbsp;&nbsp;<input type="date" class="acEndDate myBox" id = "acEndDate" value="${acEndDate}">
-								</div>
-								<div class="col-auto" id="AcMsgPrint">
-								</div>
+							<div class="col-auto ms-6">
+								<button class="btn btn-outline-primary myBtnReset" title="검색값 초기화">
+									<i class="icofont-eraser"></i>
+								</button>&nbsp;&nbsp;
+								<button class="btn btn-outline-primary myBtnRefresh" title="검색조건 변경">
+									<i class="icofont-refresh"></i>
+								</button>
 							</div>
-						</div>
-						<div class="col-auto ms-6">
-							<button class="btn btn-outline-primary myBtnReset" title="검색값 초기화">
-								<i class="icofont-eraser"></i>
-							</button>&nbsp;&nbsp;
-							<button class="btn btn-outline-primary myBtnRefresh" title="검색조건 변경">
-								<i class="icofont-refresh"></i>
-							</button>
 						</div>
 					</div>
 				</div>
-			</div>
-		
-			<div class="row mb-3">
-				<c:if test="${empty list}">
-					<div class="border bg-light mb-3 p-3 text-center">
-						거래내역이 없습니다.
-					</div>
-				</c:if>
-				
-				<c:if test="${not empty list}">
-					<div class="row ps-3">총 거래 : ${dataCount} 건</div>
-					<table class="table">
-						<thead class="table-light">
-							<tr>
-								<th class="col-2">종류</th>
-								<th class="col-2">거래대상</th>
-								<th class="col-3">내용</th>
-								<th class="col-1">입금</th>
-								<th class="col-1">출금</th>
-								<th class="col-2">거래일시</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="dto" items="${list}">
-								<tr>
-									<td class="col-2">
-										<c:if test="${dto.pgType=='product'}">
-											중고물품
-										</c:if>
-										<c:if test="${dto.pgType=='giftycon'}">
-											기프티콘
-										</c:if>
-									</td>
-									<td class="col-2 acYourpage" data-target-nick="${dto.userNickName}">
-										${dto.userNickName}
-									</td>
-									<td class="col-3">
-										<c:if test="${dto.bsType=='sell'}">
-											<span title="판매" style="color: blue"><i class="icofont-arrow-right"></i></span>
-										</c:if>
-										<c:if test="${dto.bsType=='buy'}">
-											<span title="구매" style="color: red"><i class="icofont-arrow-left"></i></span>
-										</c:if>
-										<span title="${dto.fullSubject}">${dto.subject}</span>
-									</td>
-									<td class="col-1">${dto.income}</td>
-									<td class="col-1">${dto.expenses}</td>
-									<td class="col-2">${dto.soldDate}</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table>
-				</c:if>
-			</div>
 			
-			<div class="row mb-3">
-				${paging}
+				<div class="row mb-3">
+					<c:if test="${empty list}">
+						<div class="border bg-light mb-3 p-3 text-center">
+							거래내역이 없습니다.
+						</div>
+					</c:if>
+					
+					<c:if test="${not empty list}">
+						<div class="row ps-3">총 거래 : ${dataCount} 건</div>
+						<table class="table">
+							<thead class="table-light">
+								<tr>
+									<th class="col-2">종류</th>
+									<th class="col-2">거래대상</th>
+									<th class="col-3">내용</th>
+									<th class="col-1">입금</th>
+									<th class="col-1">출금</th>
+									<th class="col-2">거래일시</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="dto" items="${list}">
+									<tr>
+										<td class="col-2">
+											<c:if test="${dto.pgType=='product'}">
+												중고물품
+											</c:if>
+											<c:if test="${dto.pgType=='giftycon'}">
+												기프티콘
+											</c:if>
+										</td>
+										<td class="col-2 acYourpage" data-target-nick="${dto.userNickName}">
+											${dto.userNickName}
+										</td>
+										<td class="col-3">
+											<c:if test="${dto.bsType=='sell'}">
+												<span title="판매" style="color: blue"><i class="icofont-arrow-right"></i></span>
+											</c:if>
+											<c:if test="${dto.bsType=='buy'}">
+												<span title="구매" style="color: red"><i class="icofont-arrow-left"></i></span>
+											</c:if>
+											<span title="${dto.fullSubject}">${dto.subject}</span>
+										</td>
+										<td class="col-1">${dto.income}</td>
+										<td class="col-1">${dto.expenses}</td>
+										<td class="col-2" title="${dto.fullSoldDate}">${dto.soldDate}</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</c:if>
+				</div>
+				
+				<div class="row mb-3">
+					${paging}
+				</div>
 			</div>
 		</div>
 	</div>

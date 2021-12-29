@@ -20,71 +20,77 @@ function sendOk() {
 }
 
 .map { width:700px; height:450px; border: 1px solid #777; }
+
+.my-font-size {
+	font-size: 14px;
+}
 </style>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<h3><i class="icofont-google-map"></i> 주소 설정 </h3>
-		</div>
-		
-		<div class="body-main">
-			<form name="addrForm" method="post">
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">
+			<div class="section-header">
+				<h3><i class="icofont-google-map"></i> 주소 설정 </h3>
+			</div>
 			
-				<div class="row mb-3">
-					<label class="col-sm-2 col-form-label" for="maZip">우편번호</label>
-					<div class="col-sm-5">
-			       		<div class="input-group">
-			           		<input type="text" name="maZip" id="maZip" class="form-control" placeholder="우편번호" value="${dto.maZip}" readonly="readonly">&nbsp;&nbsp;
-		           			<button class="btn btn-light" type="button" style="margin-left: 3px;" onclick="daumPostcode();">우편번호 검색</button>
-			           	</div>
-					</div>
-				</div>
+			<div class="container">
+				<form name="addrForm" method="post">
 				
-				<div class="row mb-3">
-			        <label class="col-sm-2 col-form-label" for="maAddr1">주소</label>
-			        <div class="col-sm-10">
-			       		<div>
-			           		<input type="text" name="maAddr1" id="maAddr1" class="form-control" placeholder="기본 주소" value="${dto.maAddr1}" readonly="readonly">
-			           	</div>
-			       		<div style="margin-top: 5px;">
-			       			<input type="text" name="maAddr2" id="maAddr2" class="form-control" placeholder="상세 주소" value="${dto.maAddr2}">
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label" for="maZip">우편번호</label>
+						<div class="col-sm-5">
+				       		<div class="input-group">
+				           		<input type="text" name="maZip" id="maZip" class="form-control" placeholder="우편번호" value="${dto.maZip}" readonly="readonly">&nbsp;&nbsp;
+			           			<button class="btn btn-light my-font-size" type="button" style="margin-left: 3px;" onclick="daumPostcode();">우편번호 검색</button>
+				           	</div>
 						</div>
 					</div>
-					<input type="hidden" name="area1" id="area1" value = "${dto.area1}">
-					<input type="hidden" name="area2" id="area2" value = "${dto.area2}">
-					<input type="hidden" name="area3" id="area3" value = "${dto.area3}">
-			    </div>
-			    
-			    <div class="row mb-3">
-			    	<div class="col-md-2">&nbsp;</div>
-			    	<div class="col-md-4">
-					    <button type="button" class="btn btn-light" onclick="mapSearch();">지도에서 찾기</button>&nbsp;&nbsp;
-					    <button type="button" class="btn btn-send btn-primary" onclick="sendOk();" style="display: none;">등록하기</button>
-			    	</div>
-			    	<div class="col-md-2 ms-auto">
-			    		<button type="button" class="btn btn-danger justify-content-md-end" onclick="location.href='${pageContext.request.contextPath}/mypage/main'">뒤로가기</button>
-			    	</div>
-			    </div>
-			    
-			    <div class="row">
-			    	<div class="col-auto me-auto">&nbsp;</div>
-			    	<div class="col-auto">
-					    <div id="map" class="map row mb-3 mx-auto"></div>
-			    	</div>
-			    </div>
-			    <div id="map2" class="map row mb-3" style="display: none;"></div>
-			    
-			    <input type="hidden" name="maLat" id = "maLat" value="${dto.maLat}">
-			    <input type="hidden" name="maLon" id = "maLon" value="${dto.maLon}">
-			    
-			    <input type="hidden" name="aLat" id = "aLat" value="${dto.aLat}">
-			    <input type="hidden" name="aLon" id = "aLon" value="${dto.aLon}">
-			    <input type="hidden" name="bcodeCut" id = "bcodeCut" value="${dto.bcodeCut}">
-			    <input type="hidden" name="bcodeSigungu" id = "bcodeSigungu" value="${dto.bcodeSigungu}">
-			    
-			   		    
-			</form>
+					
+					<div class="row mb-3">
+				        <label class="col-sm-2 col-form-label" for="maAddr1">주소</label>
+				        <div class="col-sm-10">
+				       		<div>
+				           		<input type="text" name="maAddr1" id="maAddr1" class="form-control" placeholder="기본 주소" value="${dto.maAddr1}" readonly="readonly">
+				           	</div>
+				       		<div style="margin-top: 5px;">
+				       			<input type="text" name="maAddr2" id="maAddr2" class="form-control" placeholder="상세 주소" value="${dto.maAddr2}">
+							</div>
+						</div>
+						<input type="hidden" name="area1" id="area1" value = "${dto.area1}">
+						<input type="hidden" name="area2" id="area2" value = "${dto.area2}">
+						<input type="hidden" name="area3" id="area3" value = "${dto.area3}">
+				    </div>
+				    
+				    <div class="row mb-3">
+				    	<div class="col-md-2">&nbsp;</div>
+				    	<div class="col-md-4">
+						    <button type="button" class="btn btn-light" onclick="mapSearch();">지도에서 찾기</button>&nbsp;&nbsp;
+						    <button type="button" class="btn btn-send btn-primary" onclick="sendOk();" style="display: none;">등록하기</button>
+				    	</div>
+				    	<div class="col-md-2 ms-auto">
+				    		<button type="button" class="btn btn-danger justify-content-md-end" onclick="location.href='${pageContext.request.contextPath}/mypage/main'">뒤로가기</button>
+				    	</div>
+				    </div>
+				    
+				    <div class="row">
+				    	<div class="col-auto me-auto">&nbsp;</div>
+				    	<div class="col-auto">
+						    <div id="map" class="map row mb-3 mx-auto"></div>
+				    	</div>
+				    </div>
+				    <div id="map2" class="map row mb-3" style="display: none;"></div>
+				    
+				    <input type="hidden" name="maLat" id = "maLat" value="${dto.maLat}">
+				    <input type="hidden" name="maLon" id = "maLon" value="${dto.maLon}">
+				    
+				    <input type="hidden" name="aLat" id = "aLat" value="${dto.aLat}">
+				    <input type="hidden" name="aLon" id = "aLon" value="${dto.aLon}">
+				    <input type="hidden" name="bcodeCut" id = "bcodeCut" value="${dto.bcodeCut}">
+				    <input type="hidden" name="bcodeSigungu" id = "bcodeSigungu" value="${dto.bcodeSigungu}">
+				    
+				   		    
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

@@ -12,6 +12,7 @@ public class Account {
 	private String subject;
 	private String fullSubject;
 	private String soldDate;
+	private String fullSoldDate;
 	private String sellerId;
 	private String bsType;
 	
@@ -80,6 +81,12 @@ public class Account {
 	}
 	public void setSoldDate(String soldDate) {
 		this.soldDate = soldDate;
+	}
+	public String getFullSoldDate() {
+		return fullSoldDate;
+	}
+	public void setFullSoldDate(String fullSoldDate) {
+		this.fullSoldDate = fullSoldDate;
 	}
 	public String getSellerId() {
 		return sellerId;

@@ -513,4 +513,26 @@ public class MypageServiceImpl implements MypageService {
 		return list;
 	}
 
+	@Override
+	public List<RepMemberReason> listRepMemReason() throws Exception {
+		List<RepMemberReason> list = null;
+		
+		try {
+			list = dao.selectList("mypage.listRepMemReason");
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+				
+		return list;
+	}
+
+	@Override
+	public void insertReportMember(Map<String,Object> map) throws Exception {
+		try {
+			dao.insertData("mypage.insertReportMember",map);
+		} catch (Exception e) {
+			e.printStackTrace(); throw e;
+		}
+	}
+
 }

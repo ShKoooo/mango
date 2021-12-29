@@ -153,91 +153,96 @@ $(function() {
 });
 </script>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<div class="row">
-				<div class="col-auto me-auto">
-					<h3><i class="bi bi-app"></i> ${youNick} 님과의 쪽지 </h3>
-				</div>
-				<div class="col-auto">
-					<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${youNick}'"><i class="icofont-refresh"></i></button>
-					&nbsp;
-					<c:if test="${gomain=='true'}">
-						<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-arrow-left"></i></button>
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">	
+			<div class="section-header">
+				<div class="row">
+					<div class="col-auto me-auto">
+						<h3> ${youNick} 님과의 쪽지 </h3>
+					</div>
+					<div class="col-auto">
+						<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/notenote?youNick=${youNick}'"><i class="icofont-refresh"></i></button>
 						&nbsp;
-					</c:if>
-					<button type="button" title="전체삭제" class="btn btn-outline-danger delete-user-msg" data-youId="${youId}"><i class="icofont-bin"></i></button>
+						<c:if test="${gomain=='true'}">
+							<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-arrow-left"></i></button>
+							&nbsp;
+						</c:if>
+						<button type="button" title="전체삭제" class="btn btn-outline-danger delete-user-msg" data-youId="${youId}"><i class="icofont-bin"></i></button>
+					</div>
 				</div>
 			</div>
-		</div>
-		
-		<div class="body-main">
-			<div class="row mb-5 px-5">
-				<form name="sendForm" method="post" class="form-floating">
-					<textarea class="form-control" name="content" style="height: 120px; resize: none;"></textarea>
-					<br>
-					<div class="row">
-						<div class="col text-right">
-							<button title="전송" class="btn btn-primary btnSend text-center" type="button" id="sendBtn">
-								<i class="icofont-paper-plane"></i>
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-		
-			<div class="row ms-3">
-				<c:if test="${empty list}">
-					<div class="border bg-light mb-3 p-3 text-center">
-						쪽지가 없습니다. ${youNick} 님께 쪽지를 보내보세요!
-					</div>
-				</c:if>
-				
-				<c:if test="${not empty list}">
-					<c:forEach var="dto" items="${list}">
-						<div class="row mb-2">
-							<div class="row mb-3">
-								<c:if test="${dto.sendId == sessionScope.member.userId}">
-									<div class="col-auto me-auto">&nbsp;</div>
-									<div class="col-auto p-3 mybox-mango mybox-sender-color">
-										<p class="text-right">
-											${dto.noteRegDate}&nbsp;(${dto.timeMsg})
-										</p>
-										<hr>
-										${dto.noteContent}
-										<p class="text-right mb-0 delete-one-msg"
-											data-notenum="${dto.noteNum}"
-											data-sender="${dto.sendId}"
-											data-receiver="${dto.receiveId}">
-											<i class="icofont-close"></i>
-										</p>
-									</div>
-									<c:if test="${empty dto.noteReadDate}">
-										<p class="text-right mb-0">읽지않음</p>
-									</c:if>
-								</c:if>
-								<c:if test="${dto.receiveId == sessionScope.member.userId}">
-									<div class="col-auto me-auto p-3 mybox-mango mybox-receiver-color">
-										<p class="text-right">
-											${dto.noteRegDate}&nbsp;(${dto.timeMsg})
-										</p>
-										<hr>
-										${dto.noteContent}
-										<p class="text-right mb-0 delete-one-msg"
-											data-notenum="${dto.noteNum}"
-											data-sender="${dto.sendId}"
-											data-receiver="${dto.receiveId}">
-											<i class="icofont-close"></i>
-										</p>
-									</div>
-									<div class="col-auto">&nbsp;</div>
-								</c:if>
+			
+			<div class="container">
+				<div class="row mb-5 px-5">
+					<form name="sendForm" method="post" class="form-floating">
+						<textarea class="form-control" name="content" style="height: 120px; resize: none;"></textarea>
+						<br>
+						<div class="row">
+							<div class="col text-right">
+								<button title="전송" class="btn btn-primary btnSend text-center" type="button" id="sendBtn">
+									<i class="icofont-paper-plane"></i>
+								</button>
 							</div>
 						</div>
-					</c:forEach>
-				</c:if>
+					</form>
+				</div>
+			
+				<div class="row ms-3">
+					<c:if test="${empty list}">
+						<div class="border bg-light mb-3 p-3 text-center">
+							쪽지가 없습니다. ${youNick} 님께 쪽지를 보내보세요!
+						</div>
+					</c:if>
+					
+					<c:if test="${not empty list}">
+						<c:forEach var="dto" items="${list}">
+							<div class="row mb-2">
+								<div class="row mb-3">
+									<c:if test="${dto.sendId == sessionScope.member.userId}">
+										<div class="col-auto me-auto">&nbsp;</div>
+										<div class="col-auto p-3 mybox-mango mybox-sender-color">
+											<p class="text-right">
+												${dto.noteRegDate}&nbsp;(${dto.timeMsg})
+											</p>
+											<hr>
+											${dto.noteContent}
+											<p class="text-right mb-0 delete-one-msg"
+												data-notenum="${dto.noteNum}"
+												data-sender="${dto.sendId}"
+												data-receiver="${dto.receiveId}">
+												<i class="icofont-close"></i>
+											</p>
+										</div>
+										<c:if test="${empty dto.noteReadDate}">
+											<p class="text-right mb-0">읽지않음</p>
+										</c:if>
+									</c:if>
+									<c:if test="${dto.receiveId == sessionScope.member.userId}">
+										<div class="col-auto me-auto p-3 mybox-mango mybox-receiver-color">
+											<p class="text-right">
+												${dto.noteRegDate}&nbsp;(${dto.timeMsg})
+											</p>
+											<hr>
+											${dto.noteContent}
+											<p class="text-right mb-0 delete-one-msg"
+												data-notenum="${dto.noteNum}"
+												data-sender="${dto.sendId}"
+												data-receiver="${dto.receiveId}">
+												<i class="icofont-close"></i>
+											</p>
+										</div>
+										<div class="col-auto">&nbsp;</div>
+									</c:if>
+								</div>
+							</div>
+						</c:forEach>
+					</c:if>
+				</div>
 			</div>
 		</div>
+			
+		
+		
 	</div>
 </div>

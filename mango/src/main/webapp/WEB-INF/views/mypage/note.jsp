@@ -154,92 +154,96 @@ $(function() {
 });
 </script>
 
-<div class="container">
-	<div class="body-container">	
-		<div class="body-title">
-			<div class="row">
-				<div class="col-auto me-auto">
-					<h3><i class="bi bi-app"></i> 쪽지 </h3>
-				</div>
-				<div class="col-auto">
-					<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-refresh"></i></button>
-					&nbsp;
-					<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/main'"><i class="icofont-arrow-left"></i></button>
-					&nbsp;
-					<button type="button" title="전체삭제" class="btn btn-outline-danger delete-all-msg"><i class="icofont-bin"></i></button>
+<div class="content-wrapper">
+	<div class="body-container">
+		<div class="inner-container container">
+			<div class="section-header">
+				<div class="row">
+					<div class="col-auto me-auto">
+						<h3> 쪽지 </h3>
+					</div>
+					<div class="col-auto">
+						<button type="button" title="새로고침" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/note'"><i class="icofont-refresh"></i></button>
+						&nbsp;
+						<button type="button" title="뒤로가기" class="btn btn-outline-primary" onclick="location.href='${pageContext.request.contextPath}/mypage/main'"><i class="icofont-arrow-left"></i></button>
+						&nbsp;
+						<button type="button" title="전체삭제" class="btn btn-outline-danger delete-all-msg"><i class="icofont-bin"></i></button>
+					</div>
 				</div>
 			</div>
+			
+			<div class="container">
+				<div class="row mb-5 px-5">
+					<form name="sendForm" method="post" class="form-floating">
+						<textarea class="form-control" name="content" style="height: 120px; resize: none;"></textarea>
+						<br>
+						<div class="row">
+							<div class="col-md-6">
+								<input type="text" name="targetNickName" class="bosTF" placeholder="닉네임">
+							</div>
+							<div class="col-md-6 text-right">
+								<button title="전송" class="btn btn-primary btnSend" type="button" id="sendBtn">
+									<i class="icofont-paper-plane"></i>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				
+				<c:if test="${empty noteFriendList}">
+					<div class="border bg-light mb-3 p-3 text-center">
+						쪽지가 없습니다.
+					</div>
+				</c:if>
+				
+				<c:if test="${not empty noteFriendList}">
+					<div class="row mb-3 mx-3">
+						<table class="table">
+							<thead class="table-light">
+								<tr>
+									<th class="col-3">닉네임</th>
+									<th class="col-5">내용</th>
+									<th class="col-2">최근채팅시간</th>
+									<th class="col-1">&nbsp;</th>
+								</tr>
+							</thead>
+							<tbody>
+								<c:forEach var="dto" items="${noteFriendList}">
+									<tr>
+										<td class="col-3">${dto.youNick}</td>
+										<td class="col-5">
+											<a href="${pageContext.request.contextPath}/mypage/notenote?youNick=${dto.youNick}&gomain=true">
+												<c:if test="${dto.youId==dto.sendId}">
+													<i class="icofont-inbox"></i>&nbsp;${dto.noteContent}
+												</c:if>
+												<c:if test="${dto.youId==dto.receiveId}">
+													<i class="icofont-paper-plane"></i>&nbsp;${dto.noteContent}
+												</c:if>
+											</a>
+										</td>
+										<td class="col-2">${dto.timeMsg}</td>
+										<td class="col-1 delete-one-msg text-center" 
+											data-youNick='${dto.youNick}'
+											data-youId='${dto.youId}'>
+											<i class="icofont-close"></i>
+										</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+					</div>
+				</c:if>
+				
+				<div class="row">
+					<div class="col-md-12 text-right">
+						<button class="btn btn-danger" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/mypage/main'">
+							뒤로가기
+						</button>
+					</div>
+				</div>
+			</div>	
 		</div>
 		
-		<div class="body-main">
-			<div class="row mb-5 px-5">
-				<form name="sendForm" method="post" class="form-floating">
-					<textarea class="form-control" name="content" style="height: 120px; resize: none;"></textarea>
-					<br>
-					<div class="row">
-						<div class="col-md-6">
-							<input type="text" name="targetNickName" class="bosTF" placeholder="닉네임">
-						</div>
-						<div class="col-md-6 text-right">
-							<button title="전송" class="btn btn-primary btnSend" type="button" id="sendBtn">
-								<i class="icofont-paper-plane"></i>
-							</button>
-						</div>
-					</div>
-				</form>
-			</div>
-			
-			<c:if test="${empty noteFriendList}">
-				<div class="border bg-light mb-3 p-3 text-center">
-					쪽지가 없습니다.
-				</div>
-			</c:if>
-			
-			<c:if test="${not empty noteFriendList}">
-				<div class="row mb-3 mx-3">
-					<table class="table">
-						<thead class="table-light">
-							<tr>
-								<th class="col-3">닉네임</th>
-								<th class="col-5">내용</th>
-								<th class="col-2">최근채팅시간</th>
-								<th class="col-1">&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="dto" items="${noteFriendList}">
-								<tr>
-									<td class="col-3">${dto.youNick}</td>
-									<td class="col-5">
-										<a href="${pageContext.request.contextPath}/mypage/notenote?youNick=${dto.youNick}&gomain=true">
-											<c:if test="${dto.youId==dto.sendId}">
-												<i class="icofont-inbox"></i>&nbsp;${dto.noteContent}
-											</c:if>
-											<c:if test="${dto.youId==dto.receiveId}">
-												<i class="icofont-paper-plane"></i>&nbsp;${dto.noteContent}
-											</c:if>
-										</a>
-									</td>
-									<td class="col-2">${dto.timeMsg}</td>
-									<td class="col-1 delete-one-msg text-center" 
-										data-youNick='${dto.youNick}'
-										data-youId='${dto.youId}'>
-										<i class="icofont-close"></i>
-									</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table>
-				</div>
-			</c:if>
-			
-			<div class="row">
-				<div class="col-md-12 text-right">
-					<button class="btn btn-danger" type="button" id="addrBtn" onclick="location.href='${pageContext.request.contextPath}/mypage/main'">
-						뒤로가기
-					</button>
-				</div>
-			</div>
-		</div>
+		
 	</div>
 </div>

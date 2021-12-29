@@ -56,4 +56,7 @@ public interface MypageService {
 	
 	public int countAccount(Map<String,Object> map) throws Exception;
 	public List<Account> listAccount(Map<String,Object> map) throws Exception;
+	
+	public List<RepMemberReason> listRepMemReason() throws Exception;
+	public void insertReportMember(Map<String,Object> map) throws Exception;
 }
