@@ -13,10 +13,10 @@
 	<ul>
 		<li><span>Navigation</span></li>
 		<li><a class="active">Home</a></li>
-		<li><a>회원관리</a></li>
-		<li><a>지역명소관리</a></li>
-		<li><a>커뮤니티관리</a></li>
-		<li><a>스터디관리</a></li>
+		<li><a>회원 관리</a></li>
+		<li><a>중고물품 관리</a></li>
+		<li><a>기프티콘 관리</a></li>
+		<li><a>동네커뮤니티 관리</a></li>
 		<li><a>고객센터관리</a></li>
 		<li><span>Other</span></li>
 		<c:choose>

@@ -92,15 +92,15 @@ nav ul a.active {
 nav ul a:before {
   font: normal 16px IcoFont;
   top: 15px;
-  left: 18px;
+  left: 14px;
 }
 
 /* 메뉴 아이콛 */
 nav ul li:nth-child(2) a:before { content: '\ef47'; }
-nav ul li:nth-child(3) a:before { content: '\ed0a'; }
-nav ul li:nth-child(4) a:before { content: '\ee46'; }
-nav ul li:nth-child(5) a:before { content: '\ecf4'; }
-nav ul li:nth-child(6) a:before { content: '\ead2'; }
+nav ul li:nth-child(3) a:before { content: '\ed0d'; }
+nav ul li:nth-child(4) a:before { content: '\ef3c'; }
+nav ul li:nth-child(5) a:before { content: '\ec8a'; }
+nav ul li:nth-child(6) a:before { content: '\ecf9'; }
 nav ul li:nth-child(7) a:before { content: '\f002'; }
 
 nav ul li:nth-child(9) a:before { content: '\e970'; }
