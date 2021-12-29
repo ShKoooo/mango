@@ -1,6 +1,5 @@
 package com.sp.mango.village.lost;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -123,9 +122,11 @@ public class VillageLostController {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
 			n++;
+			
+			Map<String, Object> rplyMap = new HashMap<String, Object>();
+			rplyMap.put("vNum", dto.getvNum());
+			dto.setReplyCount(service.replyCount(rplyMap));
 		}
-		
-		
 		
 		String query = "";
 		String listUrl = cp + "/village/lost/list";
@@ -171,14 +172,12 @@ public class VillageLostController {
 	
 	@RequestMapping(value = "village/lost/write", method = RequestMethod.POST)
 	public String writeSubmit(VillageLost dto, HttpSession session) throws Exception {
-		String root = session.getServletContext().getRealPath("/");
-		String pathname = root + "uploads" + File.separator + "lost";
 		
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
 			dto.setUserId(info.getUserId());
-			service.insertBoard(dto, pathname);
+			service.insertBoard(dto);
 		} catch (Exception e) {
 		}
 		

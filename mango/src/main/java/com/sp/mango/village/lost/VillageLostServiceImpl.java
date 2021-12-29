@@ -12,31 +12,18 @@ import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
-import com.sp.mango.village.lost.VillageLost;
 
 @Service("village.lost.villageLostService")
 public class VillageLostServiceImpl implements VillageLostService {
 	
 	@Autowired
 	private CommonDAO dao;
-	@Autowired
-	private FileManager fileManager;
 	
 	@Override
-	public void insertBoard(VillageLost dto, String pathname) throws Exception {
+	public void insertBoard(VillageLost dto) throws Exception {
 		try {
 			dao.insertData("lost.insertBoard", dto);
 
-			if(!dto.getSelectFile().isEmpty()) {
-				String saveFilename = fileManager.doFileUpload(dto.getSelectFile(), pathname);
-				
-				if(saveFilename != null) {
-					dto.setVimgFilename(saveFilename);
-					insertThumbnail(dto);
-				}
-			} else {
-				
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;

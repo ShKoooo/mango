@@ -9,7 +9,7 @@ import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
 
 public interface VillageLostService {
-	public void insertBoard(VillageLost dto, String pathname) throws Exception;
+	public void insertBoard(VillageLost dto) throws Exception;
 	public List<VillageLost> memberListBoard(Map<String, Object> map);
 	public int dataCount(Map<String, Object> map);
 	public VillageLost readBoard(int vNum);
