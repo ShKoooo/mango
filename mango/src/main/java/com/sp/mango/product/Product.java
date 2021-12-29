@@ -51,6 +51,11 @@ public class Product {
 	private String noteRegDate; // 쪽지 보낸 날짜
 	private String isSendDelete; // 보낸 사람 삭제 여부
 	
+	private int myAcNum;
+	private String target_id;
+	private int income;
+	private int expenses;
+	
 	public int getpNum() {
 		return pNum;
 	}
@@ -261,5 +266,31 @@ public class Product {
 	public void setIsSendDelete(String isSendDelete) {
 		this.isSendDelete = isSendDelete;
 	}
+	
+	public int getMyAcNum() {
+		return myAcNum;
+	}
+	public void setMyAcNum(int myAcNum) {
+		this.myAcNum = myAcNum;
+	}
+	public String getTarget_id() {
+		return target_id;
+	}
+	public void setTarget_id(String target_id) {
+		this.target_id = target_id;
+	}
+	public int getIncome() {
+		return income;
+	}
+	public void setIncome(int income) {
+		this.income = income;
+	}
+	public int getExpenses() {
+		return expenses;
+	}
+	public void setExpenses(int expenses) {
+		this.expenses = expenses;
+	}
+	
 	
 }

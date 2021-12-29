@@ -104,13 +104,25 @@ function sendReport() {
 }
 
 $(document).ready(function(){
-	// 신고 모달의 close를 눌렀을 시, 내용 초기화
+	// 신고 모달, 리뷰요청 모달의 close를 눌렀을 시, 내용 초기화
 	$("#closeBtn").click(function(){
 		$("#pReportF").each(function(){
 			this.reset();
 		});
 	});
 });
+
+function sendReqReview() {
+	if(confirm("리뷰 요청 쪽지를 보내시겠습니까??")) {
+		var f = document.pReqReviewForm;
+		var query = "pNum=${dto.pNum}&page=${page}&pcNum=${pcNum}"
+		
+		f.action = "${pageContext.request.contextPath}/product/reviewReq?" + query;
+	    f.submit();
+	    
+	    alert("리뷰 요청 쪽지를 전송하였습니다!");
+	}
+}
 
 function updateDate() {
 	if(confirm("게시글을 끌어올리겠습니까? ")) {
@@ -305,43 +317,6 @@ function clickInfo() {
 									</div>
 								</c:when>
 							</c:choose>
-							
-								<!-- 리뷰 요청 -->
-									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">리뷰 요청하기</button>
-									
-									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-									  <div class="modal-dialog">
-									    <div class="modal-content">
-									      <div class="modal-header">
-									        <h5 class="modal-title" id="exampleModalLabel">리뷰 요청하기</h5>
-									        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-									      </div>
-									      <form name="pReportForm" id="pReportF" method="post">
-									      <div class="modal-body">
-									          <div class="mb-3">
-									            <label for="recipient-name" class="col-form-label">신고 항목</label><br>
-									            <!--  
-									            <input type="text" class="form-control" id="recipient-name">
-									            -->
-									            <c:forEach var="vo" items="${listPreport}">							
-													<input type="radio" name="rpReasonNum" value="${vo.rpReasonNum}">${vo.rpReasonName}<br>
-												</c:forEach>
-									          </div>
-									          <div class="mb-3">
-									            <label for="message-text" class="col-form-label">자세한 사유</label>
-									            <textarea class="form-control" id="message-text" name="repPrdContent"></textarea>
-									          </div>
-									      </div>
-									      <div class="modal-footer">
-									        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-									        <button type="button" class="repbtn btn btn-primary" onclick="sendReport();">Send</button>
-									      </div>
-									      </form>
-									    </div>
-									  </div>
-									</div>
-									
-					    	
 							<c:choose>
 					    		<c:when test="${sessionScope.member.userId==dto.userId || sessionScope.member.membership>50}">
 					    			<button type="button" class="btn btn-light" onclick="deleteProduct();">삭제</button>
@@ -353,6 +328,43 @@ function clickInfo() {
 				    		</c:choose>
 				    	</c:if>
 				    		
+				    	<c:if test="${! empty sessionScope.member && sessionScope.member.userId==dto.userId}">
+							<!-- 리뷰 요청 -->
+								<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">리뷰 요청하기</button>
+								
+								<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+								  <div class="modal-dialog">
+								    <div class="modal-content">
+								      <div class="modal-header">
+								        <h5 class="modal-title" id="exampleModalLabel">리뷰 요청하기</h5>
+								        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								      </div>
+								      <form name="pReqReviewForm" id="pReportF" method="post">
+								      <div class="modal-body">
+								          <div class="mb-3">
+								            <label for="recipient-name" class="col-form-label">구매자 선택</label><span style="color: gray; font-size: 13px;"> (최근 채팅을 주고받은 이웃 중 구매자를 선택해주세요!)</span>
+								            <br>
+								            <select name="target_id">
+								            	<option value="">선택</option>
+									            <c:forEach var="dto" items="${receiveNoteList}">
+									            	<option value="${dto.sendId}">${dto.userNickName}</option>
+												</c:forEach>
+								            </select>
+								          </div>
+								          <div class="mb-3">
+								            <label for="message-text" class="col-form-label">판매 금액</label><span style="color: gray; font-size: 13px;"> (금액 변동시 직접 기입해주세요.)</span>
+								           	<input type="text" name="income" class="form-control" id="recipient-name" value="${dto.pPrice}">
+								          </div>
+								      </div>
+								      <div class="modal-footer">
+								        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+								        <button type="button" class="repbtn btn btn-primary" onclick="sendReqReview();">Send</button>
+								      </div>
+								      </form>
+								    </div>
+								  </div>
+								</div>
+							</c:if>	
 				    		
 				    			
 	                        <span style="float: right;">

@@ -330,7 +330,7 @@
 
 	<!-- 리뷰 요청을 위한 받은 쪽지 리스트 -->
 	<select id="receiveNoteList" parameterType="String" resultType="com.sp.mango.product.Product">
-		SELECT DISTINCT sendId, m.userNickName, noteRegDate, isSendDelete
+		SELECT DISTINCT sendId, m.userNickName, isSendDelete
 		FROM note n
 		JOIN member m ON n.sendId = m.userId
 		WHERE receiveId = #{userId}
@@ -342,21 +342,18 @@
 		        (isSendDelete != 'F' AND noteReadDate IS NULL)
 		        OR (isRecDelete != 'F')
 		        )
-		ORDER BY userNickName;
+		ORDER BY userNickName
 	</select>
 	
 	<!-- 리뷰요청 : 가계부 테이블 등록 -->
 	<insert id="insertMyAccount" parameterType="com.sp.mango.product.Product">
-		INSERT INTO myAccount(myAcNum, userId, target_id, income, expenses, itemName, pNum)
-		VALUES (#{myAccount_seq}, #{userId}, #{target_id}, #{income}, #{expenses}, #{itemName}, #{pNum})
-				
+	 	INSERT ALL
+         INTO myAccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, PNUM)
+         VALUES(myaccount_seq.NEXTVAL, #{userId}, #{target_id}, #{income}, 0, #{pNum})
+         INTO myAccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, PNUM)
+         VALUES(myaccount_seq.NEXTVAL+1, #{target_id}, #{userId}, 0, #{income}, #{pNum})
+         SELECT * FROM dual
 	</insert>
 
-
-	<!-- 관리자 : 카테고리 추가 -->
-	<insert id="insertPcategory" parameterType="map">
-		INSERT INTO pCategory(pcNum, pcName)
-		VALUES(pCategory_seq.NEXTVAL, #{pcName})
-	</insert>
 
 </mapper>

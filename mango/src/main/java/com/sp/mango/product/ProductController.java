@@ -299,12 +299,16 @@ public class ProductController {
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
 		List<ProductReport> listPreport = null;
+		List<Product> receiveNoteList = null;
 		
 		if(info != null) {
 			map.put("userId", info.getUserId());
 			userProductWished = service.userProductWished(map);
 			
+			String userId = info.getUserId();
+			
 			listPreport = service.listPreport();
+			receiveNoteList = service.receiveNoteList(userId);
 			
 			query += "&maLat=" + maLat + "&maLon=" + maLon + "&opt=" + opt;
 		}
@@ -335,7 +339,7 @@ public class ProductController {
 		model.addAttribute("searchKeyword", searchKeyword);
 		model.addAttribute("isPorular", isPorular);
 		model.addAttribute("userImgSaveFileName", userImgSaveFileName);
-		
+		model.addAttribute("receiveNoteList", receiveNoteList);
 		
 		return ".product.article";
 	}
@@ -631,19 +635,22 @@ public class ProductController {
 	
 	// 리뷰 요청하기
 	@RequestMapping(value = "reviewReq")
-	public String reviewReq(ProductReport dto,
+	public String reviewReq(Product dto,
 			@RequestParam int pNum,
 			@RequestParam String page,
 			@RequestParam int pcNum,
-			HttpSession session) throws Exception {
+			HttpSession session
+			) throws Exception {
+		
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
 			dto.setUserId(info.getUserId());
 			
-			service.insertPreport(dto);
+			
 		} catch (Exception e) {
 		}
+		
 		
 		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
 	}
