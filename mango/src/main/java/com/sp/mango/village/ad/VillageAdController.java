@@ -1,4 +1,4 @@
-package com.sp.mango.village.lost;
+package com.sp.mango.village.ad;
 
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -21,17 +21,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.member.MemberSessionInfo;
+import com.sp.mango.village.BusinessAddr;
 import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
 
-@Controller("village.lost.VillageLostController")
-@RequestMapping("/village/lost/*")
-public class VillageLostController {
+@Controller("village.ad.VillageAdController")
+@RequestMapping("/village/ad/*")
+public class VillageAdController {
 
 	@Autowired
-	private VillageLostService service;
+	private VillageAdService service;
 	@Autowired
 	private MyUtil myUtil;
 	
@@ -99,14 +100,14 @@ public class VillageLostController {
 		map.put("end", end);
 		
 		// 글 리스트
-		List<VillageLost> list = null;
+		List<VillageAd> list = null;
 		
 		if (info != null) {
 			list = service.memberListBoard(map);
 		}
 		
 		// ckeditor에서 첨부한 이미지를 썸네일로 불러오기
-		for(VillageLost dto : list) {
+		for(VillageAd dto : list) {
 			List<String> imgs = myUtil.getImgSrc(dto.getContent());
 			
 			if(imgs != null && imgs.size() > 0) {
@@ -118,7 +119,7 @@ public class VillageLostController {
 		
 		// 리스트 번호
 		int listNum, n = 0;
-		for (VillageLost dto : list) {
+		for (VillageAd dto : list) {
 			listNum = dataCount - (start + n - 1);
 			dto.setListNum(listNum);
 			n++;
@@ -129,18 +130,20 @@ public class VillageLostController {
 		}
 		
 		String query = "";
-		String listUrl = cp + "/village/lost/list";
-		String articleUrl = cp + "/village/lost/article?page="+current_page;
+		String listUrl = cp + "/village/ad/list";
+		String articleUrl = cp + "/village/ad/article?page="+current_page;
 		if (keyword.length()!=0) {
 			query = "condition="+condition+"&keyword="+URLEncoder.encode(keyword, "utf-8");
 		}
 		
 		if(query.length() != 0) {
-			listUrl = cp + "/village/lost/list?"+query;
-			articleUrl = cp + "/village/lost/article?page="+current_page + "&" + query;
+			listUrl = cp + "/village/ad/list?"+query;
+			articleUrl = cp + "/village/ad/article?page="+current_page + "&" + query;
 		}
 		
 		String paging = myUtil.paging(current_page, total_page, listUrl);
+		
+		BusinessAddr bsdto = service.businessAddr(info.getUserId());
 		
 		model.addAttribute("listMemberAddr", listMemberAddr);
 		model.addAttribute("memAddrCount", memAddrCount);
@@ -156,22 +159,29 @@ public class VillageLostController {
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("areaNum", areaNum);
 		
-		return ".village.lost.list";
+		model.addAttribute("businessAddr", bsdto);
+		
+		return ".village.ad.list";
 	}
 	
 	@RequestMapping(value = "write", method = RequestMethod.GET)
-	public String writeForm(Model model, HttpSession session) throws Exception {
+	public String writeForm(
+			Model model, HttpSession session) throws Exception {
+
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		List<MemberAddr> listMemberAddr = service.listMemberAddr(info.getUserId());
 		
-		model.addAttribute("mode", "write");
+		BusinessAddr bsdto = service.businessAddr(info.getUserId());
+
 		model.addAttribute("listMemberAddr", listMemberAddr);
+		model.addAttribute("mode", "write");
+		model.addAttribute("businessAddr", bsdto);
 		
-		return ".village.lost.write";
+		return ".village.ad.write";
 	}
 	
-	@RequestMapping(value = "village/lost/write", method = RequestMethod.POST)
-	public String writeSubmit(VillageLost dto, HttpSession session) throws Exception {
+	@RequestMapping(value = "village/ad/write", method = RequestMethod.POST)
+	public String writeSubmit(VillageAd dto, HttpSession session) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
@@ -181,7 +191,7 @@ public class VillageLostController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/lost/list";
+		return "redirect:/village/ad/list";
 	}
 	
 	@RequestMapping(value = "article", method = RequestMethod.GET)
@@ -203,9 +213,9 @@ public class VillageLostController {
 		
 		service.updateHitCount(vNum);
 		
-		VillageLost dto = service.readBoard(vNum);
+		VillageAd dto = service.readBoard(vNum);
 		if(dto == null) {
-			return "redirect:/village/lost/list?" + query;
+			return "redirect:/village/ad/list?" + query;
 		}
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -228,14 +238,17 @@ public class VillageLostController {
 			listVRreport = service.listVRreport();
 		}
 		
+		BusinessAddr bsdto = service.businessAddr(info.getUserId());
+		
 		model.addAttribute("dto", dto);
 
 		model.addAttribute("page", page);
 		model.addAttribute("query", query);
 		model.addAttribute("listVreport", listVreport);
 		model.addAttribute("listVRreport", listVRreport);
+		model.addAttribute("businessAddr", bsdto);
 		
-		return ".village.lost.article";
+		return ".village.ad.article";
 	}
 	
 	@RequestMapping(value = "update", method = RequestMethod.GET)
@@ -245,9 +258,9 @@ public class VillageLostController {
 			Model model) throws Exception {
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
-		VillageLost dto = service.readBoard(vNum);
+		VillageAd dto = service.readBoard(vNum);
 		if(dto == null || ! info.getUserId().equals(dto.getUserId())) {
-			return "redirect:/village/lost/list?page=" + page;
+			return "redirect:/village/ad/list?page=" + page;
 		}
 		
 		List<MemberAddr> listMemberAddr = service.listMemberAddr(info.getUserId());
@@ -257,11 +270,11 @@ public class VillageLostController {
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
 		
-		return ".village.lost.write";
+		return ".village.ad.write";
 	}
 
 	@RequestMapping(value = "update", method = RequestMethod.POST)
-	public String updateSubmit(VillageLost dto,
+	public String updateSubmit(VillageAd dto,
 			@RequestParam String page,
 			HttpSession session) throws Exception {
 		
@@ -273,7 +286,7 @@ public class VillageLostController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/lost/list?page="+page;
+		return "redirect:/village/ad/list?page="+page;
 	}
 	
 	@RequestMapping(value = "delete")
@@ -292,7 +305,7 @@ public class VillageLostController {
 		
 		service.deleteBoard(vNum, info.getUserId(), info.getMembership());
 		
-		return "redirect:/village/lost/list?"+query;
+		return "redirect:/village/ad/list?"+query;
 	}
 	
 	@RequestMapping(value = "insertBoardLike", method = RequestMethod.POST)
@@ -366,7 +379,7 @@ public class VillageLostController {
 		model.addAttribute("total_page", total_page);
 		model.addAttribute("paging", paging);
 		
-		return "village/lost/listReply";
+		return "village/ad/listReply";
 	}
 	
 	@RequestMapping(value = "insertReply", method = RequestMethod.POST)
@@ -412,7 +425,7 @@ public class VillageLostController {
 		}
 		
 		model.addAttribute("listReplyAnswer", listReplyAnswer);
-		return "village/lost/listReplyAnswer";
+		return "village/ad/listReplyAnswer";
 	}
 	
 	@RequestMapping(value = "countReplyAnswer")
@@ -484,7 +497,7 @@ public class VillageLostController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/lost/article?page="+page+"&vNum="+vNum;
+		return "redirect:/village/ad/article?page="+page+"&vNum="+vNum;
 	}
 	
 	@RequestMapping(value = "reportReply")
@@ -501,6 +514,6 @@ public class VillageLostController {
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/village/lost/article?page="+page+"&vNum="+vNum;
+		return "redirect:/village/ad/article?page="+page+"&vNum="+vNum;
 	}
 }

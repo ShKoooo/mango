@@ -1,4 +1,4 @@
-package com.sp.mango.village.lost;
+package com.sp.mango.village.ad;
 
 import java.util.List;
 import java.util.Map;
@@ -7,22 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
+import com.sp.mango.village.BusinessAddr;
 import com.sp.mango.village.MemberAddr;
 import com.sp.mango.village.Reply;
 import com.sp.mango.village.ReplyReport;
 import com.sp.mango.village.VillageReport;
 
-@Service("village.lost.villageLostService")
-public class VillageLostServiceImpl implements VillageLostService {
+@Service("village.ad.villageAdService")
+public class VillageAdServiceImpl implements VillageAdService {
 	
 	@Autowired
 	private CommonDAO dao;
 	
 	@Override
-	public void insertBoard(VillageLost dto) throws Exception {
+	public void insertBoard(VillageAd dto) throws Exception {
 		try {
-			dao.insertData("lost.insertBoard", dto);
-
+			dao.insertData("ad.insertBoard", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -30,11 +30,11 @@ public class VillageLostServiceImpl implements VillageLostService {
 		
 	}
 	@Override
-	public List<VillageLost> memberListBoard(Map<String, Object> map) {
-		List<VillageLost> memberList = null;
+	public List<VillageAd> memberListBoard(Map<String, Object> map) {
+		List<VillageAd> memberList = null;
 		
 		try {
-			memberList = dao.selectList("lost.memberListBoard", map);
+			memberList = dao.selectList("ad.memberListBoard", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -46,18 +46,18 @@ public class VillageLostServiceImpl implements VillageLostService {
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("lost.dataCount", map);
+			result = dao.selectOne("ad.dataCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 	@Override
-	public VillageLost readBoard(int vNum) {
-		VillageLost dto = null;
+	public VillageAd readBoard(int vNum) {
+		VillageAd dto = null;
 		
 		try {
-			dto = dao.selectOne("lost.readBoard", vNum);
+			dto = dao.selectOne("ad.readBoard", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +67,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void updateHitCount(int vNum) throws Exception {
 		try {
-			dao.updateData("lost.updateHitCount", vNum);
+			dao.updateData("ad.updateHitCount", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -75,9 +75,9 @@ public class VillageLostServiceImpl implements VillageLostService {
 		
 	}
 	@Override
-	public void updateBoard(VillageLost dto) throws Exception {
+	public void updateBoard(VillageAd dto) throws Exception {
 		try {
-			dao.updateData("lost.updateBoard", dto);
+			dao.updateData("ad.updateBoard", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -86,11 +86,11 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void deleteBoard(int vNum, String userId, int membership) throws Exception {
 		try {
-			VillageLost dto = readBoard(vNum);
+			VillageAd dto = readBoard(vNum);
 			if(dto == null || (membership < 51 && ! dto.getUserId().equals(userId))) {
 				return;
 			}
-			dao.deleteData("lost.deleteBoard", vNum);
+			dao.deleteData("ad.deleteBoard", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,7 +101,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		List<MemberAddr> listMemberAddr = null;
 		
 		try {
-			listMemberAddr = dao.selectList("lost.listMemberAddr", userId);
+			listMemberAddr = dao.selectList("ad.listMemberAddr", userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -112,7 +112,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("lost.memAddrCount", userId);
+			result = dao.selectOne("ad.memAddrCount", userId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -121,7 +121,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void insertBoardLike(Map<String, Object> map) throws Exception {
 		try {
-			dao.insertData("lost.insertBoardLike", map);
+			dao.insertData("ad.insertBoardLike", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -130,7 +130,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void deleteBoardLike(Map<String, Object> map) throws Exception {
 		try {
-			dao.deleteData("lost.deleteBoardLike", map);
+			dao.deleteData("ad.deleteBoardLike", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -141,7 +141,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("lost.boardLikeCount", vNum);
+			result = dao.selectOne("ad.boardLikeCount", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -152,7 +152,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		boolean result = false;
 		
 		try {
-			VillageLost dto = dao.selectOne("lost.userBoardLiked", map);
+			VillageAd dto = dao.selectOne("ad.userBoardLiked", map);
 			if(dto != null) {
 				result = true;
 			}
@@ -164,7 +164,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void insertReply(Reply dto) throws Exception {
 		try {
-			dao.insertData("lost.insertReply", dto);
+			dao.insertData("ad.insertReply", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -175,7 +175,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		List<Reply> list = null;
 		
 		try {
-			list = dao.selectList("lost.listReply", map);
+			list = dao.selectList("ad.listReply", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -186,7 +186,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("lost.replyCount", map);
+			result = dao.selectOne("ad.replyCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -195,7 +195,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void deleteReply(Map<String, Object> map) throws Exception {
 		try {
-			dao.deleteData("lost.deleteReply", map);
+			dao.deleteData("ad.deleteReply", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -206,7 +206,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		List<Reply> list = null;
 		
 		try {
-			list = dao.selectList("lost.listReplyAnswer", vrAnswer);
+			list = dao.selectList("ad.listReplyAnswer", vrAnswer);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -217,7 +217,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		int result = 0;
 		
 		try {
-			result = dao.selectOne("lost.replyAnswerCount", vrAnswer);
+			result = dao.selectOne("ad.replyAnswerCount", vrAnswer);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -226,7 +226,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void insertReplyLike(Map<String, Object> map) throws Exception {
 		try {
-			dao.insertData("lost.insertReplyLike", map);
+			dao.insertData("ad.insertReplyLike", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -237,7 +237,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		Map<String, Object> countMap = null;
 		
 		try {
-			countMap = dao.selectOne("lost.replyLikeCount", map);
+			countMap = dao.selectOne("ad.replyLikeCount", map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -248,7 +248,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		List<VillageReport> listVreport = null;
 		
 		try {
-			listVreport = dao.selectList("lost.listVreport");
+			listVreport = dao.selectList("ad.listVreport");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -257,7 +257,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void insertVreport(VillageReport dto) throws Exception {
 		try {
-			dao.insertData("lost.insertVreport", dto);
+			dao.insertData("ad.insertVreport", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -269,7 +269,7 @@ public class VillageLostServiceImpl implements VillageLostService {
 		List<ReplyReport> listVRreport = null;
 		
 		try {
-			listVRreport = dao.selectList("lost.listVRreport");
+			listVRreport = dao.selectList("ad.listVRreport");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -278,16 +278,16 @@ public class VillageLostServiceImpl implements VillageLostService {
 	@Override
 	public void insertVRreport(ReplyReport dto) throws Exception {
 		try {
-			dao.insertData("lost.insertVRreport", dto);
+			dao.insertData("ad.insertVRreport", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
 		}
 	}
 	@Override
-	public void insertThumbnail(VillageLost dto) throws Exception {
+	public void insertThumbnail(VillageAd dto) throws Exception {
 		try {
-			dao.insertData("lost.insertThumbnail", dto);
+			dao.insertData("ad.insertThumbnail", dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -295,15 +295,26 @@ public class VillageLostServiceImpl implements VillageLostService {
 	}
 	
 	@Override
-	public List<VillageLost> listThumbnail(int vNum) {
-		List<VillageLost> listThumbnail = null;
+	public List<VillageAd> listThumbnail(int vNum) {
+		List<VillageAd> listThumbnail = null;
 		
 		try {
-			listThumbnail = dao.selectList("lost.listThumbnail", vNum);
+			listThumbnail = dao.selectList("ad.listThumbnail", vNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return listThumbnail;
+	}
+	@Override
+	public BusinessAddr businessAddr(String userId) {
+		BusinessAddr dto = null;
+		
+		try {
+			dto = dao.selectOne("ad.businessAddr", userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dto;
 	}
 	
 
