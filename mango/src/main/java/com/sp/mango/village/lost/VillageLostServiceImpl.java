@@ -284,27 +284,5 @@ public class VillageLostServiceImpl implements VillageLostService {
 			throw e;
 		}
 	}
-	@Override
-	public void insertThumbnail(VillageLost dto) throws Exception {
-		try {
-			dao.insertData("lost.insertThumbnail", dto);
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-		}
-	}
-	
-	@Override
-	public List<VillageLost> listThumbnail(int vNum) {
-		List<VillageLost> listThumbnail = null;
-		
-		try {
-			listThumbnail = dao.selectList("lost.listThumbnail", vNum);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return listThumbnail;
-	}
-	
 
 }

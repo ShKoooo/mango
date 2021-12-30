@@ -1,6 +1,6 @@
-package com.sp.mango.village.lost;
+package com.sp.mango.village.forone;
 
-public class VillageLost {
+public class VillageForone {
 	private int listNum;
 	
 	private int vNum;

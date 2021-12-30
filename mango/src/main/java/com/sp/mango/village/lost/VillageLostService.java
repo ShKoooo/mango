@@ -41,6 +41,4 @@ public interface VillageLostService {
 	public List<ReplyReport> listVRreport();
 	public void insertVRreport(ReplyReport dto) throws Exception;
 	
-	public void insertThumbnail(VillageLost dto) throws Exception;
-	public List<VillageLost> listThumbnail(int vNum);
 }

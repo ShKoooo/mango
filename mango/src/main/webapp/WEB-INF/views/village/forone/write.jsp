@@ -76,20 +76,13 @@
 
 <script type="text/javascript">
 function sendOk() {
-	var f = document.lostForm;
+	var f = document.foroneForm;
 	var str;
 	
 	str = f.subject.value.trim();
 	if(!str) {
 		alert("제목을 입력하세요.");
 		f.subject.focus();
-		return;
-	}
-	
-	str = f.areaNum.value.trim();
-	if(str == "0") {
-		alert("등록 지역을 선택하세요. ");
-		f.areaNum.focus();
 		return;
 	}
 	
@@ -100,12 +93,8 @@ function sendOk() {
         return;
     }
 	f.content.value = str;
-	
-	f.vBlat.value = $("select[name=areaNum] option:selected").attr("data-maLat");
-	f.vBlon.value = $("select[name=areaNum] option:selected").attr("data-maLon");
-	
-	
-	f.action = "${pageContext.request.contextPath}/village/lost/${mode}";
+
+	f.action = "${pageContext.request.contextPath}/village/forone/${mode}";
 	f.submit();
 	
 }
@@ -117,8 +106,8 @@ function sendOk() {
 	<div class="inner-container container">
 		<div class="row">
 			<div class="section-header col-md-12">
-				<h2>분실/실종</h2>
-				<span>LOST and FOUND</span>
+				<h2>For ONE</h2>
+				<span>혼자서도 잘 노는 방법!</span>
 			</div>
 		</div> <!-- row -->
 	<div class="projects-holder">
@@ -126,23 +115,8 @@ function sendOk() {
 			<div class="box-content">
 				
 				<div class="body-main">
-				<form name="lostForm" method="post" enctype="multipart/form-data">
+				<form name="foroneForm" method="post" enctype="multipart/form-data">
 					<table class="table write-form mt-5">
-						
-						<tr>
-							<td class="table-light  col-2" scope="row">등록지역</td>
-							<td class="col-6">
-								<select name="areaNum" id="selectArea" class="form-select">
-									<option selected value="0">선택 </option>
-									<c:forEach var="vo" items="${listMemberAddr}">
-										<option value="${vo.areaNum}" ${dto.areaNum==vo.areaNum? "selected='selected'" : ""}  data-maLat='${vo.maLat}' data-maLon='${vo.maLon}'>${vo.maAddr1}</option>
-									</c:forEach>
-								</select>							
-							 
-								<input type="hidden" name="vBlat" id="vBlat" value="${dto.vBlat}">
-								<input type="hidden" name="vBlon" id="vBlon" value="${dto.vBlon}">
-							</td>
-						</tr>
 						<tr>
 							<td class="table-light col-2" scope="row">제 목</td>
 							<td>
@@ -170,10 +144,9 @@ function sendOk() {
 							<td class="text-center">
 								<button type="button" class="btn btn-dark" onclick="sendOk();">${mode=='update'?'수정완료':'등록하기'}&nbsp;<i class="bi bi-check2"></i></button>
 								<button type="reset" class="btn btn-light">다시입력</button>
-								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/lost/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button>
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/forone/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button>
 								<c:if test="${mode=='update'}">
 									<input type="hidden" name="vNum" value="${dto.vNum}">
-									<input type="hidden" name="vimgFilename" value="${dto.vimgFilename}">
 									<input type="hidden" name="page" value="${page}">
 								</c:if>
 								 

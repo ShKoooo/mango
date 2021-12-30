@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="forone">
+	<insert id="insertBoard" parameterType="com.sp.mango.village.forone.VillageForone">
+		INSERT INTO village_forone(vNum, userId, subject, content, hitCount, regDate,
+			vcNum)
+		VALUES (village_bbs_seq.NEXTVAL, #{userId}, #{subject}, #{content}, 0, SYSDATE, 
+			8)
+	</insert>
+	
+	<sql id="where-list">
+		<choose>
+			<when test="condition == 'all'">
+				( INSTR(subject, #{keyword}) &gt; 0
+					OR DBMS_LOB.INSTR(content, #{keyword}) &gt; 0 )
+			</when>
+			<when test="condition == 'content'">
+				DBMS_LOB.INSTR(content, #{keyword}) &gt; 0
+			</when>
+			<otherwise>
+			    INSTR(${condition}, #{keyword}) &gt; 0
+			</otherwise>
+		</choose>
+	</sql>
+	
+	<select id="dataCount" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*), 0)
+		FROM village_forone v
+		JOIN member m ON v.userId = m.userId
+		<where>
+		vcNum = 8
+			<if test="keyword!=null and keyword!='' ">
+				AND <include refid="where-list"/>
+			</if>
+
+		</where>
+	</select>
+	
+	<select id="memberListBoard" parameterType="map" resultType="com.sp.mango.village.forone.VillageForone">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT v.vNum, v.userId, content, userNickName, subject,
+					   vcNum
+				FROM village_forone v
+				JOIN member m ON v.userId = m.userId
+				<where>
+				vcNum = 8
+					<if test="keyword != null and keyword != ''">
+						AND <include refid="where-list"/>
+					</if>
+					
+				</where>
+				ORDER BY vNum DESC
+			) tb WHERE ROWNUM &lt;=#{end}
+		) WHERE rnum &gt;=#{start}
+	</select>
+	
+	<select id="memAddrCount" parameterType="String" resultType="Integer">
+		SELECT COUNT(maAddr1) FROM memberAddr WHERE userId=#{userId}
+	</select>
+	
+	<!-- 글 보기 -->
+	<select id="readBoard" parameterType="Integer" resultType="com.sp.mango.village.forone.VillageForone">
+		SELECT v.vNum, v.userId, userNickName, subject,
+			content, TO_CHAR(v.regDate, 'YYYY-MM-DD') reg_date, hitCount
+		FROM village_forone v
+		JOIN member m ON v.userId = m.userId
+		WHERE v.vNum=#{vNum}
+	</select>
+	
+	<update id="updateHitCount" parameterType="Integer">
+		UPDATE village_forone SET hitCount=hitCount+1 WHERE vNum=#{vNum}
+	</update>
+	
+	<update id="updateBoard" parameterType="com.sp.mango.village.forone.VillageForone">
+		UPDATE village_forone SET subject=#{subject}, content=#{content}, areaNum=#{areaNum},
+			vBlat=#{vBlat, jdbcType=DOUBLE}, vBlon=#{vBlon, jdbcType=DOUBLE}
+		WHERE vNum = #{vNum}
+	</update>
+	
+	<delete id="deleteBoard" parameterType="com.sp.mango.village.forone.VillageForone">
+		DELETE FROM village_forone WHERE vNum = #{vNum}
+	</delete>
+	
+</mapper>
