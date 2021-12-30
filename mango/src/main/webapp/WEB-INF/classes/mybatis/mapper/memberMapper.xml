@@ -121,4 +121,16 @@
 		DELETE FROM businessProfile WHERE userId = #{userId}
 	</delete>
 	
+	<select id="selectLoginFail" parameterType="String" resultType="Integer">
+		SELECT loginFail FROM member WHERE userId = #{userId}
+	</select>
+	
+	<update id="updateDefaultLoginFail" parameterType="String">
+		UPDATE member SET loginFail = 0 WHERE userId = #{userId}
+	</update>
+	
+	<update id="updateLoginFail" parameterType="String">
+		UPDATE member SET loginFail = loginFail + 1 WHERE userId = #{userId}
+	</update>
+	
 </mapper>

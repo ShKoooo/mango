@@ -220,5 +220,38 @@ public class MemberServiceImpl implements MemberService {
 			e.printStackTrace(); throw e;
 		}
 	}
+
+	@Override
+	public Integer selectLoginFail(String userId) {
+		Integer result = null;
+		
+		try {
+			result = dao.selectOne("member.selectLoginFail",userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void updateDefaultLoginFail(String userId) throws Exception {
+		try {
+			dao.updateData("member.updateDefaultLoginFail",userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateLoginFail(String userId) throws Exception {
+		try {
+			dao.updateData("member.updateLoginFail",userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
 	
 }

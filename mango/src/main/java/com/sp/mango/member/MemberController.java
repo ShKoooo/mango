@@ -38,13 +38,32 @@ public class MemberController {
 			@RequestParam String userPwd,
 			HttpSession session,
 			Model model
-			) {
+			) throws Exception {
 		
 		Member dto = service.loginMember(userId);
-		if (dto == null || !userPwd.contentEquals(dto.getUserPwd())) {
+		if (dto == null) {
 			model.addAttribute("message", "아이디 또는 패스워드가 일치하지 않습니다.");
 			return ".member.login";
 		}
+		
+		Integer loginFail = service.selectLoginFail(dto.getUserId());
+		
+		if (loginFail == null) {
+			service.updateDefaultLoginFail(userId);
+		}
+		if (loginFail >= 5) {
+			model.addAttribute("message", "비밀번호 오류 횟수 초과입니다.<br>관리자에게 문의하세요.");
+			return ".member.login";
+		}
+		
+		if (!userPwd.contentEquals(dto.getUserPwd())) {
+			service.updateLoginFail(userId);
+			
+			model.addAttribute("message", "아이디 또는 패스워드가 일치하지 않습니다.");
+			return ".member.login";
+		}
+		
+		service.updateDefaultLoginFail(userId);
 		
 		// 세션에 로그인정보 저장
 		MemberSessionInfo info = new MemberSessionInfo();
