@@ -13,11 +13,11 @@
 	<ul>
 		<li><span>Navigation</span></li>
 		<li><a class="active">Home</a></li>
-		<li><a>회원 관리</a></li>
+		<li><a href="${pageContext.request.contextPath}/admin/member/list">회원 관리</a></li>
 		<li><a>중고물품 관리</a></li>
 		<li><a>기프티콘 관리</a></li>
 		<li><a>동네커뮤니티 관리</a></li>
-		<li><a>고객센터관리</a></li>
+		<li><a href="${pageContext.request.contextPath}/admin/cscenter/list">고객센터관리</a></li>
 		<li><span>Other</span></li>
 		<c:choose>
 			<c:when test="${sessionScope.member.membership >= 90 }">
