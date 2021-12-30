@@ -5,7 +5,7 @@
 
 <div class="container-fluid">
     <ul class="nav justify-content-center p-3">
-        <li class="nav-item"><a class="text-reset" href="#">SPRING 정책 및 약관</a></li>
+        <li class="nav-item"><a class="text-reset" href="#">MANGO 정책 및 약관</a></li>
         <li class="nav-item"><span>&nbsp;&middot;&nbsp;</span></li>
         <li class="nav-item"><a class="text-reset" href="#">회사소개</a></li>
         <li class="nav-item"><span>&nbsp;&middot;&nbsp;</span></li>
@@ -16,6 +16,6 @@
         <li class="nav-item"><a class="text-reset" href="#">개인정보취급방침</a></li>
         <li class="nav-item"><span>&nbsp;&middot;&nbsp;</span></li>
         <li class="nav-item"><a class="text-reset" href="#">고객센터</a></li>
-        <li class="nav-item"><span>&nbsp;&nbsp;© SPRING Corp.</span></li>
+        <li class="nav-item"><span>&nbsp;&nbsp;© MANGO Corp.</span></li>
     </ul>
 </div>

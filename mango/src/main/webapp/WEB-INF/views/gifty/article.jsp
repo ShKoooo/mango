@@ -155,17 +155,31 @@ $(function(){
 	}
 });
 
+$(function(){
+	$(".soldout").on("click", function(e){
+		if(confirm("게시글을 거래 완료로 변경하시겠습니까?(거래완료로 변경시 리뷰요청이 가능합니다.)")){
+			$(this).attr('data-bs-toggle', 'modal');
+		} else {
+			$(this).removeAttr('data-bs-toggle', 'modal');
+			return false;
+		}
+	});
+});
+
 function sendReview() {
-	if(confirm("리뷰 요청 쪽지를 보내시겠습니까??")) {
-		var f = document.gReviewForm;
-		var query = "gNum=${dto.gNum}&page=${page}&group=${group}"
+		if(confirm("리뷰 요청 쪽지를 보내시겠습니까??\n *확인을 누르면 거래완료 처리가 됩니다.")) {
+			var f = document.gReviewForm;
+			var query = "gNum=${dto.gNum}&page=${page}&group=${group}"
+			
+			f.action = "${pageContext.request.contextPath}/gifty/reviewReq?" + query;
+		    f.submit();
+		    
+		    alert("리뷰 요청 쪽지를 전송하였습니다!");
 		
-		f.action = "${pageContext.request.contextPath}/gifty/reviewReq?" + query;
-	    f.submit();
-	    
-	    alert("리뷰 요청 쪽지를 전송하였습니다!");
 	}
 }
+
+
 
 		
 function clickInfo() {
@@ -200,27 +214,53 @@ function clickInfo() {
                 
                     <div class="project-infos col-md-12">
                         <div class="box-content">
-                            <h2 class="project-title">${dto.gSubject}</h2>
-                            <span class="project-subtitle"><a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">${dto.userNickName}</a></span>
-                            <div style="float: right;">
-	                            <span>${dto.manner} ℃</span>
-	                            <div class="progress">
-									<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: ${dto.manner}%;"></div>
-								</div>
-								  <span>매너온도</span>
+                        	<div class="row mb-2">
+                        		<div class="col-auto me-auto">
+		                            <h2 class="project-title">${dto.gSubject}</h2>
+                        		</div>
+                        		<div class="col-auto text-right">
+                        			<span>조회수 : ${dto.gHitCount}</span>
+                        		</div>
+                        	</div>
+                            <div class="row mb-2">
+                            	<div class="col-md-3">
+                            		<div class="row">
+                            			<div class="col-auto me-1">
+				                            <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">
+				                            	<c:if test="${not empty dto.userImgSaveFileName}">
+													<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+														class="img-fluid img-thumbnail img-viewer">
+												</c:if>
+												<c:if test="${empty dto.userImgSaveFileName}">
+													<img
+														class="img-fluid img-thumbnail img-viewer">
+												</c:if>
+											</a>                            	
+                            			</div>
+                            			<div class="col-auto pt-2">
+						                    <span class="project-subtitle sb-3"><a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">${dto.userNickName}</a></span>
+                            			</div>
+                            		</div>
+                            	</div>
+                            	<div class="col-md-9">
+                            		<div class="row">
+                            			<div class="col-auto me-auto">
+                            				&nbsp;
+                            			</div>
+                            			<div class="col-auto text-right">
+				                            <span>${dto.manner} ℃</span>
+				                            <div class="progress">
+												<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: ${dto.manner}%;"></div>
+											</div>
+											  <span>매너온도</span>
+                            			</div>
+                            		</div>
+                            		<%-- 
+			                            <div style="float: right;">
+			                            </div>
+                            		--%>
+                            	</div>
                             </div>
-                            <span>조회수 : ${dto.gHitCount}</span>
-                            
-                            <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">
-	                            	<c:if test="${not empty dto.userImgSaveFileName}">
-										<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
-											class="img-fluid img-thumbnail img-viewer">
-									</c:if>
-									<c:if test="${empty dto.userImgSaveFileName}">
-										<img
-											class="img-fluid img-thumbnail img-viewer">
-									</c:if>
-								</a>
                             
                             <p class="editor">${dto.gContent}</p>
                             <ul class="project-meta">
@@ -253,9 +293,6 @@ function clickInfo() {
                                 	</c:if>
                                 	<c:if test="${dto.gStatus eq '거래완료'}">
                                 		<i class="bi bi-check2-circle"></i><span>판매완료</span>
-                                	</c:if>
-                                	<c:if test="${sessionScope.member.userId==dto.userId}">
-                                		&nbsp;<i class="bi bi-check2-circle"></i><a href="${pageContext.request.contextPath}/gifty/sellInfo?gNum=${dto.gNum}"><span>거래완료</span></a>
                                 	</c:if>
                                 </li>
                            
@@ -314,7 +351,7 @@ function clickInfo() {
 				    		</c:choose>
 				    	</c:if>		
 				    			<c:if test="${! empty sessionScope.member && sessionScope.member.userId==dto.userId}">
-									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">거래완료</button>
+									<button type="button" class="btn btn-primary" data-bs-toggle= "modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">거래완료</button>
 									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									  <div class="modal-dialog">
 									    <div class="modal-content">
@@ -337,14 +374,15 @@ function clickInfo() {
 												</c:forEach>
 								            </select>
 									          </div>
-									          <<div class="mb-3">
+									          <div class="mb-3">
 								            <label for="message-text" class="col-form-label">판매 금액</label><span style="color: gray; font-size: 13px;"> (금액 변동시 직접 기입해주세요.)</span>
 								           	<input type="text" name="income" class="form-control" id="recipient-name" value="${dto.gPrice}">
 								          </div>
+								          <span>*주의 : 리뷰 요청시 자동으로 해당 게시글은 거래완료 처리가 됩니다.</span>
 								      </div>
 								      <div class="modal-footer">
-								        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-								        <button type="button" class="repbtn btn btn-primary" onclick="sendReview();">Send</button>
+								        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">취소하기</button>
+								        <button type="button" class="repbtn btn btn-primary" onclick="sendReview();">리뷰 요청하기</button>
 								      </div>
 									      </form>
 									    </div>

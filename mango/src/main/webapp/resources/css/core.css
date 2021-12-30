@@ -9,7 +9,7 @@
 
 body {
 	font-size: 14px;
-	font-family: "Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
+	font-family: "아임크리수진", "여기어때 잘난체", "Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
 }
 
 a {
@@ -95,7 +95,7 @@ textarea:focus, input:focus {
 .body-title h3 {
     font-size: 23px;
     min-width: 300px;
-    font-family:"Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
+    font-family: "아임크리수진", "여기어때 잘난체", "Malgun Gothic", "맑은 고딕", NanumGothic, 나눔고딕, 돋움, sans-serif;
     font-weight: bold;
     margin: 0 0 -5px 0;
     padding-bottom: 5px;

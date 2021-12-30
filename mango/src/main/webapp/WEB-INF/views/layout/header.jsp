@@ -20,7 +20,7 @@ function searchWard() {
          	<div class="container">
 	         	<div class="row">
 	         		<div class="col">
-						<div class="d-flex justify-content-end">
+						<div class="d-flex justify-content-end" style="margin-top:15px">
 							<c:choose>
 								<c:when test="${empty sessionScope.member}">
 									<div class="p-2">
@@ -59,13 +59,12 @@ function searchWard() {
             <div class="main-header">
                 <div class="row">
                     <div class="main-header-left col-md-3 col-sm-6 col-xs-8">
-						<p>
 							<a id="search-icon" class="btn-left fa fa-search" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
-						</p>
 						<div class="collapse" id="collapseExample">
 							<form class="d-flex" name="productSearchForm" method="post" action="${pageContext.request.contextPath}/search/productList">
-								<input class="form-control me-2" type="text" name="searchKeyword" value="${searchKeyword}" placeholder=" 어떤 매물을 찾으시나요  ?" aria-label="Search">
-								<button class="btn btn-outline-success" type="button" onclick="searchWard()">Search</button>
+								<input class="form-control me-2" type="text" name="searchKeyword" style="width:500px; height: 40px;"
+   									 value="${searchKeyword}" placeholder=" 어떤 매물을 찾으시나요  ?" aria-label="Search">
+								<button class="btn btn-outline-success mt-1" type="button" onclick="searchWard()" style="height:39px;">Search</button>
 							</form>
 						</div>
                     </div>
