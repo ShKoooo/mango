@@ -1,9 +1,11 @@
-package com.sp.mango.inquiry;
+package com.sp.mango.admin.cscenter;
 
 import org.springframework.web.multipart.MultipartFile;
 
 public class Inquiry {
 	private String userId;
+	private int listNum;
+	private int state;
 	
 	private int inquiryNum;
 	private String inquiryEmail;
@@ -20,6 +22,18 @@ public class Inquiry {
 	}
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+	public int getListNum() {
+		return listNum;
+	}
+	public void setListNum(int listNum) {
+		this.listNum = listNum;
+	}
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		this.state = state;
 	}
 	public int getInquiryNum() {
 		return inquiryNum;
@@ -63,6 +77,8 @@ public class Inquiry {
 	public void setSelectFile(MultipartFile selectFile) {
 		this.selectFile = selectFile;
 	}
+	
+	
 	
 	
 	

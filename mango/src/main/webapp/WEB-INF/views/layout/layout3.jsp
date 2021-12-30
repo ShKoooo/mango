@@ -80,7 +80,10 @@ function enterkey() {
 	    
 		$("#loginModal").modal("show");	
 		
-	    $("form[name=modelLoginForm] input[name=userId]").focus();
+		$("#loginModal").on("shown.bs.modal", function () { 
+			$("form[name=modelLoginForm] input[name=userId]").focus();
+		});
+		
 	}
 
 	function sendModelLogin() {
