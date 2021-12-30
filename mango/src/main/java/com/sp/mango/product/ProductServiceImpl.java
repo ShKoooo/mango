@@ -1,6 +1,5 @@
 package com.sp.mango.product;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -89,29 +88,6 @@ public class ProductServiceImpl implements ProductService{
 		try {
 			dto = dao.selectOne("product.readProduct", pNum);
 			
-			String pContent = dto.getpContent();
-			String pContent2 = "";
-			
-			int idxStart = 0;
-			int idxEnd = 0;
-			List<Integer> listIdxStart = new ArrayList<Integer>();
-			List<Integer> listIdxEnd = new ArrayList<Integer>();
-			
-			for (int i=0; i<pContent.length(); i++) {
-				idxStart = pContent.indexOf("<figure class=\"image\">", i);
-				idxEnd = pContent.indexOf("</figure>",i);
-				
-				if (idxStart == -1 || idxEnd == -1) {
-					break;
-				} else {
-					listIdxStart.add(i);
-					listIdxEnd.add(i);
-					
-					pContent2 = pContent.substring(0,idxStart+1) + pContent.substring(idxEnd+8);
-					pContent = pContent2;
-					i = 0;
-				}
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -418,6 +394,30 @@ public class ProductServiceImpl implements ProductService{
 		}
 		
 		return receiveNoteList;
+	}
+
+	@Override
+	public void insertMyAccount(Product dto) throws Exception {
+		try {
+			dao.insertData("product.insertMyAccount1", dto);
+			dao.insertData("product.insertMyAccount2", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public void updatePstatus(int pNum) throws Exception {
+		// 거래완료로 변경
+		try {
+			dao.updateData("product.updatePstatus", pNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
 	}
 
 

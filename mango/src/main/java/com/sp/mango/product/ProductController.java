@@ -117,10 +117,9 @@ public class ProductController {
 	        }
 	    }
 
-		// String listUrl = cp + "/product/list";
 		String articleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page;
-				
-		// String paging = myUtil.paging(current_page, total_page, listUrl);
+		
+//		int productWishCount = service.productWishCount(pNum);
 		
 		
 		model.addAttribute("listMemberAddr", listMemberAddr);
@@ -134,8 +133,6 @@ public class ProductController {
 		model.addAttribute("maLat", maLat);
 		model.addAttribute("maLon", maLon);
 		model.addAttribute("isKeyword", isKeyword);
-		
-		// model.addAttribute("paging", paging);
 		model.addAttribute("articleUrl", articleUrl);
 		
 		List<Product> listCategory = service.listCategory();
@@ -144,6 +141,7 @@ public class ProductController {
 		model.addAttribute("opt", opt);
 		
 		model.addAttribute("modeList", "list");
+//		model.addAttribute("productWishCount", productWishCount);
 
 		return ".product.list";
 	}
@@ -312,16 +310,7 @@ public class ProductController {
 			
 			query += "&maLat=" + maLat + "&maLon=" + maLon + "&opt=" + opt;
 		}
-		
-		// 글보기 사진
-//	    for(Product dto : list) {
-	        List<String> imgs = myUtil.getImgSrc(dto.getpContent());
-	        if(imgs != null && imgs.size() > 0) {
-	           dto.setpImgSaveFileName(imgs.get(0));
-	        } else {
-	           dto.setpImgSaveFileName(cp+"/resources/images/noimage.png");
-	        }
-//	    }
+
 		
 		int productWishCount = service.productWishCount(pNum);
 		String pUpOkDate = service.pUpOkDate(pNum);
@@ -609,28 +598,40 @@ public class ProductController {
 	}
 	
 	@RequestMapping(value = "writeReview", method = RequestMethod.GET)
-	public String writeReviewForm() throws Exception {
+	public String writeReviewForm(
+			@RequestParam int pNum,
+			Model model
+			) throws Exception {
+		
+		Product dto = service.readProduct(pNum);
+		
+		model.addAttribute("dto", dto);
 		
 		return ".product.prwrite";
 	}
 	
 	@RequestMapping(value = "writeReview", method = RequestMethod.POST)
-	public String writeReviewSubmit(Preview dto, HttpSession session) throws Exception {
+	public String writeReviewSubmit(
+			Preview dto,
+			@RequestParam int pNum,
+			Product pdto,
+			HttpSession session
+			) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		
 		try {
 			dto.setBuyerId(info.getUserId());
 			
-			// 셀러 gnum으로 가져와서 해당게시글 userId 넣어야힘
-			// gnum을 어디서 가져오지
-			dto.setSellerId(null);
+			pdto = service.readProduct(pNum);
+			dto.setSellerId(pdto.getUserId());
 			
+			service.insertPreview(dto);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return "redirect:/product/list";
+		return "redirect:/mypage/note";
 	}
 	
 	// 리뷰 요청하기
@@ -639,18 +640,48 @@ public class ProductController {
 			@RequestParam int pNum,
 			@RequestParam String page,
 			@RequestParam int pcNum,
-			HttpSession session
+			HttpSession session,
+			Note noteDto
 			) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
+			service.updatePstatus(pNum);
+			
 			dto.setUserId(info.getUserId());
 			
+			service.insertMyAccount(dto);
+			
+			
+			noteDto.setSendId(dto.getUserId());
+			Product vo = service.readProduct(pNum);
+			String rContent = "안녕하세요. <"+vo.getpSubject()+"> 거래에 대한 리뷰를 남겨주세요!! <br>";
+				rContent += "<a href='http://localhost:9090/mango/product/writeReview?pNum="+pNum+"'><i class=\"bi bi-arrow-right-circle\"></i> 리뷰작성하기!</a>";
+			noteDto.setReceiveId(dto.getTarget_id());
+			noteDto.setNoteContent(rContent);
+		
+			service.sendMsg(noteDto);
+			service.updateSoldDate(dto);
 			
 		} catch (Exception e) {
 		}
 		
+		
+		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
+	}
+	
+	@RequestMapping("changeStatus")
+	public String changeStatus(
+			@RequestParam int pNum,
+			@RequestParam String page,
+			@RequestParam int pcNum
+			) throws Exception {
+		
+		try {
+			service.updatePstatus(pNum);
+		} catch (Exception e) {
+		}
 		
 		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
 	}

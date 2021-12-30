@@ -52,5 +52,10 @@ public interface ProductService {
 	// 리뷰 요청을 위한 받은 쪽지 리스트
 	public List<Product> receiveNoteList(String userId);
 	
+	// 리뷰요청시 가계부 등록
+	public void insertMyAccount(Product dto) throws Exception;
+	
+	// 거래완료로 변경
+	public void updatePstatus(int pNum) throws Exception;
 	
 }

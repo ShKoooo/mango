@@ -243,9 +243,6 @@
 	<select id="pWishCount" parameterType="Integer" resultType="Integer">
 		SELECT COUNT(pWishNum) FROM product_WishList WHERE pNum = #{pNum}
 	</select>
-
-	<!-- 쪽지받은 수 -->
-	
 	
 	<!-- 회원이 등록한 주소 개수 세기 -->
 	<select id="memAddrCount" parameterType="String" resultType="Integer">
@@ -257,7 +254,7 @@
 
 	<!-- 글보기 -->
 	<select id="readProduct" parameterType="Integer" resultType="com.sp.mango.product.Product">
-		SELECT p.pNum, pSubject, pStatus, pContent, pPrice, pHitCount, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+		SELECT p.pNum, pSubject, pStatus, pContent, pPrice, pHitCount, TO_CHAR(pRegDate, 'YYYY-MM-DD HH:MI:SS') pRegDate,
 		        TO_CHAR(pUpdate_date, 'YYYY-MM-DD') pUpdate_date, pSoldDate, pIsProposable, area1, area2, area3,
 		        NVL(pWishCount, 0) pWishCount, pc.pcNum, pc.pcName, m.userNickName, p.userId, pUp, p.areaNum, m.userImgSaveFileName,
 		        (36.5 + (0.1* NVL(manner.mannerStar, 0)) + (0.1* NVL(manner.productStar, 0)) - NVL(manner.minusDeg, 0)) AS manner
@@ -346,14 +343,19 @@
 	</select>
 	
 	<!-- 리뷰요청 : 가계부 테이블 등록 -->
-	<insert id="insertMyAccount" parameterType="com.sp.mango.product.Product">
-	 	INSERT ALL
-         INTO myAccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, PNUM)
+	<insert id="insertMyAccount1" parameterType="com.sp.mango.product.Product">
+         INSERT INTO myAccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, PNUM)
          VALUES(myaccount_seq.NEXTVAL, #{userId}, #{target_id}, #{income}, 0, #{pNum})
-         INTO myAccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, PNUM)
-         VALUES(myaccount_seq.NEXTVAL+1, #{target_id}, #{userId}, 0, #{income}, #{pNum})
-         SELECT * FROM dual
+	</insert>
+	
+	<insert id="insertMyAccount2" parameterType="com.sp.mango.product.Product">
+         INSERT INTO myAccount (MYACNUM, USERID, TARGET_ID, INCOME, EXPENSES, PNUM)
+         VALUES(myaccount_seq.NEXTVAL, #{target_id}, #{userId}, 0, #{income}, #{pNum})
 	</insert>
 
-
+	<!-- 거래완료로 변경 --> 
+ 	<update id="updatePstatus" parameterType="Integer">
+		UPDATE product SET pStatus='거래완료' WHERE pNum = #{pNum}
+	</update>
+	
 </mapper>

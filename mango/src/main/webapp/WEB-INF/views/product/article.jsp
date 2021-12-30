@@ -4,6 +4,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <style type="text/css">
+.section-header {
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+
 .img-viewer {
 	cursor: pointer;
 	border: 1px solid #ccc;
@@ -124,6 +129,15 @@ function sendReqReview() {
 	}
 }
 
+function changeStatus() {
+	alert("거래완료로 변경하시겠습니까 ?");
+	/*
+    var query = "pNum=${dto.pNum}&page=${page}&pcNum=${pcNum}";
+    var url = "${pageContext.request.contextPath}/product/changeStatus?" + query;
+   	location.href = url;
+   	*/
+}
+
 function updateDate() {
 	if(confirm("게시글을 끌어올리겠습니까? ")) {
 	    var query = "pNum=${dto.pNum}";
@@ -186,58 +200,69 @@ function clickInfo() {
     
     <div class="content-wrapper">
             <div class="inner-container container">
-                <div class="row">
+            	 
+                
                     <div class="section-header col-md-12">
+                        <!--
                         <h2>Project Detail</h2>
                         <span>Subtitle Goes Here</span>
+                 		-->
                     </div>
-                </div>
+                
                 <div class="project-detail row">
-                	<!-- /.project-slider -->
-                    <div class="project-slider col-md-12">
-                        <img width="1000px" height="600px" src="${dto.pImgSaveFileName}" alt="Slide 1">
-                        <img src="" alt="Slide 2">
-                        <img src="" alt="Slide 1">
-                        <a href="#" class="slidesjs-previous slidesjs-navigation">&lt;</a> 
-                        <a href="#" class="slidesjs-next slidesjs-navigation">&gt;</a>
-                    </div>
-                    
+                    <!-- 글내용 -->
                     <div class="project-infos col-md-12">                    
                         <div class="box-content">
-                        	<div>
-	                            <span style="font-size: 20px;">${dto.pSubject}</span>
-	                            <span style="float: right">조회수 : ${dto.pHitCount}</span>
-                            </div>
+                        	<div class="row mb-2">
+                        		<div class="col-auto me-auto">
+	                        		<h2 class="project-title">${dto.pSubject}</h2>
+	                            </div>
+	                            <div class="col-auto text-right">
+                        			<span>${dto.pRegDate}&nbsp;|&nbsp;조회수 : ${dto.pHitCount}</span>
+                        		</div>
+	                        </div>
+	                        <div class="row mb-2">   
+	                        	<div class="col-md-3">
+	                        		<div class="row">
+		                            	<div class="col-auto me-1">
+				                            <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">
+				                            	<c:if test="${not empty dto.userImgSaveFileName}">
+													<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+														class="img-fluid img-thumbnail img-viewer">
+												</c:if>
+												<c:if test="${empty dto.userImgSaveFileName}">
+													<img class="img-fluid img-thumbnail img-viewer">
+												</c:if>
+											</a>
+										</div>
+										<div class="col-auto pt-2">
+											<span class="project-subtitle sb-3" style="font-size: 15px;"><a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">${dto.userNickName}</a></span>
+		                            		<span class="project-subtitle">&nbsp;${dto.area2}&nbsp;${dto.area3}</span>
+										</div>
+	                            	</div>
+	                            </div>
+	                            <div class="col-md-9">
+	                            	<div class="row">
+	                            		<div class="col-auto me-auto">
+                            				&nbsp;
+                            			</div>
+                            			<div class="col-auto text-right">
+			                            	<span>매너온도 : ${dto.manner} ℃</span>
+		                            		<div class="progress" style="width: 110px; font-size: 10px;">
+												<div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: ${dto.manner}%">${dto.manner} ℃</div>
+											</div>
+	                            		</div>
+                            		</div>
+                            	</div>
+                            </div>	
+		                    
+		                    <input type="hidden" id="searchKeyword" value="${searchKeyword}">
+		                    <input type="hidden" id="isPorular" value="${isPorular}">
                             
-                            <div>
-	                            <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}">
-	                            	<c:if test="${not empty dto.userImgSaveFileName}">
-										<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
-											class="img-fluid img-thumbnail img-viewer">
-									</c:if>
-									<c:if test="${empty dto.userImgSaveFileName}">
-										<img
-											class="img-fluid img-thumbnail img-viewer">
-									</c:if>
-								</a>
-	                            <span>${dto.userNickName}</span> <br>
-	                            <span class="project-subtitle">${dto.area2}&nbsp;${dto.area3}</span>
-                            </div>
+                            <div style="height: 10px;"></div> <!-- 글 헤더 와 내용 사이의 간격을 위한 div -->
                             
-                            <div style="float: right">
-                            	<span>${dto.manner} ℃</span>
-	                            <div class="progress" style="width: 110px; font-size: 10px;">
-								  <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: ${dto.manner}%">${dto.manner} ℃</div>
-								</div>
-	               
-	                            <span>매너온도</span>
-	                            <input type="hidden" id="searchKeyword" value="${searchKeyword}">
-	                            <input type="hidden" id="isPorular" value="${isPorular}">
-                            </div>
-                            
-                            <p>${dto.pContent}</p>
+                            <p class="editor">${dto.pContent}</p>
                             <ul class="project-meta">
-                                
                                 <c:if test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
 	                                <li>
 	                                	<button type="button" class="btn btn-outline-danger btnSendProductLike" title="좋아요" style="width: 43px;"><i class="bi ${userProductWished ? 'bi-heart-fill':'bi-heart'}"></i></button>
@@ -251,21 +276,31 @@ function clickInfo() {
                              	</c:if>
                              	
                                 <li>
-                                	${dto.pPrice}원 /
-                                	<c:if test="${dto.pIsProposable=='T'}">
-                                		<a href="">가격 제안 가능</a>
-                                	</c:if>
-                                	<c:if test="${dto.pIsProposable=='F'}">
-                                		가격 제안 불가
+                                	<c:if test="${dto.pPrice==0}">
+                                		무료나눔<span style="color: orange;"><i class="bi bi-suit-heart-fill"></i></span>
                                 	</c:if>
                                 	
+                                	<c:if test="${dto.pPrice!=0}">
+	                                	${dto.pPrice}원 /
+	                                	<c:if test="${dto.pIsProposable=='T'}">
+	                                		가격 제안 가능
+	                                	</c:if>
+	                                	<c:if test="${dto.pIsProposable=='F'}">
+	                                		가격 제안 불가
+	                                	</c:if>
+                                	</c:if>
                                 </li>
                                 <li>
                                 	<c:if test="${dto.pStatus=='판매중'}">
-                                		<i class="fa fa-envelope-o"></i><a onclick="clickInfo();" href="${pageContext.request.contextPath}/product/sendMsg?pNum=${dto.pNum}">거래 쪽지 보내기</a>
+                                		<c:if test="${sessionScope.member.userId==dto.userId}">
+                                			<i class="fa fa-envelope-o"></i>거래 쪽지 보내기
+                                		</c:if>
+                                		<c:if test="${sessionScope.member.userId!=dto.userId}">
+                                			<i class="fa fa-envelope-o"></i><a onclick="clickInfo();" href="${pageContext.request.contextPath}/product/sendMsg?pNum=${dto.pNum}">거래 쪽지 보내기</a>
+                                		</c:if>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='예약중'}">
-                                		<i class="bi bi-calendar-check-fill"></i><a href="">거래가 예약된 매물입니다</a>
+                                		<i class="bi bi-calendar-check-fill"></i>거래가 예약된 매물입니다
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='거래완료'}">
                                 		<i class="bi bi-check2-circle"></i><span>판매완료</span>
@@ -282,7 +317,7 @@ function clickInfo() {
 								</c:when>
 								<c:when test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
 									
-									<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">신고</button>
+									<button type="button" style="background: #ff6262; border-color: #ff6262;" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">신고</button>
 					
 									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									  <div class="modal-dialog">
@@ -328,43 +363,45 @@ function clickInfo() {
 				    		</c:choose>
 				    	</c:if>
 				    		
+				    	<!-- 거래완료 및 리뷰 요청 -->	
 				    	<c:if test="${! empty sessionScope.member && sessionScope.member.userId==dto.userId}">
-							<!-- 리뷰 요청 -->
-								<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">리뷰 요청하기</button>
-								
-								<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-								  <div class="modal-dialog">
-								    <div class="modal-content">
-								      <div class="modal-header">
-								        <h5 class="modal-title" id="exampleModalLabel">리뷰 요청하기</h5>
-								        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-								      </div>
-								      <form name="pReqReviewForm" id="pReportF" method="post">
-								      <div class="modal-body">
-								          <div class="mb-3">
-								            <label for="recipient-name" class="col-form-label">구매자 선택</label><span style="color: gray; font-size: 13px;"> (최근 채팅을 주고받은 이웃 중 구매자를 선택해주세요!)</span>
-								            <br>
-								            <select name="target_id">
-								            	<option value="">선택</option>
-									            <c:forEach var="dto" items="${receiveNoteList}">
-									            	<option value="${dto.sendId}">${dto.userNickName}</option>
-												</c:forEach>
-								            </select>
-								          </div>
-								          <div class="mb-3">
-								            <label for="message-text" class="col-form-label">판매 금액</label><span style="color: gray; font-size: 13px;"> (금액 변동시 직접 기입해주세요.)</span>
-								           	<input type="text" name="income" class="form-control" id="recipient-name" value="${dto.pPrice}">
-								          </div>
-								      </div>
-								      <div class="modal-footer">
-								        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-								        <button type="button" class="repbtn btn btn-primary" onclick="sendReqReview();">Send</button>
-								      </div>
-								      </form>
-								    </div>
-								  </div>
-								</div>
-							</c:if>	
+							<button type="button" id="statusBtn" style="background: #3c8bff; border-color: #3c8bff;"  class="btn btn-primary" onclick="changeStatus();" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">거래완료</button>
+							
+							<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							  <div class="modal-dialog">
+							    <div class="modal-content">
+							      <div class="modal-header">
+							        <h5 class="modal-title" id="exampleModalLabel">리뷰 요청하기</h5>
+							        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							      </div>
+							      <form name="pReqReviewForm" id="pReportF" method="post">
+							      <div class="modal-body">
+							          <div class="mb-3">
+							            <label for="recipient-name" class="col-form-label">구매자 선택</label><span style="color: gray; font-size: 13px;"> (최근 채팅을 주고받은 이웃 중 구매자를 선택해주세요!)</span>
+							            <br>
+							            <select name="target_id">
+							            	<option value="">선택</option>
+								            <c:forEach var="dto" items="${receiveNoteList}">
+								            	<option value="${dto.sendId}">${dto.userNickName}</option>
+											</c:forEach>
+							            </select>
+							          </div>
+							          <div class="mb-3">
+							            <label for="message-text" class="col-form-label">판매 금액</label><span style="color: gray; font-size: 13px;"> (금액 변동시 직접 기입해주세요.)</span>
+							           	<input type="text" name="income" class="form-control" id="recipient-name" value="${dto.pPrice}">
+							          </div>
+							          <br>
+							          <label for="recipient-name" class="col-form-label">※주의 : 리뷰요청 완료시 해당 게시글은 '거래완료'로 변경 됩니다.</label>
+							      </div>
+							      <div class="modal-footer">
+							        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+							        <button type="button" class="repbtn btn btn-primary" onclick="sendReqReview();">Send</button>
+							      </div>
+							      </form>
+							    </div>
+							  </div>
+							</div>
+						</c:if>	
 				    		
 				    			
 	                        <span style="float: right;">

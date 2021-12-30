@@ -183,27 +183,26 @@ function printProduct(data) {
 		
 		out += "<div class='col-lg-4 mb-5'>";
 		out += "    <div class='card h-100 shadow border-0'>";
-		out += "    	<img class='card-img-top' src='' alt='' />";
+		out += "    	<img class='card-img-top' width='308px' height='200px' src='${dto.pImgSaveFileName}' alt='' />";
 		out += "		<div class='card-body p-4'>";
-		out += "			<a class='text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
+		out += "			<a class='logo text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
 		out += "			<p class='card-text mb-0'>"+area3+"</p>";	
 		out += "		</div>";
 		out += "		<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
 		out += "			<div class='d-flex align-items-end justify-content-between'>";
 		out += "				<div class='d-flex align-items-center'>";
-		out += "					<div class='row'>";
-		out += "						<c:if test='${not empty dto.userImgSaveFileName}'>";
-		out += "							<img src='${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}' class='img-fluid img-thumbnail img-viewer'>";
-		out += "						</c:if>";
-		out += "						<c:if test='${empty dto.userImgSaveFileName}'>";
-		out += "							<img class='img-fluid img-thumbnail img-viewer'>";
-		out += "						</c:if>";
-		out += "					</div>";
-		out += "					<div class='small'>";
+		out += "					<c:if test='${not empty dto.userImgSaveFileName}'>";
+		out += "						<img src='${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}' class='img-fluid img-thumbnail img-viewer'>";
+		out += "					</c:if>";
+		out += "					<c:if test='${empty dto.userImgSaveFileName}'>";
+		out += "						<img class='img-fluid img-thumbnail img-viewer'>";
+		out += "					</c:if>";
+		out += "					<div class='row small' style='margin-left: 2px;'>";
 		out += "						<div class='fw-bold'>"+userNickName+"</div>";
-		out += "						<div class='text-muted'>"+pRegDate+" &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>";
+		out += "						<div class='text-muted'>"+pRegDate+"</div>";
 		out += "					</div>";
 		out += "				</div>"
+		out += "				<span><i class='bi bi-heart' style='color: red;'></i>&nbsp;"+pWishCount+"</span>"
 		out += "			</div>"
 		out += "		</div>"
 		out += "	</div>"
@@ -288,30 +287,28 @@ $(function(){
 					            <c:forEach var="dto" items="${list}">
 					            	<div class="col-lg-4 mb-5">
 					                	<div class="card h-100 shadow border-0">
-					                    	<img class="card-img-top" src="" alt="" />
+					                    	<img class="card-img-top" width="308px" height="200px" src="${dto.pImgSaveFileName}" alt="" />
 					                        	<div class="card-body p-4">
-					                            	<a class="text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
+					                            	<a class="logo text-decoration-none link-dark stretched-link" href="${articleUrl}&pNum=${dto.pNum}"><div class="h5 card-title mb-3">${dto.pSubject}</div></a>
 					                                	<p class="card-text mb-0">${dto.area3}</p>
 					                            </div>
 					                            <div class="card-footer p-4 pt-0 bg-transparent border-top-0">
 					                            	<div class="d-flex align-items-end justify-content-between">
 					                                	<div class="d-flex align-items-center">
-					                                    	<div class="row">
-						                                    	<c:if test="${not empty dto.userImgSaveFileName}">
-																	<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
-																		class="img-fluid img-thumbnail img-viewer">
-																</c:if>
-																<c:if test="${empty dto.userImgSaveFileName}">
-																	<img
-																		class="img-fluid img-thumbnail img-viewer">
-																</c:if>
-															</div>
-					                                    
-					                                        <div class="small">
+					                                    	<c:if test="${not empty dto.userImgSaveFileName}">
+																<img src="${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}"
+																	class="img-fluid img-thumbnail img-viewer">
+															</c:if>
+															<c:if test="${empty dto.userImgSaveFileName}">
+																<img
+																	class="img-fluid img-thumbnail img-viewer">
+															</c:if>
+					                                        <div class="row small" style="margin-left: 2px;">
 					                                        	<div class="fw-bold">${dto.userNickName}</div>
-					                                            <div class="text-muted">${dto.pRegDate} &middot; 만약 끌올하면 끌올 몇분전이나 몇회나 표시</div>
+					                                            <div class="text-muted">${dto.pRegDate}</div>
 					                                        </div>
 					                                    </div>
+					                                    <span><i class="bi bi-heart" style="color: red;"></i>&nbsp;${dto.pWishCount}</span>
 					                                </div>
 					                            </div>
 					                   	</div>

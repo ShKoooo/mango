@@ -67,22 +67,25 @@ $(function(){
 
 function sendOk() {
 	var f = document.reviewForm;
-	var st = f.review.value;
-	var st2 = f.review2.value;
+	var st = f.mannerStar.value;
+	var st2 = f.prdStar.value;
 	
 	if(st==='0') {
 		alert("별점을 입력해주세요.");
 		return;
 	}
-	console.log(st);
 	
 	if(st2==='0') {
 		alert("별점을 입력해주세요.");
 		return;
 	}
 	
-	f.action = "${pageContext.request.contextPath}/product/writeReview?star="+st+"&star2="+st2;
+	var query = "pNum=${dto.pNum}"
+	
+	f.action = "${pageContext.request.contextPath}/product/writeReview?"+query;
 	f.submit();
+	
+	alert("소중한 리뷰 작성이 완료됐습니다!");
 }
 
 </script>
@@ -117,26 +120,21 @@ function sendOk() {
 		
 		
 		<div class="p-1">
-				<span class="fw-bold">중고매물 리뷰</span><span> </span>
-			</div>
+			<span class="fw-bold">중고매물 리뷰</span><span> </span>
+		</div>
+		
+		<form name="reviewForm" method="post">
 			<div class="p-1">
-				<textarea name="grContent" id="grContent" class="form-control" placeholder="${empty sessionScope.member ? '로그인 후 등록 가능합니다.':''}"></textarea>
+				<textarea name="prContent" id="grContent" class="form-control" placeholder="${empty sessionScope.member ? '로그인 후 등록 가능합니다.':''}"></textarea>
 			</div>
 			<div class="p-1 text-end">
 				<button type="button" class="btnSend btn btn-dark"  onclick="sendOk();"> 등록하기 <i class="bi bi-check2"></i> </button>
 			</div>
-			<!-- 
-			<div class="p-1 text-end">
-				<button type="button" class="btnSend btn btn-dark" ${empty sessionScope.member ? "disabled='disabled'":""} onclick="sendOk();"> 등록하기 <i class="bi bi-check2"></i> </button>
-			</div>
-			 -->
+			
+			<input type="hidden" name="mannerStar" id="review" value="0" readonly="readonly">
+			<input type="hidden" name="prdStar" id="review2" value="0" readonly="readonly">
 		
-		<div style="margin-top: 10px;">
-		<form name="reviewForm">
-			<input type="text" name="review" id="review" value="0" readonly="readonly">
-			<input type="text" name="review2" id="review2" value="0" readonly="readonly">
 		</form>
-		</div>
 		
 		
 		
