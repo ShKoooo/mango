@@ -16,10 +16,13 @@ public class Village {
 	private String cateogry;
 	
 	private int areaNum;
+	private String addr2;
 	private double vBlat;
 	private double vBlon;
 	
 	private String maAddr1;
+	private String area1;
+	private String area3;
 
 	public int getListNum() {
 		return listNum;
@@ -109,6 +112,14 @@ public class Village {
 		this.areaNum = areaNum;
 	}
 
+	public String getAddr2() {
+		return addr2;
+	}
+
+	public void setAddr2(String addr2) {
+		this.addr2 = addr2;
+	}
+
 	public double getvBlat() {
 		return vBlat;
 	}
@@ -131,6 +142,22 @@ public class Village {
 
 	public void setMaAddr1(String maAddr1) {
 		this.maAddr1 = maAddr1;
+	}
+
+	public String getArea1() {
+		return area1;
+	}
+
+	public void setArea1(String area1) {
+		this.area1 = area1;
+	}
+
+	public String getArea3() {
+		return area3;
+	}
+
+	public void setArea3(String area3) {
+		this.area3 = area3;
 	}
 	
 	

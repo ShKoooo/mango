@@ -114,35 +114,45 @@ $(function() {
 					  <div class="tab-pane container active" id="qna">
 						<c:forEach var="qna" items="${listQna}" varStatus="status">
 							<div class="row">
-								${qna.subject}
+								<span><b>${qna.area1}&nbsp;${qna.area3}</b>
+									&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/village/qna/article?page=1&vNum=${qna.vNum}">${qna.subject}</a>
+								</span>
 							</div>
 						</c:forEach>
 					  </div>
 					  <div class="tab-pane container " id="eat">
 					 	<c:forEach var="eat" items="${listEat}" varStatus="status">
 							<div class="row">
-								${eat.subject}
+								<span><b>${eat.area1}&nbsp;${eat.area3}</b>
+									&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/village/eat/article?page=1&vNum=${eat.vNum}">${eat.subject}</a>
+								</span>
 							</div>
 						</c:forEach>
 					  </div>
 					  <div class="tab-pane container " id="helpme">
 					  	<c:forEach var="help" items="${listHelp}" varStatus="status">
 							<div class="row">
-								${help.subject}
+								<span><b>${help.area1}&nbsp;${help.area3}</b>
+									&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/village/help/article?page=1&vNum=${help.vNum}">${help.subject}</a>
+								</span>
 							</div>
 						</c:forEach>
 					  </div>
 					  <div class="tab-pane container " id="withme">
 					  	<c:forEach var="with" items="${listWith}" varStatus="status">
 							<div class="row">
-								${with.subject}
+								<span><b>${with.area1}&nbsp;${with.area3}</b>
+									&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/village/with/article?page=1&vNum=${with.vNum}">${with.subject}</a>
+								</span>
 							</div>
 						</c:forEach>
 					  </div>
 					  <div class="tab-pane container " id="news">
 					  	<c:forEach var="news" items="${listNews}" varStatus="status">
 							<div class="row">
-								${news.subject}
+								<span><b>${news.area1}&nbsp;${news.area3}</b>
+									&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/village/news/article?page=1&vNum=${news.vNum}">${news.subject}</a>
+								</span>
 							</div>
 						</c:forEach>
 					  </div>
@@ -164,109 +174,76 @@ $(function() {
 					  </button>
 				<div class="carousel-inner">
 					<div class="carousel-item active">
+						<div class="row" style="margin:15px; ">
+							<table>
+								<tr>
+									<td> <h5> 분실 / 실종 </h5> </td>
+								</tr>
+							</table>
+						</div>
 						<div class="row">
-						
+						<c:forEach var="lost" items="${listLost}" varStatus="status">
 							<div class="col-md-4 project-item">
-								<c:forEach var="lost" items="${listLost1}" varStatus="status">
 								<div class="proeject-thumb">
-									<img class="img-fluid" src="${lost.thumbnail}" alt="">
+									<a href="${pageContext.request.contextPath}/village/lost/article?page=1&vNum=${lost.vNum}">
+									<img class="img-fluid" src="${lost.thumbnail}">
+									</a>
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="${pageContext.request.contextPath}/village/lost/article?vNum=${lost.vNum}">${lost.subject}</a></h2>
-								</div>
-								</c:forEach>
-							</div>
-							<div class="col-md-4 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://source.unsplash.com/SsKf1L6rWJk" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">가게 홍보 제목</a></h2>
-									<p> 가게 홍보 내용 </p>
+									<h2><a href="${pageContext.request.contextPath}/village/lost/article?page=1&vNum=${lost.vNum}">${lost.subject}</a></h2>
 								</div>
 							</div>
+						</c:forEach>
 							
-							<div class="col-md-4 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">1인 가구</a></h2>
-									<p> 추천내용 </p>
-								</div>
-							</div> 
-							
-						</div> <!-- row -->
+						</div>
 					</div> <!-- caousal-item active -->
 					<div class="carousel-item">
+						<div class="row" style="margin:15px;">
+							<table>
+								<tr>
+									<td> <h5> 여기 올래? </h5> </td>
+								</tr>
+							</table>
+						</div>
 						<div class="row">
-						
+							<c:forEach var="ad" items="${listAd}" varStatus="status">
 							<div class="col-md-4 project-item">
-								<c:forEach var="lost" items="${listLost2}" varStatus="status">
 								<div class="proeject-thumb">
-									<img class="img-fluid" src="${lost.thumbnail}" alt="">
+									<a href="${pageContext.request.contextPath}/village/ad/article?page=1&vNum=${ad.vNum}">
+									<img class="img-fluid" src="${ad.thumbnail}" alt="">
+									</a>
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="${pageContext.request.contextPath}/village/lost/article?vNum=${lost.vNum}">${lost.subject}</a></h2>
-								</div>
-								</c:forEach>
-							</div>
-
-							<div class="col-md-4 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">가게 홍보 제목22</a></h2>
-									<p> 가게 홍보 내용22 </p>
+									<h2><a href="${pageContext.request.contextPath}/village/ad/article?page=1&vNum=${ad.vNum}">${ad.subject}</a></h2>
 								</div>
 							</div>
-							
-							<div class="col-md-4 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">1인 가구</a></h2>
-									<p> 추천내용2 </p>
-								</div>
-							</div> 
+							</c:forEach>
 							
 						</div> <!-- row -->
 					</div>
 					<div class="carousel-item">
+						<div class="row" style="margin:15px;">
+							<table>
+								<tr>
+									<td> <h5> 당신을 위한 추천 </h5> </td>
+								</tr>
+							</table>
+						</div>
 						<div class="row">
-							
+							<c:forEach var="forone" items="${listForone}" varStatus="status">
 							<div class="col-md-4 project-item">
 								<div class="proeject-thumb">
-									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
+									<a href="${pageContext.request.contextPath}/village/forone/article?page=1&vNum=${forone.vNum}">
+									<img class="img-fluid" src="${forone.thumbnail}" alt="">
+									</a>
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="">분실 실종 제목3</a></h2>
-									<p> 분실 실종 내용3 </p>
+									<h2><a href="${pageContext.request.contextPath}/village/forone/article?page=1&vNum=${forone.vNum}">${forone.subject}</a></h2>
 								</div>
 							</div>
-							<div class="col-md-4 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://unsplash.com/photos/L6T_6Rp2iEk" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">가게 홍보 제목3</a></h2>
-									<p> 가게 홍보 내용3 </p>
-								</div>
-							</div>
+							</c:forEach>
 							
-							<div class="col-md-4 project-item">
-								<div class="project-thumb">
-									<img class="img-fluid" src="https://source.unsplash.com/V7WkmXntA8M" alt="">
-								</div>
-								<div class="box-content project-detail">
-									<h2><a href="">1인 가구</a></h2>
-									<p> 추천내용3 </p>
-								</div>
-							</div> 
-						
-						</div>
+						</div> <!-- row -->
 					</div>
 				</div><!-- carousel inner -->
 			</div>
