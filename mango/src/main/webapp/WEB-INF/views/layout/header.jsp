@@ -84,6 +84,10 @@ function searchWard() {
                             		<li><a href="${pageContext.request.contextPath}/village/eat/list">동네 맛집</a></li>
                             		<li><a href="${pageContext.request.contextPath}/village/help/list">해주세요</a></li>
                             		<li><a href="${pageContext.request.contextPath}/village/with/list">같이해요</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/news/list">동네 소식</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/lost/list">분실실종</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/ad/list">여기올래?</a></li>
+                            		<li><a href="${pageContext.request.contextPath}/village/forone/list">1인가구</a></li>
                             	</ul>
                             </li>
                             <li><a href="${pageContext.request.contextPath}/cscenter/list">고객센터</a></li>
