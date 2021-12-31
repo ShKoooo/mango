@@ -6,7 +6,9 @@
 <c:forEach var="vo" items="${listReplyAnswer}">
 	<div class='border-bottom mb-2'>
 		<div class='row py-1'>
-			<div class='col-6'><i class="bi bi-person-circle text-muted"></i> <span class="bold">${vo.userNickName}</span></div>
+			<div class='col-6'><span class="bold">
+			<a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${vo.userNickName}">&nbsp;<b>${vo.userNickName}</b></a>
+			</span></div>
 			<div class='col text-end'>
 				<span class="text-muted">${vo.vrRegDate}</span> |
 				<c:choose>

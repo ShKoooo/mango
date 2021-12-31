@@ -98,7 +98,7 @@ $(function() {
 									<a href="${articleUrl}&vNum=${dto.vNum}" class="text-reset">${dto.subject}</a>
 									<c:if test="${dto.replyCount!=0}">(${dto.replyCount})</c:if>
 								</td>
-								<td> ${dto.userNickName} </td>
+								<td><a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}"> ${dto.userNickName} </a></td>
 								<td> ${dto.reg_date} </td>
 								<td> ${dto.hitCount} </td>
 							</tr>

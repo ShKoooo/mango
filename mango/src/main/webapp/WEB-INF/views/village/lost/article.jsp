@@ -368,7 +368,7 @@ $(document).ready(function(){
 						<tbody>
 							<tr>
 								<td width="50%">
-								<img class="rounded-circle profileImg" src="https://dummyimage.com/20x20/ced4da/6c757d" alt="..." style="float: left; margin-right: 10px"/> <b> ${dto.userNickName} </b>
+								작성자 : <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}"> <b> ${dto.userNickName} </b> </a>
 								</td>
 								<td align="right">
 									${dto.reg_date} | 조회 ${dto.hitCount}

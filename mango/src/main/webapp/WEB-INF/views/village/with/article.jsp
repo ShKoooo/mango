@@ -346,7 +346,7 @@ $(document).ready(function(){
 	<div class="inner-container container">
 		<div class="row">
 			<div class="section-header col-md-12">
-				<h2> 함께해요 </h2>
+				<h2> 같이해요 </h2>
 				<span>With ME</span>
 			</div>
 		</div> <!-- row -->
@@ -368,8 +368,7 @@ $(document).ready(function(){
 						<tbody>
 							<tr>
 								<td width="50%">
-								<img class="rounded-circle profileImg" src="https://dummyimage.com/20x20/ced4da/6c757d" alt="..." style="float: left; margin-right: 10px"/>
-									<b>${dto.userNickName}</b>
+								작성자 : <a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${dto.userNickName}"> <b> ${dto.userNickName} </b> </a>
 								</td>
 								<td align="right">
 									${dto.reg_date} | 조회 ${dto.hitCount}
@@ -413,7 +412,7 @@ $(document).ready(function(){
 								</c:choose>
 							</td>
 							<td class="text-end">
-								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/with/list?areaNum=${areaNum}';">리스트</button>
+								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/with/list';">리스트</button>
 							</td>
 						</tr>
 					</table>

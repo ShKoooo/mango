@@ -12,7 +12,9 @@
 	<c:forEach var="vo" items="${listReply}">
 		<tr class='border bg-light'>
 			<td width='50%'>
-				<i class="bi bi-person-circle text-muted"></i> <span class="bold">${vo.userNickName}</span>
+				<span class="bold">
+				<a href="${pageContext.request.contextPath}/mypage/yourpage?userNickName=${vo.userNickName}">${vo.userNickName}</a>
+				</span>
 			</td>
 			<td width='50%' align='right'>
 				<span class="text-muted">${vo.vrRegDate}</span> |
