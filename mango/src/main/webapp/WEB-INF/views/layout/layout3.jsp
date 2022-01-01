@@ -10,6 +10,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title><tiles:insertAttribute name="title"/></title>
+	<link href="${pageContext.request.contextPath}/resources/images/mangologo.png" rel="shortcut icon" type="image/x-icon">
 	
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/font-awesome.css">
