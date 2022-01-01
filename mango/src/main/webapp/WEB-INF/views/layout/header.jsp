@@ -13,7 +13,7 @@ function searchWard() {
 
 	<div class="site-header container-fluid">
             <div class="top-header">
-                <div class="logo col-md-6 col-sm-6">
+                <div class="logo col-md-6 col-sm-6" style="padding-top: 10px;">
                 	<h1><a href="${pageContext.request.contextPath}/" style="text-decoration: none;"><img width="43px;" height="43px;" style="display: inline-block; margin-bottom: 5px;" src="${pageContext.request.contextPath}/resources/images/mangologo.png">&nbsp;<em>망고</em>마켓</a></h1>
                 </div>
 	         	<div class="container">
