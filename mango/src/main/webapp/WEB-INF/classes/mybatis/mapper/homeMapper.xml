@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="home">
+	<select id="productPop" resultType="com.sp.mango.home.Home">
+		<![CDATA[
+			SELECT * FROM (
+				SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+					  TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area2, area3,
+					  NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
+					  RANK() OVER(ORDER BY popularPoint DESC) RANK
+				FROM product p
+				JOIN area a ON p.areaNum = a.areaNum
+				JOIN pCategory pc ON p.pcNum = pc.pcNum
+				JOIN member m ON p.userId = m.userId
+				LEFT OUTER JOIN (
+					SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+					GROUP BY pNum
+				) c ON p.pNum = c.pNum
+				LEFT OUTER JOIN (
+					SELECT p.pNum, ((NVL(pWishCount, 0) * 2) +
+							(pHitCount * 0.1)) popularPoint
+					FROM product p
+					LEFT OUTER JOIN (
+										SELECT pNum, COUNT(pWishNum) pWishCount FROM product_WishList
+										GROUP BY pNum
+									) c ON p.pNum = c.pNum
+				) pop ON p.pNum = pop.pNum
+				WHERE popularPoint >= 5
+			) T1
+			WHERE T1.RANK <= 3
+		]]>
+	</select>
+	
+	<select id="giftyPop" resultType="com.sp.mango.home.Home">
+		<![CDATA[
+			SELECT * FROM (
+				SELECT g.gNum, gSubject, gPrice, TO_CHAR(gRegDate, 'YYYY-MM-DD') gRegDate,
+					  TO_CHAR(gUpdate_date, 'YYYY-MM-DD HH:MI:SS') gUpdate_date,
+					  NVL(gWishCount, 0) gWishCount, gc.gcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
+					  RANK() OVER(ORDER BY popularPoint DESC) RANK
+				FROM giftycon g
+				JOIN giftyCategory gc ON g.gcNum = gc.gcNum
+				JOIN member m ON g.userId = m.userId
+				LEFT OUTER JOIN (
+					SELECT gNum, COUNT(giftyWishNum) gWishCount FROM gifty_WishList
+					GROUP BY gNum
+				) c ON g.gNum = c.gNum
+				LEFT OUTER JOIN (
+					SELECT g.gNum, ((NVL(gWishCount, 0) * 2) +
+							(gHitCount * 0.1)) popularPoint
+					FROM giftycon g
+					LEFT OUTER JOIN (
+										SELECT gNum, COUNT(giftyWishNum) gWishCount FROM gifty_WishList
+										GROUP BY gNum
+									) c ON g.gNum = c.gNum
+				) pop ON g.gNum = pop.gNum
+				WHERE popularPoint >= 5
+			) T1
+			WHERE T1.RANK <= 3
+		]]>
+	</select>
+	
+	<select id="villagePop" resultType="com.sp.mango.home.Home">
+		<![CDATA[
+			SELECT * FROM (
+				SELECT v.vNum, v.subject, hitCount, TO_CHAR(v.regDate, 'YYYY-MM-DD') regDate, a.area3,
+					  NVL(vWishCount, 0) vWishCount, vc.vcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
+					  RANK() OVER(ORDER BY popularPoint DESC) RANK
+				FROM village_bbs v
+				JOIN area a ON v.areaNum = a.areaNum
+				JOIN villageCategory vc ON v.vcNum = vc.vcNum
+				JOIN member m ON v.userId = m.userId
+				LEFT OUTER JOIN (
+					SELECT vNum, COUNT(*) vWishCount FROM vbbsLike
+					GROUP BY vNum
+				) c ON v.vNum = c.vNum
+				LEFT OUTER JOIN (
+					SELECT v.vNum, ((NVL(vWishCount, 0) * 2) +
+							(hitCount * 0.1)) popularPoint
+					FROM village_bbs v
+					LEFT OUTER JOIN (
+										SELECT vNum, COUNT(*) vWishCount FROM vbbsLike
+										GROUP BY vNum
+									) c ON v.vNum = c.vNum
+				) pop ON v.vNum = pop.vNum
+				WHERE popularPoint >= 5
+			) T1
+			WHERE T1.RANK <= 3
+		]]>
+	</select>
+	
+	
+</mapper>

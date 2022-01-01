@@ -179,7 +179,7 @@
 	<select id="popularList" parameterType="map" resultType="com.sp.mango.product.Product">
 		SELECT * FROM (
         	   SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
-		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3,
+		              TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area3, pContent,
 		              NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
 		              RANK() OVER(ORDER BY popularPoint DESC) RANK
         		FROM product p

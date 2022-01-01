@@ -568,6 +568,16 @@ public class ProductController {
 				opt = listMemberAddr.get(0).getAreaNum();
 			}
 		}
+		
+		// 썸내일 사진
+	    for(Product dto : list) {
+	        List<String> imgs = myUtil.getImgSrc(dto.getpContent());
+	        if(imgs != null && imgs.size() > 0) {
+	           dto.setpImgSaveFileName(imgs.get(0));
+	        } else {
+	           dto.setpImgSaveFileName(cp+"/resources/images/noimage.png");
+	        }
+	    }
 
 		String isPorular = "1";
 		// String listUrl = cp + "/product/list";
