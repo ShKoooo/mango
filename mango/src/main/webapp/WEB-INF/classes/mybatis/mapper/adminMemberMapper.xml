@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminMember">
+	<select id="listMember" parameterType="map" resultType="com.sp.mango.admin.member.Member">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (			
+				SELECT m.userId, userName, userNickName, TO_CHAR(m.regDate,'YYYY-MM-DD') regDate, m.regDate fullRegDate,
+				    memberEnable, membershipName, NVL2(busNickName,'true','false') business, busNickName,
+				    NVL(COUNT(CASE WHEN repMemChecked='F' THEN repMemNum END),0) cntRep
+				FROM member m
+				JOIN membership s ON m.membershipNum = s.membershipNum
+				LEFT OUTER JOIN businessProfile b ON m.userId = b.userId
+				LEFT OUTER JOIN reportMember rm ON m.userId = rm.target_id
+				WHERE
+				<if test="chkBlk =='true' ">
+					memberEnable = 0
+				</if>
+				<if test="chkBlk =='false' ">
+					memberEnable = 0 OR memberEnable = 1
+				</if>
+				<if test="chkRep == 'true' ">
+					AND repMemChecked = 'F'
+				</if>
+				<if test="chkBus =='true' ">
+					AND NVL2(busNickName,'true','false') = 'true'
+				</if>
+				<if test="userId != null and userId != '' ">
+					AND INSTR(m.userId, #{userId}) > 0
+				</if>
+				<if test="userNickName != null and userNickName != '' ">
+					AND (INSTR(userNickName, #{userNickName}) > 0
+					OR INSTR(busNickName, #{userNickName}) > 0)
+				</if>
+				GROUP BY m.userId, userName, userNickName, regDate, memberEnable, membershipName, busNickName
+				ORDER BY m.userId
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}		
+	</select>
+	
+	<select id="countMember" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(NVL(COUNT(CASE WHEN repMemChecked='F' THEN repMemNum END),0)),0) cnt
+		FROM member m
+		LEFT OUTER JOIN businessProfile b ON m.userId = b.userId
+		LEFT OUTER JOIN reportMember rm ON m.userId = rm.target_id
+		WHERE
+		<if test="chkBlk =='true' ">
+			memberEnable = 0
+		</if>
+		<if test="chkBlk =='false' ">
+			memberEnable = 0 OR memberEnable = 1
+		</if>
+		<if test="chkRep == 'true' ">
+			AND repMemChecked = 'F'
+		</if>
+		<if test="chkBus =='true' ">
+			AND NVL2(busNickName,'true','false') = 'true'
+		</if>
+		<if test="userId != null and userId != '' ">
+			AND INSTR(m.userId, #{userId}) > 0
+		</if>
+		<if test="userNickName != null and userNickName != '' ">
+			AND (INSTR(userNickName, #{userNickName}) > 0
+			OR INSTR(busNickName, #{userNickName}) > 0)
+		</if>
+		GROUP BY m.userId, userName, userNickName, regDate, memberEnable, busNickName
+	</select>
+	
+	<select id="readMember" parameterType="String" resultType="com.sp.mango.admin.member.MemberID">
+		SELECT m.userId, userName, userNickName, m.regDate, memberEnable, loginFail,
+		    membershipName, userTel, userEmail, nickUpdate_date, birth,
+		    busNickName, busTel, busEmail, busAddr1, busAddr2,
+		    a.area1 busArea1, a.area2 busArea2, a.area3 busArea3
+		FROM member m
+		JOIN membership s ON m.membershipNum = s.membershipNum
+		LEFT OUTER JOIN businessProfile b ON m.userId = b.userId
+		LEFT OUTER JOIN area a ON b.areaNum = a.areaNum
+		WHERE m.userId = #{memberId}
+	</select>
+	
+	<select id="listMemberAddr" parameterType="String" resultType="com.sp.mango.admin.member.MemberAddr">
+		SELECT maAddr1, maAddr2, area1, area2, area3
+		FROM memberAddr ma
+		LEFT OUTER JOIN area a ON ma.areaNum = a.areaNum
+		WHERE userId = #{memberId}
+	</select>
+	
+	<select id="listReportMember" parameterType="String" resultType="com.sp.mango.admin.member.ReportMember">
+		SELECT repMemNum, repMemContent, rm.rmReasonNum, rmReasonName, repMemRegDate, repMemChecked, rm.userId, userNickName reporter, target_id
+		FROM reportMember rm
+		JOIN repMember_Reason r ON rm.rmReasonNum = r.rmReasonNum
+		JOIN member m ON rm.userId = m.userId
+		WHERE target_id = #{memberId}
+		AND repMemChecked = 'F'
+		ORDER BY repMemRegDate DESC
+	</select>
+	
+	<select id="listMemberState" parameterType="map" resultType="com.sp.mango.admin.member.MemberState">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (	
+				SELECT msNum, memo, TO_CHAR(regDate, 'YYYY-MM-DD') regDate, userId, s.msCodeNum, msCodeName
+				FROM memberState s
+				JOIN memberStateCode c ON s.msCodeNum = c.msCodeNum
+				WHERE userId = #{memberId}
+				ORDER BY regDate DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}	
+	</select>
+	
+	<select id="countMemberState" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt
+		FROM memberState
+		WHERE userId = #{memberId}
+	</select>
+	
+	<select id="listMemberStateCode" resultType="com.sp.mango.admin.member.MemberStateCode">
+		SELECT msCodeNum, msCodeName
+		FROM MemberStateCode
+	</select>
+	
+	<insert id="insertMemberState" parameterType="map">
+		INSERT INTO memberState (msNum, memo, regDate, userId, msCodeNum)
+		VALUES (memberState_seq.NEXTVAL, #{memo}, SYSDATE, #{memberId}, #{msCodeNum})
+	</insert>
+	
+	<update id="updateMemberEnable" parameterType="map">
+		UPDATE member SET memberEnable = #{enable}
+		WHERE userId = #{memberId}
+	</update>
+	
+	<update id="updateMemberLoginFail" parameterType="String">
+		UPDATE member SET loginFail = 0
+		WHERE userId = #{memberId}
+	</update>
+	
+	<update id="updateMannerMinusDeg" parameterType="map">
+		UPDATE mannerProfile SET minusDeg = minusDeg + #{minusDeg}
+		WHERE userId = #{memberId}
+	</update>
+	
+	<update id="updateReportChecked" parameterType="Integer">
+		UPDATE reportMember SET repMemChecked = 'T'
+		WHERE repMemNum = #{repMemNum}
+	</update>
+</mapper>

@@ -47,12 +47,37 @@ public class MemberController {
 		}
 		
 		Integer loginFail = service.selectLoginFail(dto.getUserId());
+		Integer userEnable = service.selectEnable(dto.getUserId());
+		System.out.println(":::: Enable : "+userEnable);
+		System.out.println(":::: userPwd : "+userPwd);
+		System.out.println(":::: dto.getUserPwd() : "+dto.getUserPwd());
 		
 		if (loginFail == null) {
 			service.updateDefaultLoginFail(userId);
 		}
+		if (userEnable == null) {
+			service.updateDefaultEnable(userId);
+		}
 		if (loginFail >= 5) {
+			service.updateLoginFail(userId);
+			
 			model.addAttribute("message", "비밀번호 오류 횟수 초과입니다.<br>관리자에게 문의하세요.");
+			if (loginFail < 6) {
+				Map<String, Object> enableMap = new HashMap<String, Object>();
+				enableMap.put("userId", userId);
+				enableMap.put("value", 0);
+				service.updateEnable(enableMap);
+				
+				Map<String, Object> stateMap = new HashMap<String, Object>();
+				stateMap.put("userId", userId);
+				stateMap.put("memo", "Activated by: "+userId+"\n사유: 비밀번호 오류 횟수 초과");
+				service.insertMemberState(stateMap);
+			}
+			
+			return ".member.login";
+		}
+		if (userEnable < 1) {
+			model.addAttribute("message", "차단된 계정입니다.<br>관리자에게 문의하세요.");
 			return ".member.login";
 		}
 		
@@ -63,7 +88,7 @@ public class MemberController {
 			return ".member.login";
 		}
 		
-		service.updateDefaultLoginFail(userId);
+		service.updateDefaultLoginFail(userId);		// 정상 접근 시
 		
 		// 세션에 로그인정보 저장
 		MemberSessionInfo info = new MemberSessionInfo();

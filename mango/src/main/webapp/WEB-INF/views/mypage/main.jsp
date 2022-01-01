@@ -192,8 +192,8 @@ $(function() {
 <div class="content-wrapper">
 	<div class="body-container">
 		<div class="inner-container container">
-			<div class="myfont-jalnan section-header">
-				<h3 class="myfont-jalnan"> <span class="myfont-jalnan">마이 페이지</span> </h3>
+			<div class="section-header">
+				<h3> <span>마이 페이지</span> </h3>
 			</div>
 			
 			<div class="container">

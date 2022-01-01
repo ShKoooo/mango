@@ -25,4 +25,9 @@ public interface MemberService {
 	public Integer selectLoginFail(String userId);
 	public void updateDefaultLoginFail(String userId) throws Exception;
 	public void updateLoginFail(String userId) throws Exception;
+	
+	public Integer selectEnable(String userId);
+	public void updateDefaultEnable(String userId) throws Exception;
+	public void updateEnable(Map<String,Object> map) throws Exception;
+	public void insertMemberState(Map<String, Object> map) throws Exception;
 }

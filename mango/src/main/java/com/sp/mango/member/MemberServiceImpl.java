@@ -253,5 +253,48 @@ public class MemberServiceImpl implements MemberService {
 			throw e;
 		}
 	}
+
+	@Override
+	public Integer selectEnable(String userId) {
+		Integer result = null;
+		
+		try {
+			result = dao.selectOne("member.selectEnable",userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public void updateDefaultEnable(String userId) throws Exception {
+		try {
+			dao.updateData("member.updateDefaultEnable",userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void updateEnable(Map<String,Object> map) throws Exception {
+		try {
+			dao.updateData("member.updateEnable",map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public void insertMemberState(Map<String, Object> map) throws Exception {
+		try {
+			dao.insertData("member.insertMemberState",map);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
 	
 }

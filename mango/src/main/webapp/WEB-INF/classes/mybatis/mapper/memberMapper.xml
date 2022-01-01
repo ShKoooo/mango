@@ -5,7 +5,7 @@
 	<select id="loginMember" parameterType="String" resultType="com.sp.mango.member.Member">
 		SELECT userId, userPwd, userName, userNickName, membershipNum, regDate, update_Date
 		FROM member
-		WHERE userId = #{userId} AND memberEnable != 0
+		WHERE userId = #{userId}
 	</select>
 	
 	<sql id="where-duplMember">
@@ -133,4 +133,20 @@
 		UPDATE member SET loginFail = loginFail + 1 WHERE userId = #{userId}
 	</update>
 	
+	<select id="selectEnable" parameterType="String" resultType="Integer">
+		SELECT memberEnable FROM member WHERE userId = #{userId}
+	</select>
+	
+	<update id="updateDefaultEnable" parameterType="String">
+		UPDATE member SET memberEnable = 1 WHERE userId = #{userId}
+	</update>
+	
+	<update id="updateEnable" parameterType="map">
+		UPDATE member SET memberEnable = #{value} WHERE userId = #{userId}
+	</update>
+	
+	<insert id="insertMemberState" parameterType="map">
+		INSERT INTO memberState (msNum, memo, regDate, userId, msCodeNum)
+		VALUES (memberState_seq.NEXTVAL, #{memo}, SYSDATE, #{userId}, 400)
+	</insert>
 </mapper>
