@@ -84,7 +84,7 @@
 										GROUP BY vNum
 									) c ON v.vNum = c.vNum
 				) pop ON v.vNum = pop.vNum
-				WHERE popularPoint >= 5
+				WHERE popularPoint >= 2 AND vc.vcNum = 7
 			) T1
 			WHERE T1.RANK <= 3
 		]]>

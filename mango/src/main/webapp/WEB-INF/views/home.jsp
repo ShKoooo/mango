@@ -146,7 +146,7 @@
 			                	<div class="card h-100 shadow border-0">
 			                    	<img class="card-img-top" width="308px" height="200px" src="${dto.vImgFilename}" alt="" />
 			                        	<div class="card-body p-4">
-			                            	<a class="logo text-decoration-none link-dark stretched-link" href="${articleUrl}&vNum=${dto.vNum}"><div class="h5 card-title mb-3">${dto.subject}</div></a>
+			                            	<a class="logo text-decoration-none link-dark stretched-link" href="${vArticleUrl}&vNum=${dto.vNum}"><div class="h5 card-title mb-3">${dto.subject}</div></a>
 			                                	
 			                            </div>
 			                            <div class="card-footer p-4 pt-0 bg-transparent border-top-0">

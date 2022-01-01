@@ -50,7 +50,7 @@ public class HomeController {
 		
 		String pArticleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page;
 		String gArticleUrl = cp +"/gifty/article?group="+group+"&page=" + current_page;
-		
+		String vArticleUrl = cp + "/village/ad/article?page="+current_page;
 		
 		model.addAttribute("productPopList", productPopList);
 		model.addAttribute("giftyPopList", giftyPopList);
@@ -58,7 +58,7 @@ public class HomeController {
 		
 		model.addAttribute("pArticleUrl", pArticleUrl);
 		model.addAttribute("gArticleUrl", gArticleUrl);
-		//model.addAttribute("pArticleUrl", pArticleUrl);
+		model.addAttribute("vArticleUrl", vArticleUrl);
 		
 		return ".home";
 	}
