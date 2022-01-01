@@ -22,6 +22,19 @@ textarea.form-control {
 .form-control {
 	font-size: 12px;
 }
+
+.page-item.active .page-link {
+	background-color : #f69730;
+	border-color : #f69730;
+}
+
+.page-link {
+	color : #f69730;
+}
+.btn-primary {
+	background-color : #f69730;
+	border-color : #f69730;
+}
   
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/vendor/ckeditor5/ckeditor.js"></script>

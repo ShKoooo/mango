@@ -22,6 +22,7 @@ textarea.form-control {
 .form-control {
 	font-size: 12px;
 }
+
   
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/vendor/ckeditor5/ckeditor.js"></script>

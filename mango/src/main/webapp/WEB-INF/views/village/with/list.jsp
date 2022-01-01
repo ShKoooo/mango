@@ -16,6 +16,10 @@ a:hover {
 	text-decoration : none;
 }
 
+.page-link {
+	color : #f69730;
+}
+
 .container {
 	width: 1170px;
 }
