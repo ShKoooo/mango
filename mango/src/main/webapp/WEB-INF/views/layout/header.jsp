@@ -14,45 +14,44 @@ function searchWard() {
 	<div class="site-header container-fluid">
             <div class="top-header">
                 <div class="logo col-md-6 col-sm-6">
-                    <h1><a href="${pageContext.request.contextPath}/" style="text-decoration: none;"><em>망고</em>마켓</a></h1>
+                	<h1><a href="${pageContext.request.contextPath}/" style="text-decoration: none;"><img width="43px;" height="43px;" style="display: inline-block; margin-bottom: 5px;" src="${pageContext.request.contextPath}/resources/images/mangologo.png">&nbsp;<em>망고</em>마켓</a></h1>
                 </div>
-                
-         	<div class="container">
-	         	<div class="row">
-	         		<div class="col">
-						<div class="d-flex justify-content-end" style="margin-top:15px">
-							<c:choose>
-								<c:when test="${empty sessionScope.member}">
-									<div class="p-2">
-										<a href="javascript:dialogLogin();" title="로그인"><i class="bi bi-lock"></i></a>
-									</div>
-									<div class="p-2">
-										<a href="${pageContext.request.contextPath}/member/member" title="회원가입"><i class="bi bi-person-plus"></i></a>
-									</div>	
-								</c:when>
-								<c:otherwise>
-									<div class="p-2">
-										<a href="${pageContext.request.contextPath}/member/logout" title="로그아웃"><i class="bi bi-unlock"></i></a>
-									</div>					
-									<div class="p-2">
-										<a href="#" title="알림"><i class="bi bi-bell"></i></a>
-									</div>
-									<c:if test="${sessionScope.member.membership>50}">
+	         	<div class="container">
+		         	<div class="row">
+		         		<div class="col">
+							<div class="d-flex justify-content-end" style="margin-top:15px">
+								<c:choose>
+									<c:when test="${empty sessionScope.member}">
 										<div class="p-2">
-											<a href="${pageContext.request.contextPath}/admin" title="관리자"><i class="bi bi-gear"></i></a>
-										</div>					
-									</c:if>
-									<c:if test="${sessionScope.member.membership<50}">
+											<a href="javascript:dialogLogin();" title="로그인"><i class="bi bi-lock"></i></a>
+										</div>
 										<div class="p-2">
-											<a href="${pageContext.request.contextPath}/mypage/main" title="마이페이지">${sessionScope.member.userNickName} 님</a>
+											<a href="${pageContext.request.contextPath}/member/member" title="회원가입"><i class="bi bi-person-plus"></i></a>
+										</div>	
+									</c:when>
+									<c:otherwise>
+										<div class="p-2">
+											<a href="${pageContext.request.contextPath}/member/logout" title="로그아웃"><i class="bi bi-unlock"></i></a>
 										</div>					
-									</c:if>
-								</c:otherwise>
-							</c:choose>
+										<div class="p-2">
+											<a href="#" title="알림"><i class="bi bi-bell"></i></a>
+										</div>
+										<c:if test="${sessionScope.member.membership>50}">
+											<div class="p-2">
+												<a href="${pageContext.request.contextPath}/admin" title="관리자"><i class="bi bi-gear"></i></a>
+											</div>					
+										</c:if>
+										<c:if test="${sessionScope.member.membership<50}">
+											<div class="p-2">
+												<a href="${pageContext.request.contextPath}/mypage/main" title="마이페이지">${sessionScope.member.userNickName} 님</a>
+											</div>					
+										</c:if>
+									</c:otherwise>
+								</c:choose>
+							</div>
 						</div>
-					</div>
-	         	</div>	
-	         </div>		
+		         	</div>	
+		        </div>		
             </div>
             
           
@@ -62,9 +61,9 @@ function searchWard() {
 							<a id="search-icon" class="btn-left fa fa-search" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample"></a>
 						<div class="collapse" id="collapseExample">
 							<form class="d-flex" name="productSearchForm" method="post" action="${pageContext.request.contextPath}/search/productList">
-								<input class="form-control me-2" type="text" name="searchKeyword" style="width:500px; height: 40px;"
+								<input class="form-control me-2" type="text" name="searchKeyword" style="width:500px; height: 40px; margin-top: 3px;"
    									 value="${searchKeyword}" placeholder=" 어떤 매물을 찾으시나요  ?" aria-label="Search">
-								<button class="btn btn-outline-success mt-1" type="button" onclick="searchWard()" style="height:39px;">Search</button>
+								<button class="btn btn-outline-success mt-1" type="button" onclick="searchWard()" style="height:37px;">Search</button>
 							</form>
 						</div>
                     </div>
