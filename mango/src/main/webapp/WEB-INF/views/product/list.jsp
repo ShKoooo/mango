@@ -375,8 +375,7 @@ $(function(){
 	                </c:if>
 					
 					
-					<c:if test="${total_page > 1}">	
-					:::${total_page}""${page}
+					<c:if test="${total_page > 1}">
 						<div class="more-box load-more">
 							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
 						</div>
