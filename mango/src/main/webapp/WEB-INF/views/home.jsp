@@ -6,45 +6,35 @@
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100">
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,400italic,300italic,300,500,500italic,700,900">
 
-       
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
+		<!-- Carousel -->
+       	<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+		  <div class="carousel-inner">
+		    <div class="carousel-item active">
+		 		<div class="main" style="background-color: #fdfaf3">
+		 			<div class="inner">
+			    	<img src="${pageContext.request.contextPath}/resources/images/main.png" style="padding:300px;">
+		 			</div>
+		 		</div>
+		    </div>
 
-                <div class="swiper-slide" style="background-image: url(images/slide1.jpg);">
-                    <div class="overlay-s"></div>
-                    <div class="slider-caption">
-                        <div class="inner-content">
-                            <h2>Earth New House Project</h2>
-                            <p>Artcore is free HTML5 template by <b class="blue">template</b><b class="green">mo</b>. Credit goes to <a rel="nofollow" href="http://unsplash.com">Unsplash</a> for photos.</p>
-                            <a href="#" class="main-btn white">View Projects</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="swiper-slide" style="background-image: url(images/slide2.jpg);">
-                    <div class="overlay-s"></div>
-                    <div class="slider-caption">
-                        <div class="inner-content">
-                            <h2>Hotel and Residence Concept in Montenegro</h2>
-                            <p>We come with new fresh and unique ideas.</p>
-                            <a href="#" class="main-btn white">View Projects</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="swiper-slide" style="background-image: url(images/slide3.jpg);">
-                    <div class="overlay-s"></div>
-                    <div class="slider-caption">
-                        <div class="inner-content">
-                            <h2>Natural 3d Architecture Design</h2>
-                            <p>Natural concrete is a material which is calm and clean.</p>
-                            <a href="#" class="main-btn white">View Projects</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
+		    <div class="carousel-item" data-bs-interval="10000">
+		    	<div class="main" style="background-image: url('resources/images/main2.jpg'); background-size: cover;">
+		    		<div class="inner" style="padding: 300px;">
+			    			<h3 style="color:#FFFFFF;"> 집에서 자고 있는 물건들, <br>지금 당장 망고하는 건 어떨까요? </h3>
+							<a href="${pageContext.request.contextPath}/product/list" class="main-btn white">망고하기</a>
+		    		</div>
+		    	</div>
+		    </div>
+		  </div>
+		  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+		    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		    <span class="visually-hidden">Previous</span>
+		  </button>
+		  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+		    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+		    <span class="visually-hidden">Next</span>
+		  </button>
+		</div>
         
         <div style="height: 100px; text-align: center; margin-top: 60px;">
 	       	<h3>지금 <span style="color: #f69730;">망고</span>마켓은? <span style="color: #f69730;">망고</span>마켓 BEST <span style="color: #CC3D3D;">TOP 3</span> !!</h3>
