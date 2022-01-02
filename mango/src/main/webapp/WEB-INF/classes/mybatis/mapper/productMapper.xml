@@ -358,4 +358,15 @@
 		UPDATE product SET pStatus='거래완료' WHERE pNum = #{pNum}
 	</update>
 	
+	
+	<!-- 예약상품 인서트 -->
+	<insert id="insertBook" parameterType="com.sp.mango.product.Product">
+         INSERT INTO productBook (userId, pNum, bookAble)
+         VALUES(#{userId}, #{pNum}, 'T')
+	</insert>
+	
+	<!-- 예약내역 검색 -->
+	<select id="selectBook" parameterType="Integer" resultType="com.sp.mango.product.Product">
+		SELECT * FROM productBook WHERE pNum = #{pNum}
+	</select>
 </mapper>

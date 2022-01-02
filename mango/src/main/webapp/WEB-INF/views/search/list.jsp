@@ -136,7 +136,7 @@ var total_page = "${total_page}";
 function listPage(page, pcNum) {
 	var url = "${pageContext.request.contextPath}/search/morelist";
 	var searchKeyword = $("#searchKeyword").val();
-	var query = "page=" + page + "&pcNum=" + pcNum + "&searchKeyword=" + searchKeyword;
+	var query = "page=" + page + "&pcNum=" + pcNum + "&searchKeyword=" + searchKeyword + "&maLat=" + ${maLat} + "&maLon=" + ${maLon};
 	
 	var fn = function(data) {
 		printProduct(data);

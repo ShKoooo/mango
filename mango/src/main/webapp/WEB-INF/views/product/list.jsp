@@ -142,10 +142,12 @@ function ajaxFun(url, method, query, dataType, fn) {
 // 더보기
 var current_page = "${page}";
 var total_page = "${total_page}";
+var maLat = $("#selectArea option:selected").attr("data-maLat");
+var maLon = $("#selectArea option:selected").attr("data-maLon");
 
 function listPage(page, pcNum) {
 	var url = "${pageContext.request.contextPath}/product/morelist";
-	var query = "page=" + page + "&pcNum=" + pcNum;
+	var query = "page=" + page + "&pcNum=" + pcNum + "&maLat=" + ${maLat} + "&maLon=" + ${maLon};
 	
 	var fn = function(data) {
 		printProduct(data);
@@ -181,8 +183,8 @@ function getUrlDefaultInfo(){
 
 function printProduct(data) {
 	var dataCount = data.dataCount;
-	var page = data.page;
-	var total_page = data.total_page;
+	current_page = data.page;
+	total_page = data.total_page;
 	var pcNum = data.pcNum;
 	
 //	$(".more-list").show();
@@ -199,10 +201,11 @@ function printProduct(data) {
 	}
 */
 	$(".load-more .more").show();
+
 	if(parseInt(total_page) <= parseInt(current_page)) {
 		$(".load-more .more").hide();
-	}	
-
+	}
+	
 	
 	var out = "";
 	
@@ -371,7 +374,9 @@ $(function(){
 		                </div>
 	                </c:if>
 					
-					<c:if test="${total_page > 1}">			
+					
+					<c:if test="${total_page > 1}">	
+					:::${total_page}""${page}
 						<div class="more-box load-more">
 							<a class="more btn btn-outline-success" style="text-decoration: none;">매물 더보기</a>
 						</div>

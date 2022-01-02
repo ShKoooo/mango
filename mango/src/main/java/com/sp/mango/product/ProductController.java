@@ -184,11 +184,6 @@ public class ProductController {
 		map.put("searchKeyword", searchKeyword);
 		map.put("isKeyword", isKeyword);
 		
-		dataCount = service.dataCount(map);
-		int total_page = myUtil.pageCount(rows, dataCount);
-		if (current_page > total_page) {
-			current_page = total_page;
-		}
 		
 		// 리스트
 		int start = (current_page - 1) * rows + 1;
@@ -196,6 +191,12 @@ public class ProductController {
 		map.put("start", start);
 		map.put("end", end);
 				
+		dataCount = service.dataCount(map);
+		int total_page = myUtil.pageCount(rows, dataCount);
+		if (current_page > total_page) {
+			current_page = total_page;
+		}
+
 		List<Product> list = service.memberListProduct(map);
 		if(info != null) { 
 			if(opt == 0 && listMemberAddr.size() > 0) {
@@ -366,7 +367,8 @@ public class ProductController {
 	public String updateSubmit(Product dto,
 			@RequestParam String page,
 			@RequestParam int pcNum,
-			@RequestParam String soldDateTF,
+			@RequestParam int pNum,
+			Note noteDto,
 			HttpSession session
 			) throws Exception {
 
@@ -374,17 +376,32 @@ public class ProductController {
 		
 		try {
 			dto.setUserId(info.getUserId());
-			if(soldDateTF.equals("거래완료")) {
-				service.updateSoldDate(dto);
-			}
 			
 			service.updateProduct(dto);
+			
+			
+			if(dto.getpStatus().equals("판매중")) {
+				List<Product> selectBook = service.selectBook(pNum);
+				
+					for(Product vo : selectBook) {
+						String bookAble = vo.getBookAble();
+						
+						if(bookAble.equals("T")) {
+							noteDto.setSendId(dto.getUserId());
+							String rContent = "안녕하세요. 알림 예약하신 <"+dto.getpSubject()+"> 게시글이 '판매중'으로 변경되었습니다.<br> 판매이웃에게 거래쪽지를 보내보세요!";
+							noteDto.setReceiveId(vo.getUserId());
+							noteDto.setNoteContent(rContent);
+							
+							service.sendMsg(noteDto);					
+						}
+					}
+			}
+			
 		} catch (Exception e) {
 		}
 
 		return "redirect:/product/list?pcNum="+ pcNum + "&page=" + page;
 	}
-	
 	
 	// 게시글 관심 추가/삭제 : AJAX - JSON
 	@RequestMapping(value = "insertProductWish", method = RequestMethod.POST)
@@ -692,6 +709,29 @@ public class ProductController {
 			service.updatePstatus(pNum);
 		} catch (Exception e) {
 		}
+		
+		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
+	}
+	
+	
+	// 예약 설정하기
+	@RequestMapping(value = "insertBook")
+	public String insertBook(Product dto,
+			@RequestParam int pNum,
+			@RequestParam String page,
+			@RequestParam int pcNum,
+			HttpSession session
+			) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		try {
+			dto.setUserId(info.getUserId());
+			
+			service.insertBook(dto);
+		} catch (Exception e) {
+		}
+		
 		
 		return "redirect:/product/article?pNum=" + pNum + "&page=" + page + "&pcNum=" + pcNum;
 	}

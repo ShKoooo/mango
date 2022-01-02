@@ -196,6 +196,10 @@ function clickInfo() {
 	alert("거래 쪽지를 전송했습니다! 쪽지함에서 확인해주세요~!");
 }
 
+function clickBook() {
+	alert("알림설정을 완료했습니다! 거래중으로 변경될 시 안내쪽지를 보내드리겠습니다~!");
+}
+
 </script>
     
     <div class="content-wrapper">
@@ -292,15 +296,20 @@ function clickInfo() {
                                 </li>
                                 <li>
                                 	<c:if test="${dto.pStatus=='판매중'}">
-                                		<c:if test="${sessionScope.member.userId==dto.userId}">
+                                		<c:if test="${empty sessionScope.member || sessionScope.member.userId==dto.userId}">
                                 			<i class="fa fa-envelope-o"></i>거래 쪽지 보내기
                                 		</c:if>
-                                		<c:if test="${sessionScope.member.userId!=dto.userId}">
+                                		<c:if test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
                                 			<i class="fa fa-envelope-o"></i><a onclick="clickInfo();" href="${pageContext.request.contextPath}/product/sendMsg?pNum=${dto.pNum}">거래 쪽지 보내기</a>
                                 		</c:if>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='예약중'}">
-                                		<i class="bi bi-calendar-check-fill"></i>거래가 예약된 매물입니다
+                                		<c:if test="${sessionScope.member.userId==dto.userId || empty sessionScope.member}">
+                                			<i class="bi bi-calendar-check-fill"></i>거래가 예약된 매물입니다
+                                		</c:if>
+                                		<c:if test="${! empty sessionScope.member && sessionScope.member.userId!=dto.userId}">
+                                			<i class="bi bi-calendar-check-fill"></i><a onclick="clickBook();" href="${pageContext.request.contextPath}/product/insertBook?pNum=${dto.pNum}&page=${page}&pcNum=${pcNum}">예약중인 매물입니다.(알림설정하기)</a>
+                                		</c:if>
                                 	</c:if>
                                 	<c:if test="${dto.pStatus=='거래완료'}">
                                 		<i class="bi bi-check2-circle"></i><span>판매완료</span>

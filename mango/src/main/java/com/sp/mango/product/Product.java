@@ -56,6 +56,8 @@ public class Product {
 	private int income;
 	private int expenses;
 	
+	private String bookAble;
+	
 	public int getpNum() {
 		return pNum;
 	}
@@ -290,6 +292,13 @@ public class Product {
 	}
 	public void setExpenses(int expenses) {
 		this.expenses = expenses;
+	}
+	
+	public String getBookAble() {
+		return bookAble;
+	}
+	public void setBookAble(String bookAble) {
+		this.bookAble = bookAble;
 	}
 	
 	

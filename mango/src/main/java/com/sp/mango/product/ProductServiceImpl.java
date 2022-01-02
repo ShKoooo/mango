@@ -420,6 +420,33 @@ public class ProductServiceImpl implements ProductService{
 		
 	}
 
+	@Override
+	public void insertBook(Product dto) throws Exception {
+		// 예약중
+		try {
+			dao.insertData("product.insertBook", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
+
+	@Override
+	public List<Product> selectBook(int pNum) {
+		// 예약내역
+		List<Product> selectBook = null;
+		
+		try {
+			selectBook = dao.selectList("product.selectBook", pNum);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return selectBook;
+	}
 
 
+	
+	
 }

@@ -58,4 +58,10 @@ public interface ProductService {
 	// 거래완료로 변경
 	public void updatePstatus(int pNum) throws Exception;
 	
+	// 예약중인 상품, 유저아이디 등록
+	public void insertBook(Product dto) throws Exception;
+	
+	// 예약내역 검색
+	public List<Product> selectBook(int pNum);
+	
 }

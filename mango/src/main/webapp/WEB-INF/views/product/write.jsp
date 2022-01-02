@@ -127,15 +127,6 @@ $(function(){
 	});
 });
 
-$(function(){
-	$("#selectStatus").change(function(){
-		var state = $("#selectStatus option:selected").val();
-		if(state == '거래완료') {
-			// console.log(state);
-			$(".soldDate").attr("value", "거래완료");
-		}
-	});
-});
 
 </script>
 
@@ -157,10 +148,8 @@ $(function(){
 									<select name="pStatus" class="form-select" id="selectStatus" style="width: 500px; margin-left: 10px;">
 						    			<option selected value="판매중" ${dto.pStatus=="판매중" ? "selected='selected'" : ""}>판매중</option>
 							    		<option value="예약중" ${dto.pStatus=="예약중" ? "selected='selected'" : ""}>예약중</option>
-							    	<!-- <option value="거래완료" ${dto.pStatus=="거래완료" ? "selected='selected'" : ""}>거래완료</option> -->
 						  			</select>
 								</div>
-								<input type="hidden" name="soldDateTF" class="soldDate">
 							</td>
 						</tr>
 					</c:if>

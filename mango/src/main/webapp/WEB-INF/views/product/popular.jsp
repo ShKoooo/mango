@@ -91,7 +91,7 @@ $(function(){
 		var areaNum = $(this).val();
 		
 		var query = "maLat="+maLat+"&maLon="+maLon+"&opt="+areaNum;
-		var url="${pageContext.request.contextPath}/product/list?"+query;
+		var url="${pageContext.request.contextPath}/product/popular?"+query;
 		location.href=url;
 	});	
 
