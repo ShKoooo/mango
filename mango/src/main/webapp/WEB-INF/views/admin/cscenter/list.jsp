@@ -60,13 +60,13 @@ function searchList() {
 	f.submit();
 }
 	
-function detailedMember(inquiryNum) {
+function detailedMember(inquiryNum, state) {
 	var dlg = $("#member-dialog").dialog({
 		  autoOpen: false,
 		  modal: true,
 		  buttons: {
 		       " 삭제 " : function() {
-		    	   deleteOk(userId);
+		    	   deleteOk(inquiryNum);
 			   },
 		       " 닫기 " : function() {
 		    	   $(this).dialog("close");
@@ -89,9 +89,17 @@ function detailedMember(inquiryNum) {
 	ajaxFun(url, "post", query, "html", fn);
 }
 
-function deleteOk(userId) {
+function deleteOk(inquiryNum) {
 	if(confirm("선택한 문의를 삭제 하시겠습니까 ?")) {
-
+		var url = "${pageContext.request.contextPath}/admin/cscenter/delete";
+		var query = "inquiryNum=" + inquiryNum;
+		
+		var fn = function(){
+			alert("삭제 완료");
+			location.reload();
+		};
+		ajaxFun(url, "post", query, "json", fn);
+		
 	}
 	
 	$('#member-dialog').dialog("close");
@@ -168,6 +176,7 @@ function selectStateChange() {
 							<th class="w-100">이메일</th>
 							<th class="w-150">내용</th>
 							<th class="w-120">문의 날짜</th>
+							<th class="w-100">처리 상태</th>
 							<th class="w-auto">첨부파일</th>
 						</tr>
 					</thead>
@@ -180,6 +189,7 @@ function selectStateChange() {
 							<td>${dto.inquiryEmail}</td>
 							<td>${dto.inquiryContent}</td>
 							<td>${dto.inquiryRegDate}</td>
+							<td>${dto.state == 0 ? "미완료" : "완료"}</td>
 							<td>
 								<c:if test="${not empty dto.saveFilename}">
 									<a href="${pageContext.request.contextPath}/admin/cscenter/download?inquiryNum=${dto.inquiryNum}" class="text-reset"><i class="li_cloud"></i></a>

@@ -51,9 +51,9 @@
 	</tr>
 </table>
 
-<form id="deteailedMemberForm" name="deteailedMemberForm" method="post">
+<form id="deteailedMemberForm" name="deteailedMemberForm" method="post" action="${pageContext.request.contextPath}/admin/cscenter/update">
 	<div>
-		<button type="button" class="okBtn" onclick="location.href='${pageContext.request.contextPath}/admin/cscenter/update';">완료 처리</button>
+		<button type="submit" class="okBtn">${dto.state == '1' ? '미완료 처리' : '완료 처리'}</button>
 		<input type="hidden" name="state" value="${dto.state=='0' ? '1' : '0' }">
 		<input type="hidden" name="inquiryNum" value="${dto.inquiryNum}">
 		<input type="hidden" name="userId" value="${dto.userId}">

@@ -1,5 +1,7 @@
 package com.sp.mango.admin.cscenter;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -7,15 +9,20 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sp.mango.common.FileManager;
 import com.sp.mango.common.MyUtil;
+import com.sp.mango.member.MemberSessionInfo;
 
 @Controller("admin.cscenter.inquiryController")
 @RequestMapping("admin/cscenter/*")
@@ -133,10 +140,11 @@ public class InquiryController {
 		return "admin/cscenter/detaile";
 	}
 	
-	@RequestMapping(value="update")
+	@RequestMapping(value="update", method = RequestMethod.POST)
 	public String update(
 			@RequestParam int inquiryNum,
 			@RequestParam String userId,
+			@RequestParam String state,
 			Model model) throws Exception {
 		
 		try {
@@ -144,6 +152,7 @@ public class InquiryController {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("inquiryNum", inquiryNum);
 			map.put("userId", userId);
+			map.put("state", state);
 			
 			service.updateBoard(map);
 			
@@ -151,7 +160,61 @@ public class InquiryController {
 			e.printStackTrace();
 		}
 		
-		return "admin.cscenter.list";
+		return "redirect:/admin/cscenter/list";
+	}
+	
+	@RequestMapping(value = "download")
+	public void download(@RequestParam int inquiryNum, 
+			HttpServletRequest req, HttpServletResponse resp,
+			HttpSession session) throws Exception {
+
+		String root = session.getServletContext().getRealPath("/");
+		String pathname = root + "uploads" + File.separator + "inquiry";
+
+		Inquiry dto = service.readBoard(inquiryNum);
+
+		if (dto != null) {
+			boolean b = fileManager.doFileDownload(dto.getSaveFilename(), 
+					dto.getOriginalFilename(), pathname, resp);
+			if (b) {
+				return;
+			}
+		}
+
+		resp.setContentType("text/html;charset=utf-8");
+		PrintWriter out = resp.getWriter();
+		out.print("<script>alert('파일 다운로드가 실패 했습니다.');history.back();</script>");
+	}
+	
+	@RequestMapping(value = "delete", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> delete(
+			@RequestParam int inquiryNum,
+			HttpSession session
+			) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+		
+		String check = "false";
+		
+		if(info.getMembership() > 50) {
+			try {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("inquiryNum", inquiryNum);
+				
+				service.deleteBoard(map);
+				
+				check = "true";
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+		}
+		
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("check", check);
+		
+		return model;
+	
 	}
 
 }

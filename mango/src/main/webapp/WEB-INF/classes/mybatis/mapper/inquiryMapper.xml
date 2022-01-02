@@ -86,14 +86,11 @@
 	
 	<update id="updateBoard" parameterType="map">
 		UPDATE inquiry SET state = #{state}
-		WHERE inquiryNum = #{inquiryNum} AND userId = #{userId}
+		WHERE inquiryNum = #{inquiryNum}
 	</update>
 
 	<delete id="deleteBoard" parameterType="map">
 		DELETE FROM inquiry WHERE inquiryNum = #{inquiryNum}
-		<if test="membership &lt; 51 ">
-			AND userId = #{userId}
-		</if>
 	</delete>
 	
 </mapper>
