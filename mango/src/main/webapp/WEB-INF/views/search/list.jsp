@@ -37,9 +37,12 @@
 	width: 45px;
 	height: 45px;
 	border-radius: 45px;
-	background-image: url("${pageContext.request.contextPath}/resources/images/add_photo.png");
+	padding: 0;
+	background-image: url("${pageContext.request.contextPath}/resources/images/note-person-icon2.png");
 	position: relative;
+	/*
 	z-index: 9999;
+	*/
 	background-repeat : no-repeat;
 	background-size : cover;
 }

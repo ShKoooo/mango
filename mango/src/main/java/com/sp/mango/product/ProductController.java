@@ -158,10 +158,12 @@ public class ProductController {
 			@RequestParam(value = "opt", defaultValue = "0") int opt,
 			@RequestParam(value = "searchKeyword", defaultValue = "") String searchKeyword,
 			@RequestParam(value = "isKeyword", defaultValue = "0") String isKeyword,
+			HttpServletRequest req,
 			HttpSession session
 			) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		String cp = req.getContextPath();
 		
 		int rows = 6;
 		int dataCount;
@@ -203,6 +205,16 @@ public class ProductController {
 				opt = listMemberAddr.get(0).getAreaNum();
 			}
 		}
+		
+		// 썸내일 사진
+	    for(Product dto : list) {
+	        List<String> imgs = myUtil.getImgSrc(dto.getpContent());
+	        if(imgs != null && imgs.size() > 0) {
+	           dto.setpImgSaveFileName(imgs.get(0));
+	        } else {
+	           dto.setpImgSaveFileName(cp+"/resources/images/noimage.png");
+	        }
+	    }
 		
 		Map<String, Object> model = new HashMap<>();
 		
