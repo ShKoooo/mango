@@ -291,7 +291,7 @@ function searchFaq() {
 	        <div class="col-md-6 service-item service-right">
 	            <div class="box-content">
 	                <div class="service-icon">
-	                    <a href="${pageContext.request.contextPath}/cscenter/csNotice" style="text-decoration-line: none;"><i class="li_bubble"></i></a>
+	                    <a href="${pageContext.request.contextPath}/csGuide/main" style="text-decoration-line: none;"><i class="li_bubble"></i></a>
 	                </div>
 	                <div class="service-content">
 	                    <h4 id="sub-title">이용 가이드</h4>
