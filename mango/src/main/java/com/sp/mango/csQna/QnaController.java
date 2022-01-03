@@ -176,6 +176,22 @@ public class QnaController {
 		return ".csQna.write";
 	}
 	
+	@RequestMapping(value = "update", method = RequestMethod.POST)
+	public String updateSubmit(Qna dto,
+			@RequestParam String pageNo,
+			HttpSession session) throws Exception {
+
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+
+		try {
+			dto.setUserId(info.getUserId());
+			service.updateFaq(dto);
+		} catch (Exception e) {
+		}
+
+		return "redirect:/csQna/qna?pageNo=" + pageNo;
+	}
+	
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
 	@ResponseBody
 	public void delete(

@@ -53,11 +53,11 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public Qna readFaq(int num) {
+	public Qna readFaq(int faqNum) {
 		Qna dto = null;
 		
 		try {
-			dto = dao.selectOne("faq.readFaq", num);
+			dto = dao.selectOne("faq.readFaq", faqNum);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

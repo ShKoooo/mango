@@ -105,18 +105,6 @@ function deleteOk(inquiryNum) {
 	$('#member-dialog').dialog("close");
 }
 
-function memberStateDetaileView() {
-	$('#memberStateDetaile').dialog({
-		  modal: true,
-		  minHeight: 100,
-		  maxHeight: 450,
-		  width: 750,
-		  title: '계정상태 상세',
-		  close: function(event, ui) {
-			   $(this).dialog("destroy"); // 이전 대화상자가 남아 있으므로 필요
-		  }
-	  });	
-}
 
 function selectStateChange() {
 	var f = document.deteailedMemberForm;
@@ -160,9 +148,9 @@ function selectStateChange() {
 						</td>
 						<td align="right">
 							<select id="selectEnabled" class="selectField" onchange="searchList();">
-								<option value="" ${state=="" ? "selected='selected'":""}>::계정상태::</option>
-								<option value="0" ${state=="0" ? "selected='selected'":""}>활성 계정</option>
-								<option value="1" ${state=="1" ? "selected='selected'":""}>잠금 계정</option>
+								<option value="" ${state=="" ? "selected='selected'":""}>::응답 구분::</option>
+								<option value="0" ${state=="0" ? "selected='selected'":""}>미완료</option>
+								<option value="1" ${state=="1" ? "selected='selected'":""}>완료</option>
 							</select>
 						</td>
 					</tr>
@@ -217,6 +205,7 @@ function selectStateChange() {
 								</select>
 								<input type="text" name="keyword" class="boxTF" value="${keyword}">
 								<input type="hidden" name="page" value="1">
+								<input type="hidden" name="state" value="${state}">
 								<button type="button" class="btn" onclick="searchList()">검색</button>
 							</form>
 						</td>

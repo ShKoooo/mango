@@ -55,6 +55,9 @@
 					<if test="keyword != null and keyword != ''">
 						<include refid="where-list"/>
 					</if>
+					<if test="state != ''">
+						AND state = #{state}
+					</if>
 				</where>
 				ORDER BY inquiryNum DESC
 			) tb WHERE ROWNUM &lt;= #{end}
