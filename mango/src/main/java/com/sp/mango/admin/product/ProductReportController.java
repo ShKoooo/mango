@@ -1,4 +1,4 @@
-package com.sp.mango.admin.gifty;
+package com.sp.mango.admin.product;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,16 +15,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sp.mango.common.MyUtil;
 
-@Controller("admin.gifty.giftyReportController")
-@RequestMapping(value="/admin/gifty/*")
-public class GiftyReportController {
+@Controller("admin.product.productReportController")
+@RequestMapping(value="/admin/product/*")
+public class ProductReportController {
 	@Autowired
-	private GiftyReportService service;
+	private ProductReportService service;
 	@Autowired
 	private MyUtil myUtil;
 	
 	@RequestMapping("list")
-	public String list(
+	public String list (
 			Model model,
 			HttpServletRequest req,
 			@RequestParam(value="page", defaultValue="1") int current_page
@@ -53,13 +53,9 @@ public class GiftyReportController {
 		map.put("start", start);
 		map.put("end", end);
 		
-		System.out.println(":::: dataCount : "+dataCount);
-		System.out.println(":::: start : "+start);
-		System.out.println(":::: end : "+end);
+		List<ProductReport> list = service.listReport(map);
 		
-		List<GiftyReport> list = service.listReport(map);
-		
-		for (GiftyReport dto : list) {
+		for (ProductReport dto : list) {
 			if (dto.getSubject() != null && !dto.getSubject().equals("")) {
 				if (dto.getSubject().length() > 12) {
 					dto.setSubject(dto.getSubject().substring(0,12)+"...");
@@ -67,7 +63,6 @@ public class GiftyReportController {
 			}
 		}
 		
-		// String query = "";
 		String listUrl = cp + "/admin/gifty/list";
 		String paging = myUtil.paging(current_page, total_page, listUrl);
 		
@@ -77,7 +72,7 @@ public class GiftyReportController {
 		model.addAttribute("total_page",total_page);
 		model.addAttribute("paging",paging);
 		
-		return ".admin.gifty.list";
+		return ".admin.product.list";
 	}
 	
 	@RequestMapping("clear")
@@ -95,6 +90,6 @@ public class GiftyReportController {
 		}
 		
 		reAttr.addAttribute("page",current_page);
-		return "redirect:/admin/gifty/list";
+		return "redirect:/admin/product/list";
 	}
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminProduct">
+	
+	<select id="countReport" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt
+		FROM reportProduct
+		WHERE repPrdChecked = 'F'
+	</select>
+
+	<select id="listReport" parameterType="map" resultType="com.sp.mango.admin.product.ProductReport">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT repPrdNum reportNum, r.pnum num, v.pcNum catNum, s.rpReasonName reasonName,
+					repPrdRegDate reportRegDate, repPrdChecked reportChecked, v.pSubject subject,
+					v.pSubject fullSubject
+				FROM reportProduct r
+				JOIN product v ON r.pnum = v.pnum
+				JOIN reportProduct_Reason s ON r.rpReasonNum = s.rpReasonNum
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<update id="updateClear" parameterType="Integer">
+		UPDATE reportProduct
+		SET repPrdChecked = 'T'
+		WHERE repPrdNum = #{reportNum}
+	</update>
+	
+</mapper>
