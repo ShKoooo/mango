@@ -122,7 +122,7 @@ $(function() {
 					  </div>
 					  <div class="tab-pane container " id="eat">
 					 	<c:forEach var="eat" items="${listEat}" varStatus="status">
-							<div class="row">
+							<div class="row" >
 								<span><b>${eat.area1}&nbsp;${eat.area3}</b>
 									&nbsp;&nbsp;<a href="${pageContext.request.contextPath}/village/eat/article?page=1&vNum=${eat.vNum}">${eat.subject}</a>
 								</span>
@@ -190,7 +190,7 @@ $(function() {
 									</a>
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="${pageContext.request.contextPath}/village/lost/article?page=1&vNum=${lost.vNum}">${lost.subject}</a></h2>
+									<h2><a href="${pageContext.request.contextPath}/village/lost/article?page=1&vNum=${lost.vNum}" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${lost.subject}</a></h2>
 								</div>
 							</div>
 						</c:forEach>
@@ -214,7 +214,7 @@ $(function() {
 									</a>
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="${pageContext.request.contextPath}/village/ad/article?page=1&vNum=${ad.vNum}">${ad.subject}</a></h2>
+									<h2><a href="${pageContext.request.contextPath}/village/ad/article?page=1&vNum=${ad.vNum}" style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${ad.subject}</a></h2>
 								</div>
 							</div>
 							</c:forEach>
@@ -238,7 +238,7 @@ $(function() {
 									</a>
 								</div>
 								<div class="box-content project-detail">
-									<h2><a href="${pageContext.request.contextPath}/village/forone/article?page=1&vNum=${forone.vNum}">${forone.subject}</a></h2>
+									<h2 style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;"><a href="${pageContext.request.contextPath}/village/forone/article?page=1&vNum=${forone.vNum}" >${forone.subject}</a></h2>
 								</div>
 							</div>
 							</c:forEach>

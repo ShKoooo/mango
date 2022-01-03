@@ -34,7 +34,9 @@ textarea.form-control {
 	background-color : #f69730;
 	border-color : #f69730;
 }
-  
+.container {
+	width: 1170px;
+}
 </style>
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/vendor/ckeditor5/ckeditor.js"></script>
 <script type="text/javascript">

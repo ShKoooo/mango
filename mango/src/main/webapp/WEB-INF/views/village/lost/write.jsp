@@ -173,7 +173,6 @@ function sendOk() {
 								<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/lost/list';">${mode=='update'?'수정취소':'등록취소'}&nbsp;<i class="bi bi-x"></i></button>
 								<c:if test="${mode=='update'}">
 									<input type="hidden" name="vNum" value="${dto.vNum}">
-									<input type="hidden" name="vimgFilename" value="${dto.vimgFilename}">
 									<input type="hidden" name="page" value="${page}">
 								</c:if>
 								 

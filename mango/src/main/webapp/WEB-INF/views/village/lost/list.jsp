@@ -75,10 +75,11 @@ $(function() {
 	<div class="projects-holder">
 		<div class="col-12">
 			<div class="box-content">
+				<div class="row">
 					<div style="float: right;">
 						<c:if test="${sessionScope.member.membership < 50}">
 							<c:if test="${!empty listMemberAddr}">
-								<select name="areaNum" id="selectArea" class="form-select" style="float:left; width: 120px;">
+								<select name="areaNum" id="selectArea" class="form-select" style="float:right; width: 120px;">
 									<c:forEach var="vo" items="${listMemberAddr}">
 										<option value="${vo.areaNum}" data-maLat='${vo.maLat}' data-maLon='${vo.maLon}' ${areaNum == vo.areaNum ? "selected='selected'" :"" }>${vo.area3}</option>
 									</c:forEach>
@@ -89,8 +90,8 @@ $(function() {
 							</c:if>
 						</c:if>
 					</div>
+				</div>
 					
-			<div class="row">
 			 	<c:forEach var="dto" items="${list}" varStatus="status">
 			 		<div class="col-md-4 col-lg-3 p-1 mb-3 item">
 			 			<div class="row mb-3">
@@ -98,12 +99,11 @@ $(function() {
 				 				<img class="img-viewer img-fluid img-thumbnail w-100" src="${dto.thumbnail}">
 				 			</a>			 				
 			 			</div>
-			 			<div class="row mb-3 ps-4">
-			 				${dto.subject}
+			 			<div class="row mb-3">
+			 				<a href="${articleUrl}&vNum=${dto.vNum}"  style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${dto.subject}</a>
 			 			</div>
 					</div>
 			 	</c:forEach>
-			 </div>
 				
 				<div class="page-box">
 					${dataCount == 0? "등록된 게시물이 없습니다." : paging}

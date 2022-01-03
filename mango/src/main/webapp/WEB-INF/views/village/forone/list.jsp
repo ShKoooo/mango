@@ -67,8 +67,8 @@ function searchList() {
 				 				<img class="img-viewer img-fluid img-thumbnail w-100" src="${dto.thumbnail}">
 				 			</a>			 				
 			 			</div>
-			 			<div class="row mb-3 ps-4">
-			 				${dto.subject}
+			 			<div class="row mb-3">
+			 				<a href="${articleUrl}&vNum=${dto.vNum}"  style="text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">${dto.subject}</a>
 			 			</div>
 					</div>
 			 	</c:forEach>
