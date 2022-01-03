@@ -144,7 +144,7 @@ function selectStateChange() {
 				<table class="table">
 					<tr>
 						<td align="left" width="50%">
-							${dataCount}개(${page}/${total_page} 페이지)
+							총 문의 갯수 : ${dataCount}개 (${page}/${total_page} 페이지)
 						</td>
 						<td align="right">
 							<select id="selectEnabled" class="selectField" onchange="searchList();">
