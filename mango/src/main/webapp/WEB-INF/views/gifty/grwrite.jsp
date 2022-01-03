@@ -76,7 +76,7 @@ function sendReview() {
 				<span class="fw-bold">기프티콘 상세리뷰</span><span> </span>
 			</div>
 		<form name="reviewForm" method="POST">
-				<input type="text" name="mannerstar" id="mannerstar" value="0" readonly="readonly">
+				<input type="hidden" name="mannerstar" id="mannerstar" value="0" readonly="readonly">
 			<div class="p-1">
 				<textarea name="grContent" id="grContent" class="form-control" placeholder="${empty sessionScope.member ? '로그인 후 등록 가능합니다.':''}"></textarea>
 			</div>

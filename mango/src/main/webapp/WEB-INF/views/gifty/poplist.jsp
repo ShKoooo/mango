@@ -3,7 +3,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-
 <style type="text/css">
 .body-container {
 	max-width: 800px;
@@ -14,7 +13,7 @@
   margin-bottom: 60px;
 }
 
-.pop {
+.back {
 	width : auto;
 	left: -1%;
 	position: fixed;
@@ -37,16 +36,9 @@
 }
 
 </style>
-<script type="text/javascript">
-function searchList() {
-	var f = document.searchForm;
-	f.submit();
-}
 
-function changeList() {
-	var f=document.boardListForm;
-	f.submit();
-}
+<script type="text/javascript">
+
 
 function ajaxFun(url, method, query, dataType, fn) {
 	$.ajax({
@@ -137,14 +129,13 @@ function printGifty(data) {
 		out += "				</c:if>";
 		out += "			<div class='small ms-2'>";
 		out += "				<div class='fw-bold'>"+userNickName+"</div>";
-		out += "				<div class='text-muted'>"+gRegdate+"&middot;<i class='icofont-heart-alt' style='color:red;'></i>"+gWishCount+"</div>";
+		out += "				<div class='text-muted'>"+gRegdate+"&middot;<i class='icofont-heart-alt'></i>"+gWishCount+"</div>";
 		out += "			</div>";
 		out += "			</div>";
 		out += "			</div>";
 		out += "		</div>";
 		out += "	</div>";
 		out += "</div>";
-	
 	}
 	
 	$(".morelist").append(out);
@@ -167,30 +158,17 @@ $(function(){
 	});
 });
 
-$(function(){
-	$("#tab-${group}").addClass("active");
-	
-    $("button[role='tab']").on("click", function(e){
-		var tab = $(this).attr("data-tab");
-	
-		var url="${pageContext.request.contextPath}/gifty/list?group="+tab;	
-		location.href=url;
-    });
-});
-
 </script>
 
-
-        <div class="content-wrapper">
-            <div class="inner-container container">
+<div class="content-wrapper">
+      	<div class="inner-container container">
                 <div class="row">
                     <div class="section-header col-md-12">
-                        <h2>기프티콘 거래</h2>
-                        <span>안쓰는 기프티콘 팔아요!</span>
+                        <h2>인기매물보기</h2>
+                        <span>요즘 떠오르는 핫템은?!</span>
                     </div> <!-- /.section-header -->
-                    
                     <div>
-                    	<a class="btn btn-outline-info pop" style="text-decoration: none;" href="${pageContext.request.contextPath}/gifty/listPop">인기 아이템</a>
+                    	<a class="btn btn-outline-info back" style="text-decoration: none;" href="${pageContext.request.contextPath}/gifty/list">뒤로가기</a>
                     </div>
                 </div> <!-- /.row -->
                 <div class="col-6 text-center">
@@ -213,23 +191,8 @@ $(function(){
 						</div>
 					</form>
 				</div>
-               
-             <div class="tab-content pt-2" id="nav-tabContent">
-			    <div class="container px-5">
-				 <ul class="nav nav-tabs" id="myTab" role="tablist">
-				 		<li class="nav-item" role="presentation">
-							<button class="nav-link" id="tab-0" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="0" aria-selected="true" data-tab="0">전체보기</button>
-						</li>
-					<c:forEach var="vo" items="${listGcategory}" varStatus="status">
-						<li class="nav-item" role="presentation">
-							<button class="nav-link" id="tab-${status.count}" data-bs-toggle="tab" data-bs-target="#nav-content" type="button" role="tab" aria-controls="${status.count}" aria-selected="true" data-tab="${vo.gcNum}">${vo.gcName}</button>
-						</li>
-					</c:forEach>
-				</ul>
-                 
-				 
-		<div class="tab-content pt-2" id="nav-tabContent">
-			<div class="tab-pane fade show active mt-3" id="nav-content" role="tabpanel" aria-labelledby="nav-tab-content">
+				
+			    <div class="container px-5 mt-4">
 				<div class="row gx-5 morelist">
 					<!-- list div 반복 영역 -->
 					<c:forEach var="dto" items="${list}">
@@ -266,20 +229,8 @@ $(function(){
 					</c:forEach>
 				</div>
 
-
-				<div>
-                    <a style="color:orange" href="${pageContext.request.contextPath}/gifty/write"><i class="fa fa-plus-circle jb fa-4x" aria-hidden="true"></i></a>
-                </div>
-					<c:if test="${total_page > 1}">
-                        <div class="load-more">
-                            <a href="javascript:void(0)" class="more btn btn-light">더보기</a>
-                        </div>  
-                   </c:if>
-                    </div> <!-- /.projects-holder -->
+                  </div> <!-- /.projects-holder -->
                 </div> <!-- /.projects-holder-2 -->
-            </div> <!-- /.inner-content -->
-        </div> <!-- /.content-wrapper -->
-	</div>
-	</div>
-        
-       
+             </div><!-- /.inner-content -->
+        <!-- /.content-wrapper -->
+

@@ -18,14 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.sp.mango.common.MyUtil;
-import com.sp.mango.greview.Greview;
 import com.sp.mango.member.MemberSessionInfo;
-import com.sp.mango.mypage.MypageService;
 import com.sp.mango.mypage.Note;
-import com.sp.mango.product.Product;
 
 
 
@@ -38,8 +34,7 @@ public class GiftyController {
 	@Autowired
 	private MyUtil myUtil;
 	
-	@Autowired
-	private MypageService mypageservice;
+	
 	
 	
 	
@@ -52,7 +47,6 @@ public class GiftyController {
 			HttpServletRequest req,
 			Model model,
 			HttpSession session
-			// , Member mdto
 			) throws Exception {
 		String cp = req.getContextPath();
 		
@@ -86,8 +80,7 @@ public class GiftyController {
 		map.put("condition", condition);
 		map.put("keyword", keyword);
 		map.put("userId", userId);
-		// 얘를 어디서 가져오냐
-				// map.put("blockedId", blockedId);
+
 		
 		dataCount = service.dataCount(map);
 		
@@ -114,6 +107,7 @@ public class GiftyController {
 		if (keyword.length() != 0) {
 			query = "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "UTF-8");
 		}
+		
 		
 		
 		// String query = "rows=" + rows;
@@ -153,7 +147,7 @@ public class GiftyController {
 			HttpServletRequest req,
 			HttpSession session
 			) throws Exception {
-		
+		String cp = req.getContextPath();
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		int rows = 6;
@@ -178,8 +172,6 @@ public class GiftyController {
 		map.put("condition", condition);
 		map.put("keyword", keyword);
 		map.put("userId", userId);
-		// 얘를 어디서 가져오냐
-		// map.put("blockedId", blockedId);
 		
 		dataCount = service.dataCount(map);
 		int total_page = myUtil.pageCount(rows, dataCount);
@@ -187,6 +179,14 @@ public class GiftyController {
 			current_page = total_page;
 		}
 		List<Gifty> list = service.listGifty(map);
+		for(Gifty dto : list) {
+			List<String> imgs = myUtil.getImgSrc(dto.getgContent());
+			if(imgs != null && imgs.size() > 0) {
+				dto.setgImgSaveFileName(imgs.get(0));
+			} else {
+				dto.setgImgSaveFileName(cp+"/resources/images/noimage.png");
+			}
+		}
 		
 		String query = "";
 		if (keyword.length() != 0) {
@@ -207,6 +207,90 @@ public class GiftyController {
 		
 		return model;
 	}
+	
+	@RequestMapping("listPop")
+	public String poplist(@RequestParam(value = "page", defaultValue = "1") int current_page,
+			@RequestParam(defaultValue = "0") int group,
+			@RequestParam(defaultValue = "all") String condition,
+			@RequestParam(defaultValue = "") String keyword,
+			HttpServletRequest req,
+			HttpSession session,
+			Model model
+			) throws Exception {
+		
+		String cp = req.getContextPath();
+		List<Gifty> listGcategory = service.listGcategory();
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
+		
+		int dataCount;
+		int rows = 6;
+		int total_page = 0;
+		String query ="";
+		String userId = "";
+		
+		if (req.getMethod().equalsIgnoreCase("GET")) {
+			keyword = URLDecoder.decode(keyword, "UTF-8");
+		}
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(info != null) {
+			userId = info.getUserId();
+			map.put("membership", info.getMembership());
+		}
+		int start = (current_page - 1) * rows + 1;
+		int end = current_page * rows;
+		map.put("start", start);
+		map.put("end", end);
+		map.put("group", group);
+		map.put("condition", condition);
+		map.put("keyword", keyword);
+		map.put("userId", userId);
+		
+		dataCount = service.dataCount(map);
+		
+		if(dataCount != 0) {
+			total_page = myUtil.pageCount(rows, dataCount);
+		}
+		
+		if(current_page > total_page) {
+			current_page = total_page;
+		}
+		
+		List<Gifty> list = service.listPop(map);
+		for(Gifty dto : list) {
+			List<String> imgs = myUtil.getImgSrc(dto.getgContent());
+			if(imgs != null && imgs.size() > 0) {
+				dto.setgImgSaveFileName(imgs.get(0));
+			} else {
+				dto.setgImgSaveFileName(cp+"/resources/images/noimage.png");
+			}
+		}
+		
+		if (keyword.length() != 0) {
+			query = "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "UTF-8");
+		}
+		
+		
+		String articleUrl = cp +"/gifty/article?group="+group+"&page=" + current_page + query;
+		
+	
+		model.addAttribute("listGcategory", listGcategory);
+		model.addAttribute("list", list);
+		model.addAttribute("articleUrl", articleUrl);
+		model.addAttribute("total_page", total_page);
+		model.addAttribute("page", current_page);
+		model.addAttribute("dataCount", dataCount);
+		model.addAttribute("rows", rows);
+		model.addAttribute("group", group);
+		
+		model.addAttribute("condition", condition);
+		model.addAttribute("keyword", keyword);
+		
+		
+		
+		return ".gifty.poplist";
+	}
+	
 	
 
 	
@@ -241,7 +325,7 @@ public class GiftyController {
 			@RequestParam String page,
 			@RequestParam(defaultValue = "all") String condition,
 			@RequestParam(defaultValue = "") String keyword,
-			@RequestParam(defaultValue = "0") int group,
+			@RequestParam(defaultValue = "0") String group,
 			HttpSession session,
 			HttpServletRequest req,
 			Model model) throws Exception {
@@ -268,15 +352,17 @@ public class GiftyController {
 		boolean userGwished = false;
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
 		List<GiftyReport> listGreport = null;
+		List<Gifty> listTargetId = null;
 		
 		if(info != null) {
 			map.put("userId", info.getUserId());
 			userGwished = service.userGwished(map);
 			
 			listGreport = service.listGreport();
+			listTargetId = service.listTargetId(map);
 		}
 		
-		String userImgSaveFileName = service.userImgSaveFileName(gNum);
+		// String userImgSaveFileName = service.userImgSaveFileName(gNum);
 		int giftyWishCount = service.giftyWishCount(gNum);
 		String gUpOkDate = service.gUpOkDate(gNum);
 		
@@ -286,7 +372,6 @@ public class GiftyController {
 		} else {
 			dto.setgImgSaveFileName(cp+"/resources/images/noimage.png");
 		}
-		List<Gifty> listTargetId = service.listTargetId(map);
 		
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
@@ -298,7 +383,7 @@ public class GiftyController {
 		model.addAttribute("condition", condition);
 		model.addAttribute("keyword", keyword);
 		model.addAttribute("gUpOkDate", gUpOkDate);
-		model.addAttribute("userImgSaveFileName", userImgSaveFileName);
+		// model.addAttribute("userImgSaveFileName", userImgSaveFileName);
 		model.addAttribute("listTargetId", listTargetId);
 		
 		return ".gifty.article";
@@ -321,10 +406,10 @@ public class GiftyController {
 		List<Gifty> listGcategory = service.listGcategory();
 		
 		model.addAttribute("listGcategory", listGcategory);
-		
 		model.addAttribute("dto", dto);
 		model.addAttribute("page", page);
 		model.addAttribute("mode", "update");
+		model.addAttribute("group", group);
 		
 		return ".gifty.write";
 	}
@@ -335,22 +420,37 @@ public class GiftyController {
 			@RequestParam String page,
 			@RequestParam int group,
 			@RequestParam int gNum,
-			HttpSession session) throws Exception {
+			HttpSession session,
+			Note noteDto) throws Exception {
 		
 		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
-		
+	
 		try {
 			dto.setUserId(info.getUserId());
-			if(dto.getgStatus().equals("거래완료")) {
-				service.updateSdate(dto);
-			} else {
-				service.updateGifty(dto);
-			}
+			service.updateGifty(dto);
+			
+			
+			if(dto.getgStatus().equals("판매중")) {
+				List<Gifty> listBook = service.selectBook(gNum);
+				
+				for(Gifty vo : listBook) {
+					String bookAble = vo.getBookAble();
+					
+					if(bookAble.equals("T")) {
+						noteDto.setSendId(dto.getUserId());
+						String rContent = "안녕하세요. 알림 예약하신 <"+dto.getgSubject()+"> 게시글이 '판매중'으로 변경되었습니다.<br> 판매이웃에게 거래쪽지를 보내보세요!";
+						noteDto.setReceiveId(vo.getUserId());
+						noteDto.setNoteContent(rContent);
+						
+						service.sendMsg(noteDto);		
+					}
+				}
+			} 
 			
 		} catch (Exception e) {
 		}
 		
-		return "redirect:/gifty/list?group= "+ group +"&page=" + page;
+		return "redirect:/gifty/list?group="+ group +"&page=" + page;
 	}
 	
 	@RequestMapping(value = "delete")
@@ -440,21 +540,7 @@ public class GiftyController {
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
-			/*
-			Date date = new Date();
-			long gap;
 			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date regDate = sdf.parse(dto.getgRegdate());
-			gap = (date.getTime() - regDate.getTime()) / (1000*60*60);
-			
-			if(gap < 3) {
-				resp.setContentType("text/html; charset=utf-8");
-				PrintWriter out = resp.getWriter();
-				out.print("<script>alert('끌어올리기는 첫 등록 3일 후 가능합니다');</script>");
-			} else {
-			}
-				*/
 			service.updateDate(gNum, info.getUserId());
 			
 		} catch (Exception e) {
@@ -464,77 +550,6 @@ public class GiftyController {
 	}
 	
 	
-	@RequestMapping("listPop")
-	public String poplist(@RequestParam(value = "page", defaultValue = "1") int current_page,
-			@RequestParam(defaultValue = "0") int group,
-			@RequestParam(defaultValue = "all") String condition,
-			@RequestParam(defaultValue = "") String keyword,
-			HttpServletRequest req,
-			Model model
-			) throws Exception {
-		
-		List<Gifty> listGcategory = service.listGcategory();
-		
-		int dataCount;
-		int rows = 6;
-		int total_page = 0;
-		String query ="";
-		
-		if (req.getMethod().equalsIgnoreCase("GET")) {
-			keyword = URLDecoder.decode(keyword, "UTF-8");
-		}
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		int start = (current_page - 1) * rows + 1;
-		int end = current_page * rows;
-		map.put("start", start);
-		map.put("end", end);
-		map.put("group", group);
-		map.put("condition", condition);
-		map.put("keyword", keyword);
-		
-		dataCount = service.dataCount(map);
-		
-		if(dataCount != 0) {
-			total_page = myUtil.pageCount(rows, dataCount);
-		}
-		
-		if(current_page > total_page) {
-			current_page = total_page;
-		}
-		
-		List<Gifty> list = service.listPop(map);
-		
-		if (keyword.length() != 0) {
-			query = "&condition=" + condition + "&keyword=" + URLEncoder.encode(keyword, "UTF-8");
-		}
-		
-		
-		String cp = req.getContextPath();
-		// String query = "rows=" + rows;
-		// String listUrl = cp + "/gifty/list?group=" +group;
-		String articleUrl = cp +"/gifty/article?group="+group+"&page=" + current_page + query;
-		
-		//if (query.length() != 0) {
-		// listUrl += "?" + query;
-		// articleUrl += "&" + query;
-		//}
-		model.addAttribute("listGcategory", listGcategory);
-		model.addAttribute("list", list);
-		model.addAttribute("articleUrl", articleUrl);
-		model.addAttribute("total_page", total_page);
-		model.addAttribute("page", current_page);
-		model.addAttribute("dataCount", dataCount);
-		model.addAttribute("rows", rows);
-		model.addAttribute("group", group);
-		
-		model.addAttribute("condition", condition);
-		model.addAttribute("keyword", keyword);
-		
-		
-		
-		return ".gifty.poplist";
-	}
 	
 	@RequestMapping("sendMsg")
 	public String sendMsg(
@@ -547,7 +562,7 @@ public class GiftyController {
 			dto.setSendId(info.getUserId());
 			
 			Gifty vo = service.readGifty(gNum);
-			String nContent = "안녕하세요 "+vo.getgSubject()+"를 구매하고 싶어서 쪽지남깁니다.";
+			String nContent = "안녕하세요 <"+vo.getgSubject()+"> 게시글 보고 구매 문의드립니다.";
 			dto.setReceiveId(vo.getUserId());
 			dto.setNoteContent(nContent);
 			
@@ -560,99 +575,7 @@ public class GiftyController {
 		return "redirect:/mypage/note";
 	}
 	
-	public String sendReview(
-			Note noteDto,
-			@RequestParam int gNum,
-			@RequestParam String target_id,
-			HttpSession session,
-			Gifty dto
-			) throws Exception {
-		
-		// MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");	
-		noteDto.setSendId(dto.getUserId());
-		
-		String rContent = "안녕하세요 "+dto.getgSubject()+"에 대한 리뷰를 남겨주세요";
-			rContent += "<a href='http://localhost:9090/mango/greview/write?gNum=${dto.gNum}'>리뷰작성하기</a>";// + <a href='http://localhost:9090/mango/greview/write?gNum=${dto.gNum}'>리뷰작성하기</a>
-		noteDto.setReceiveId(target_id); // 설정 필요!!!!!!!!@@@@@@@@@@@@@@
-		noteDto.setNoteContent(rContent);
-	
-		service.sendMsg(noteDto);
-		
-		return "redirect:/gifty/article?gNum="+gNum;
-	}
-	
 
-	
-/*
-	@RequestMapping(value = "sellInfo", method = RequestMethod.POST)
-	public String sellSubmit (
-			@RequestParam String skeyword,
-			@RequestParam int gNum,
-			HttpSession session,
-			Model model,
-			final RedirectAttributes reAttr,
-			HttpServletRequest req
-			) throws Exception {
-		
-		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");			
-		String userId = info.getUserId();
-		
-		// GET방식일 경우
-		if (req.getMethod().equalsIgnoreCase("get")) {
-			skeyword = URLDecoder.decode(skeyword,"utf-8");
-			}
-		
-	
-		String target_id = mypageservice.readUserIdByNickName(skeyword);
-		if (target_id == null || target_id.equals("")) {
-			String msg = "닉네임 ["+skeyword+"] 에 해당하는 유저는 존재하지 않습니다. <br>";
-			msg += "닉네임을 정확하게 입력해 주세요. <br>";
-			String goBack = "/gifty/sellInfo?gNum="+gNum;
-		
-			reAttr.addFlashAttribute("title","닉네임 입력 오류");
-			reAttr.addFlashAttribute("message",msg);
-			reAttr.addFlashAttribute("goBack",goBack);
-			
-			return "redirect:/member/complete";
-		}
-	
-		reAttr.addFlashAttribute("skeyword",skeyword);
-		// model.addAttribute("skeyword", skeyword);
-		
-		int income;
-		
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("userId", userId);
-		map.put("target_id", target_id);
-		map.put("income", income);
-		
-		
-		service.insertMyAccount(map);
-		
-		return "redirect:/gifty/sellInfo?gNum="+gNum;
-	}
-*/
-	
-	@RequestMapping(value = "sellInfo", method = RequestMethod.POST)
-	public String sellSubmit (
-			HttpSession session,
-			@RequestParam int gNum,
-			HttpServletRequest req
-			) throws Exception {
-		
-		// MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");			
-		// String userId = info.getUserId();
-		
-		// GET방식일 경우
-		//if (req.getMethod().equalsIgnoreCase("get")) {
-			//skeyword = URLDecoder.decode(skeyword,"utf-8");
-			//}
-	
-	
-		
-		
-		return "redirect:/gifty/sellInfo?gNum="+gNum;
-	}
 	
 	@RequestMapping(value = "reviewReq")
 	public String reviewReq(Gifty dto,
@@ -666,18 +589,19 @@ public class GiftyController {
 		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		try {
+			service.updateGstatus(gNum);
 			dto.setUserId(info.getUserId());
 			service.insertMyAccount(dto);
 			
 			noteDto.setSendId(dto.getUserId());
 			Gifty vo = service.readGifty(gNum);
-			String rContent = "안녕하세요 "+vo.getgSubject()+"에 대한 리뷰를 남겨주세요";
-				rContent += "<a href='http://localhost:9090/mango/gifty/writeReview?gNum="+gNum+"'>리뷰작성하기</a>";// + <a href='http://localhost:9090/mango/greview/write?gNum=${dto.gNum}'>리뷰작성하기</a>
+			String rContent = "안녕하세요 <"+vo.getgSubject()+"> 거래에 대한 리뷰를 남겨주세요<br>";
+				rContent += "<a href='http://localhost:9090/mango/gifty/writeReview?gNum="+gNum+"'><i class='fas fa-angle-double-right'></i>리뷰작성하기</a>";// + <a href='http://localhost:9090/mango/greview/write?gNum=${dto.gNum}'>리뷰작성하기</a>
 			noteDto.setReceiveId(dto.getTarget_id()); // 설정 필요!!!!!!!!@@@@@@@@@@@@@@
 			noteDto.setNoteContent(rContent);
 		
 			service.sendMsg(noteDto);
-			
+			service.updateSdate(gNum, dto.getUserId());
 			
 		} catch (Exception e) {
 		}
@@ -699,7 +623,7 @@ public class GiftyController {
 	}	
 	
 	@RequestMapping(value = "writeReview", method = RequestMethod.POST)
-	public String writeSubmit(Greview dto,
+	public String writeReivewSubmit(Greview dto,
 			@RequestParam int gNum,
 			Gifty giftydto,
 			HttpSession session) throws Exception {
@@ -715,11 +639,35 @@ public class GiftyController {
 			service.insertGreview(dto);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
-		return "redirect:/gifty/list";
+		return "redirect:/mypage/note";
 	}
 
+	@RequestMapping(value = "insertBook")
+	public String insertBook(
+			Gifty dto,
+			@RequestParam int gNum,
+			@RequestParam String page,
+			@RequestParam int group,
+			HttpSession session
+			) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+
+		try {
+			dto.setUserId(info.getUserId());
+			
+			service.insertBook(dto);
+		} catch (Exception e) {
+		}
+		
+		return "redirect:/gifty/list?gNum=" + gNum + "&page=" + page + "&group=" + group;
+
+		
+	}
+	
+	
 	
 }

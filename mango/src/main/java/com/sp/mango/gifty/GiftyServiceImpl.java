@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sp.mango.common.dao.CommonDAO;
-import com.sp.mango.greview.Greview;
 import com.sp.mango.mypage.Note;
 
 
@@ -187,9 +186,15 @@ public class GiftyServiceImpl implements GiftyService {
 	}
 
 	@Override
-	public void updateSdate(Gifty dto) throws Exception {
+	public void updateSdate(int gnum, String userId) throws Exception {
 		try {
-			dao.updateData("gifty.updateSdate", dto);
+			Gifty dto = readGifty(gnum);
+			if(dto == null || (! dto.getUserId().equals(userId))) {
+				return;
+			}
+			
+			
+			dao.updateData("gifty.updateSdate", gnum);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw e;
@@ -327,6 +332,40 @@ public class GiftyServiceImpl implements GiftyService {
 			throw e;
 		}
 		
+	}
+
+	@Override
+	public void updateGstatus(int gNum) throws Exception {
+		try {
+			dao.updateData("gifty.updateGstatus", gNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public void insertBook(Gifty dto) throws Exception {
+		try {
+			dao.insertData("gifty.insertBook", dto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+		
+	}
+
+	@Override
+	public List<Gifty> selectBook(int gNum) {
+		List<Gifty> bookList = null;
+		
+		try {
+			bookList = dao.selectList("gifty.selectBook", gNum);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bookList;
 	}
 
 }

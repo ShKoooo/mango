@@ -1,4 +1,4 @@
-package com.sp.mango.greview;
+package com.sp.mango.gifty;
 
 public class Greview {
 	int gNum;
@@ -6,7 +6,7 @@ public class Greview {
 	String sellerId;
 	String grContent;
 	int mannerstar;
-	
+	//풀..
 	
 	public int getgNum() {
 		return gNum;

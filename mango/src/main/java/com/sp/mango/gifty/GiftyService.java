@@ -3,7 +3,6 @@ package com.sp.mango.gifty;
 import java.util.List;
 import java.util.Map;
 
-import com.sp.mango.greview.Greview;
 import com.sp.mango.mypage.Note;
 
 public interface GiftyService {
@@ -24,7 +23,8 @@ public interface GiftyService {
 	public void deleteGwish(Map<String, Object> map) throws Exception;
 	public boolean userGwished(Map<String, Object> map);
 	
-	public void updateSdate(Gifty dto) throws Exception;
+	public void updateSdate(int gnum, String userId) throws Exception;
+	public void updateGstatus(int gNum) throws Exception;
 	
 	// 기프티콘 신고
 	public List<GiftyReport> listGreport();
@@ -38,7 +38,7 @@ public interface GiftyService {
 	public void sendMsg(Note dto) throws Exception;
 	public void getUserId(int gnum);
 	
-	// 관심글보기
+	// 인기매물 
 	public List<Gifty> listPop(Map<String, Object> map);
 
 	public String userImgSaveFileName(int gNum) throws Exception;
@@ -48,4 +48,8 @@ public interface GiftyService {
 	public void insertMyAccount(Gifty dto) throws Exception;
 
 	public void insertGreview(Greview dto) throws Exception;
+	
+	public void insertBook(Gifty dto) throws Exception;
+	
+	public List<Gifty> selectBook(int gNum);
 }

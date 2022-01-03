@@ -186,6 +186,11 @@ function clickInfo() {
 	alert("거래 쪽지를 전송했습니다! 쪽지함에서 확인해주세요~!");
 }
 		
+		
+function clickBook() {
+	alert("이 게시글에대한 알림설정을 완료했습니다! 거래중으로 변경되면 쪽지를 보내드립니다~!");
+}
+		
 
 </script>
 
@@ -198,12 +203,13 @@ function clickInfo() {
 		<div class="content-wrapper">
             <div class="inner-container container">
                 <div class="row">
-                    <div class="section-header col-md-12">
+                    <div class="section-header m-4">
                         <h2>기프티콘 거래</h2>
                         <span>기프티콘 거래로 아름다운 세상 만들어요~</span>
                     </div> <!-- /.section-header -->
                 </div> <!-- /.row -->
                 <div class="project-detail row">
+                <!--
                 	<div class="project-slider col-md-12">
                         <img width="1000px" height="600px" src="${dto.gImgSaveFileName}" alt="Slide 1">
                         <img src="" alt="Slide 2">
@@ -211,7 +217,7 @@ function clickInfo() {
                         <a href="#" class="slidesjs-previous slidesjs-navigation">&lt;</a> 
                         <a href="#" class="slidesjs-next slidesjs-navigation">&gt;</a>
                     </div>
-                
+                  -->  
                     <div class="project-infos col-md-12">
                         <div class="box-content">
                         	<div class="row mb-2">
@@ -219,7 +225,7 @@ function clickInfo() {
 		                            <h2 class="project-title">${dto.gSubject}</h2>
                         		</div>
                         		<div class="col-auto text-right">
-                        			<span>조회수 : ${dto.gHitCount}</span>
+                        			<span>${dto.gRegdate}&nbsp;|&nbsp;조회수 : ${dto.gHitCount}</span>
                         		</div>
                         	</div>
                             <div class="row mb-2">
@@ -232,8 +238,7 @@ function clickInfo() {
 														class="img-fluid img-thumbnail img-viewer">
 												</c:if>
 												<c:if test="${empty dto.userImgSaveFileName}">
-													<img
-														class="img-fluid img-thumbnail img-viewer">
+													<img class="img-fluid img-thumbnail img-viewer">
 												</c:if>
 											</a>                            	
                             			</div>
@@ -276,20 +281,37 @@ function clickInfo() {
                                    </li>
                                 </c:if>
                             
-                            	 <li>${dto.gPrice}원
-                            	 	<c:if test="${dto.gIsProposable eq 'T'}">
-                                		<a href="">가격 제안하기</a>
-                                	</c:if>
-                                	<c:if test="${dto.gIsProposable eq 'F'}">
-                                		가격 제안 불가
-                                	</c:if>
+                            	 <li>
+                            	 	<c:choose>
+                            	 		<c:when test=" ${dto.gPrice==0}">
+                            	 			무료나눔<span style="color: orange;"><i class="bi bi-suit-heart-fill"></i></span>
+                            	 		</c:when>
+                            	 		<c:otherwise>
+		                            	 	<c:if test="${dto.gIsProposable eq 'T'}">
+		                                		<a href="">가격 제안하기</a>
+		                                	</c:if>
+		                                	<c:if test="${dto.gIsProposable eq 'F'}">
+		                                		가격 제안 불가
+		                                	</c:if>
+                            	 		</c:otherwise>
+                            	 	</c:choose>
                             	 </li>
                                  <li>
                                 	<c:if test="${dto.gStatus eq '판매중'}">
+                                      <c:if test="${sessionScope.member.userId==dto.userId || empty sessionScope.member}">
+                                         <i class="fa fa-envelope-o"></i>거래 쪽지 보내기
+                                      </c:if>
+                                      <c:if test="${sessionScope.member.userId!=dto.userId && ! empty sessionScope.member}">
                                 		<i class="fa fa-envelope-o"></i><a href="${pageContext.request.contextPath}/gifty/sendMsg?gNum=${dto.gNum}">거래 쪽지 보내기</a>
+                                      </c:if>
                                 	</c:if>
                                 	<c:if test="${dto.gStatus eq '예약중'}">
-                                		<i class="bi bi-calendar-check-fill"></i><span>다른 회원이 예약중입니다.</span>
+                                		<c:if test="${sessionScope.member.userId==dto.userId || empty sessionScope.member}">
+                                			<i class="bi bi-calendar-check-fill"></i><span>다른 회원이 예약중입니다.</span>
+                                		</c:if>
+                                		<c:if test="${sessionScope.member.userId!=dto.userId && ! empty sessionScope.member}">
+                                			<i class="bi bi-calendar-check-fill"></i><a onclick="clickBook();" href="${pageContext.request.contextPath}/gifty/insertBook?gNum=${dto.gNum}&page=${page}&group=${group}">다른 회원이 예약중입니다.(알림설정하기)</a>
+                                		</c:if>
                                 	</c:if>
                                 	<c:if test="${dto.gStatus eq '거래완료'}">
                                 		<i class="bi bi-check2-circle"></i><span>판매완료</span>
@@ -351,7 +373,7 @@ function clickInfo() {
 				    		</c:choose>
 				    	</c:if>		
 				    			<c:if test="${! empty sessionScope.member && sessionScope.member.userId==dto.userId}">
-									<button type="button" class="btn btn-primary" data-bs-toggle= "modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">거래완료</button>
+									<button type="button" class="btn btn-primary"  style="background: #3c8bff; border-color: #3c8bff;" data-bs-toggle= "modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">거래완료</button>
 									<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 									  <div class="modal-dialog">
 									    <div class="modal-content">
@@ -362,7 +384,7 @@ function clickInfo() {
 									      <form name="gReviewForm" id="gReviewF" method="post">
 									      <div class="modal-body">
 									          <div class="mb-3">
-									            <label for="recipient-name" class="col-form-label">구매자</label><br>
+									            <label for="recipient-name" class="col-form-label">구매자 선택</label><span style="color: gray; font-size: 13px;">(최근 채팅을 주고받은 이웃 중 구매자를 선택해주세요!)</span><br>
 									            <!--  
 									            <input type="text" class="form-control" id="recipient-name">
 									            -->

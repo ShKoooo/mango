@@ -26,10 +26,7 @@ public class GreviewController {
 		
 		try {
 			dto.setBuyerId(info.getUserId());
-			
-			// 셀러 gnum으로 가져와서 해당게시글 userId 넣어야힘
-			// gnum을 어디서 가져오지
-			dto.setSellerId(null);
+			dto.setBuyerId(null);
 			
 		} catch (Exception e) {
 			// TODO: handle exception

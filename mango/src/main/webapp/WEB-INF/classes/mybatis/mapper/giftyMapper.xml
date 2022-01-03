@@ -46,32 +46,50 @@
     
     <select id="dataCount" parameterType="map" resultType="Integer">
 		SELECT NVL(COUNT(*), 0)
-		FROM giftycon 
+		FROM giftycon g
+		LEFT OUTER JOIN (
+			SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+			FROM BLOCKEDUSER
+			GROUP BY USERID
+		)BLOCKED ON BLOCKED.USERID = #{userId}
 		<where>
+			CASE WHEN blocked.blockedId IS NULL THEN 1
+                 WHEN not regexp_like(g.userId, blocked.blockedId) THEN 1
+            ELSE 0 END = 1
 			<if test="group!=0">
 				gc.gcNum = #{group}
 			</if>
 			<if test="keyword!=null and keyword!='' ">
 				<include refid="where-list"/>
 			</if>
-		</where>   
+		</where> 
+		AND gSoldDate IS NULL 
+		AND gStatus != '거래완료' 
 	</select>
 
 	<select id="listGifty" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
 		SELECT * FROM (
 			SELECT ROWNUM rnum, tb.* FROM (
-				SELECT gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD HH:MI:SS') gRegdate, g.gcNum,
-					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, gUpdate_date, gUp, m.userImgSaveFileName
+				SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
+					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
+					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, gUpdate_date, gUp, m.userImgSaveFileName,
+					 NVL(gWishCount, 0) gWishCount
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId
 				JOIN giftyCategory gc ON g.gcNum = gc.gcNum
+				LEFT OUTER JOIN (
+					SELECT gNum, COUNT(giftyWishNum) gWishCount FROM gifty_WishList
+					GROUP BY gNum
+				) c ON g.gNum = c.gNum
 				LEFT OUTER JOIN  (
                     SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
                     FROM BLOCKEDUSER
                     GROUP BY USERID
 				)BLOCKED ON BLOCKED.USERID = #{userId}
 				<where>
+				gSoldDate IS NULL 
+				AND gStatus != '거래완료'
+				AND
 				 	CASE WHEN blocked.blockedId is null THEN 1
 		                 WHEN not regexp_like(g.userId, blocked.blockedId) THEN 1
 		            ELSE 0 END = 1
@@ -82,7 +100,6 @@
 						AND <include refid="where-list"/>
 					</if>
 				</where> 
-				AND gSoldDate IS NULL 
 				ORDER BY gUpdate_date DESC  
 			) tb WHERE ROWNUM &lt;= #{end}
 		) WHERE rnum &gt;= #{start}
@@ -143,9 +160,7 @@
 	</select>
 	
 	<update id="updateSdate" parameterType="com.sp.mango.gifty.Gifty">
-		UPDATE giftycon SET gSubject=#{gSubject}, gExpdate=#{gExpdate, jdbcType=VARCHAR}, gPrice=#{gPrice, jdbcType=VARCHAR}, gContent=#{gContent, jdbcType=VARCHAR}, gStatus=#{gStatus, jdbcType=VARCHAR}, gcNum=#{gcNum}, gIsProposable=#{gIsProposable, jdbcType=VARCHAR},
-			gSoldDate = TO_DATE(SYSDATE, 'YYYY-MM-DD HH:MI:SS')
-			WHERE gNum = #{gNum} AND userId = #{userId}
+		UPDATE giftycon SET gSoldDate = SYSDATE, gStatus = '거래완료' WHERE gNum = #{gNum}
 	</update>
 	
 	<select id="listGreport" parameterType="map" resultType="com.sp.mango.gifty.GiftyReport">
@@ -172,7 +187,7 @@
    </insert>
    
    <update id="updateGstatus" parameterType="com.sp.mango.gifty.Gifty">
-   		UPDATE giftycon SET gStatus = '거래중' WHERE gNum = #{gNum}
+   		UPDATE giftycon SET gStatus = '거래완료' WHERE gNum = #{gNum}
    </update>
    <!-- 
    <select id="getUserId" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
@@ -185,11 +200,10 @@
     -->
    <select id="listPop" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
    	SELECT * FROM (
-   		SELECT ROWNUM rnum, tb.* FROM (
 				SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
-					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD HH:MI:SS') gRegdate, g.gcNum,
-					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD HH:MI:SS') gExpdate, g.gUpdate_date, g.gUp,
-                     NVL(gWishCount, 0) gWishCount, popPoint
+					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
+					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate, g.gUpdate_date, g.gUp,
+                     NVL(gWishCount, 0) gWishCount, RANK() OVER(ORDER BY popPoint DESC) RANK
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId
 				LEFT OUTER JOIN (
@@ -199,21 +213,20 @@
 				LEFT OUTER JOIN (
 					SELECT g.gNum, ((NVL(gWishCount, 0) * 2) + (gHitCount * 0.1)) popPoint
 					FROM giftycon g
-	                LEFT OUTER JOIN (
+	            	LEFT OUTER JOIN (
 		                SELECT gNum, COUNT(giftyWishNum) gWishCount FROM gifty_WishList
 		                GROUP BY gNum
 		            ) c ON g.gNum = c.gNum
 				) pop ON g.gNum = pop.gNum
-				<choose>
-				<when test="group==1">
-					ORDER BY popPoint DESC
-				</when>
-				<when test="group==2">
-					ORDER BY gWishCount DESC
-				</when>
-				</choose>
-			) tb WHERE ROWNUM &lt;= #{end}
-		) WHERE rnum &gt;= #{start}
+		        	WHERE gSoldDate IS NULL
+		        	AND gStatus != '거래완료'
+				<where>
+		            <if test="keyword!=null and keyword!='' ">
+						AND <include refid="where-list"/>
+					</if>
+		        </where>
+			) tb 
+			WHERE tb.RANK &lt;= 6
    </select>
    
    <select id="userPic" parameterType="Integer" resultType="String">
@@ -239,11 +252,19 @@
 			VALUES(myaccount_seq.NEXTVAL, #{target_id}, #{userId}, 0, #{income}, #{gNum})
 	</insert>
 	
-	<insert id="insertGreview" parameterType="com.sp.mango.gifty.Gifty">
+	<insert id="insertGreview" parameterType="com.sp.mango.gifty.Greview">
 		INSERT INTO gReview (gNum, buyerId, sellerId, grContent, mannerStar)
 			VALUES(#{gNum}, #{buyerId}, #{sellerId}, #{grContent, jdbcType=VARCHAR}, #{mannerstar})
 	</insert>
 	
+	<insert id="insertBook" parameterType="com.sp.mango.gifty.Gifty">
+		INSERT INTO giftyBook (userId, gNum, bookAble)
+		VALUES(#{userId}, #{gNum}, 'T')
+	</insert>
+	
+	<select id="selectBook" parameterType="Integer" resultType="com.sp.mango.gifty.Gifty">
+		SELECT * FROM giftyBook WHERE gNum = #{gNum}
+	</select>
 	
 
 </mapper>
