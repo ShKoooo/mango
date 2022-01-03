@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminVillage">
+
+	<select id="countReport" parameterType="String" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt FROM (
+		SELECT 'bbs' AS brType
+		FROM vbbsReport
+		WHERE vbbsRepChecked = 'F' 
+		
+		UNION ALL
+		
+		SELECT 'reply' AS brType
+		FROM vbbsReplyReport r
+		WHERE vrReportChecked = 'F'
+		)
+		<if test="brType == 'all' ">
+			WHERE brType = 'reply' OR brType = 'bbs'
+		</if>
+		<if test="brType == 'bbs' ">
+			WHERE brType = 'bbs'
+		</if>
+		<if test="brType == 'reply' ">
+			WHERE brType = 'reply'
+		</if>
+	</select>
+
+	<select id="listReport" parameterType="map" resultType="com.sp.mango.admin.village.VillageReport">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (		
+				SELECT * FROM (
+				SELECT 'bbs' AS brType ,vbbsRepNum reportNum, v.vnum, b.subject, b.subject fullSubject, vrReasonName reasonName, vbbsRepContent rcontent, vbbsRepRegDate regDate, vbbsRepChecked repChecked, NULL AS replyNum, vcNum catNum
+				FROM vbbsReport v
+				JOIN vbbsReport_Reason vr ON v.vrReasonNum = vr.vrReasonNum
+				JOIN village_bbs b ON v.vnum = b.vnum
+				WHERE vbbsRepChecked = 'F'
+				
+				UNION ALL
+				
+				SELECT 'reply' AS brType, vrReportNum, reply.vNum vnum, vrContent subject, vrContent fullSubject, vrrReasonName reasonName, vrReportContent rcontent, vrReportRegDate regDate, vrReportChecked repChecked, r.vReplyNum replyNum, vcNum catNum
+				FROM vbbsReplyReport r
+				JOIN vbbsReplyReport_Reason rr ON r.vrrReasonNum = rr.vrrReasonNum
+				JOIN vbbsReply reply ON r.vReplyNum = reply.vReplyNum
+				JOIN village_bbs b ON reply.vnum = b.vnum
+				WHERE vrReportChecked = 'F'
+				)
+				<if test="brType == 'all' ">
+					WHERE brType = 'reply' OR brType = 'bbs'
+				</if>
+				<if test="brType == 'bbs' ">
+					WHERE brType = 'bbs'
+				</if>
+				<if test="brType == 'reply' ">
+					WHERE brType = 'reply'
+				</if>
+				ORDER BY regDate DESC
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}			
+	</select>
+	
+	<update id="updateVbbsReportChecked">
+		UPDATE vbbsReport
+		SET vbbsRepChecked = 'T'
+		WHERE vbbsRepNum = #{reportNum}
+	</update>
+	
+	<update id="updateVbbsReplyReportChecked">
+		UPDATE vbbsReplyReport
+		SET vrReportChecked = 'T'
+		WHERE vrReportNum = #{reportNum}
+	</update>
+
+</mapper>
