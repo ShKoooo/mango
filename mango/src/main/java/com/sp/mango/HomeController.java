@@ -38,7 +38,7 @@ public class HomeController {
 		List<Home> giftyPopList = service.giftyPopularList();
 		List<Home> villagePopList = service.villagePopularList();
 		
-		// 썸내일 사진
+		// 상품 썸내일 사진
 	    for(Home dto : productPopList) {
 	        List<String> imgs = myUtil.getImgSrc(dto.getpContent());
 	        if(imgs != null && imgs.size() > 0) {
@@ -47,6 +47,26 @@ public class HomeController {
 	           dto.setpImgSaveFileName(cp+"/resources/images/noimage.png");
 	        }
 	    }
+	    
+	    // 깊티 썸내일 사진
+	    for(Home dto : giftyPopList) {
+			List<String> imgs = myUtil.getImgSrc(dto.getgContent());
+			if(imgs != null && imgs.size() > 0) {
+				dto.setgImgSaveFileName(imgs.get(0));
+			} else {
+				dto.setgImgSaveFileName(cp+"/resources/images/noimage.png");
+			}
+		}
+	    
+	    // 동네 커뮤 썸내일 사진
+	    for(Home dto : villagePopList) {
+			List<String> imgs = myUtil.getImgSrc(dto.getContent());
+			if(imgs != null && imgs.size() > 0) {
+				dto.setThumbnail(imgs.get(0));
+			} else {
+				dto.setThumbnail(cp + "/resources/images/nothumb.png");
+			}
+		}
 		
 		String pArticleUrl = cp + "/product/article?pcNum="+pcNum+"&page="+current_page;
 		String gArticleUrl = cp +"/gifty/article?group="+group+"&page=" + current_page;

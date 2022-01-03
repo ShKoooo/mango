@@ -13,7 +13,7 @@ public class Home {
 	private String userNickName; // 회원 닉네임
 	private String userImgSaveFileName; // 프로필 사진
 	private String pImgSaveFileName; // 상품 이미지 저장명
-	private String pContent; // 제목
+	private String pContent; // 내용
 	
 	private int gNum;
 	private String gSubject;
@@ -23,6 +23,7 @@ public class Home {
 	private int gWishCount;
 	private int gcNum;
 	private String gImgSaveFileName; // 기프티콘 이미지 저장명
+	private String gContent;
 	
 	private int vNum;
 	private String subject;
@@ -31,7 +32,8 @@ public class Home {
 	private int vWishCount;
 	private int vcNum;
 	private String vImgFilename; // 동네 커뮤니티 이미지 저장명
-	
+	private String content;
+	private String thumbnail; // 썸낼 이미지 저장
 	
 	public int getpNum() {
 		return pNum;
@@ -201,6 +203,24 @@ public class Home {
 	}
 	public void setpContent(String pContent) {
 		this.pContent = pContent;
+	}
+	public String getgContent() {
+		return gContent;
+	}
+	public void setgContent(String gContent) {
+		this.gContent = gContent;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	public String getThumbnail() {
+		return thumbnail;
+	}
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
 	}
 	
 	

@@ -5,7 +5,7 @@
 	<select id="productPop" resultType="com.sp.mango.home.Home">
 		<![CDATA[
 			SELECT * FROM (
-				SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate,
+				SELECT p.pNum, pSubject, pPrice, TO_CHAR(pRegDate, 'YYYY-MM-DD') pRegDate, pContent,
 					  TO_CHAR(pUpdate_date, 'YYYY-MM-DD HH:MI:SS') pUpdate_date, area2, area3,
 					  NVL(pWishCount, 0) pWishCount, pc.pcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
 					  RANK() OVER(ORDER BY popularPoint DESC) RANK
@@ -35,7 +35,7 @@
 	<select id="giftyPop" resultType="com.sp.mango.home.Home">
 		<![CDATA[
 			SELECT * FROM (
-				SELECT g.gNum, gSubject, gPrice, TO_CHAR(gRegDate, 'YYYY-MM-DD') gRegDate,
+				SELECT g.gNum, gSubject, gPrice, TO_CHAR(gRegDate, 'YYYY-MM-DD') gRegDate, gContent,
 					  TO_CHAR(gUpdate_date, 'YYYY-MM-DD HH:MI:SS') gUpdate_date,
 					  NVL(gWishCount, 0) gWishCount, gc.gcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
 					  RANK() OVER(ORDER BY popularPoint DESC) RANK
@@ -64,7 +64,7 @@
 	<select id="villagePop" resultType="com.sp.mango.home.Home">
 		<![CDATA[
 			SELECT * FROM (
-				SELECT v.vNum, v.subject, hitCount, TO_CHAR(v.regDate, 'YYYY-MM-DD') regDate, a.area3,
+				SELECT v.vNum, v.subject, hitCount, TO_CHAR(v.regDate, 'YYYY-MM-DD') regDate, a.area3, content,
 					  NVL(vWishCount, 0) vWishCount, vc.vcNum, m.userNickName, popularPoint, m.userImgSaveFileName,
 					  RANK() OVER(ORDER BY popularPoint DESC) RANK
 				FROM village_bbs v

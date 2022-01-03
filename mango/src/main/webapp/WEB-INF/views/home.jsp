@@ -6,6 +6,24 @@
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100">
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,400italic,300italic,300,500,500italic,700,900">
 
+<style type="text/css">
+.img-viewer {
+	cursor: pointer;
+	border: 1px solid #ccc;
+	width: 45px;
+	height: 45px;
+	border-radius: 45px;
+	padding: 0;
+	background-image: url("${pageContext.request.contextPath}/resources/images/note-person-icon2.png");
+	position: relative;
+	/*
+	z-index: 9999;
+	*/
+	background-repeat : no-repeat;
+	background-size : cover;
+}
+</style>
+
 		<!-- Carousel -->
        	<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
 		  <div class="carousel-inner">
