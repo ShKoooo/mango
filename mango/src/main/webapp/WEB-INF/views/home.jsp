@@ -152,7 +152,7 @@
 			            <c:forEach var="dto" items="${villagePopList}">
 			            	<div class="col-lg-4 mb-5">
 			                	<div class="card h-100 shadow border-0">
-			                    	<img class="card-img-top" width="308px" height="200px" src="${dto.vImgFilename}" alt="" />
+			                    	<img class="card-img-top" width="308px" height="200px" src="${dto.thumbnail}" alt="" />
 			                        	<div class="card-body p-4">
 			                            	<a class="logo text-decoration-none link-dark stretched-link" href="${vArticleUrl}&vNum=${dto.vNum}"><div class="h5 card-title mb-3">${dto.subject}</div></a>
 			                                	
