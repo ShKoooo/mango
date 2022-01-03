@@ -217,10 +217,12 @@ function printProduct(data) {
 		var area3 = data.list[i].area3 || '주소';
 		var pWishCount = data.list[i].pWishCount;
 		var userNickName = data.list[i].userNickName;
+		var pImgSaveFileName = data.list[i].pImgSaveFileName;
+		var userImgSaveFileName = data.list[i].userImgSaveFileName
 		
 		out += "<div class='col-lg-4 mb-5'>";
 		out += "    <div class='card h-100 shadow border-0'>";
-		out += "    	<img class='card-img-top' width='308px' height='200px' src='${dto.pImgSaveFileName}' alt='' />";
+		out += "    	<img class='card-img-top' width='308px' height='200px' src='"+pImgSaveFileName+"' alt='' />";
 		out += "		<div class='card-body p-4'>";
 		out += "			<a class='logo text-decoration-none link-dark stretched-link' href='${articleUrl}&pNum="+pNum+"'><div class='h5 card-title mb-3'>"+pSubject+"</div></a>";
 		out += "			<p class='card-text mb-0'>"+area3+"</p>";	
@@ -228,10 +230,10 @@ function printProduct(data) {
 		out += "		<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
 		out += "			<div class='d-flex align-items-end justify-content-between'>";
 		out += "				<div class='d-flex align-items-center'>";
-		out += "					<c:if test='${not empty dto.userImgSaveFileName}'>";
-		out += "						<img src='${pageContext.request.contextPath}/uploads/photo/${dto.userImgSaveFileName}' class='img-fluid img-thumbnail img-viewer'>";
+		out += "					<c:if test='${not empty "+userImgSaveFileName+"}'>";
+		out += "						<img src='${pageContext.request.contextPath}/uploads/photo/"+userImgSaveFileName+"' class='img-fluid img-thumbnail img-viewer'>";
 		out += "					</c:if>";
-		out += "					<c:if test='${empty dto.userImgSaveFileName}'>";
+		out += "					<c:if test='${empty "+userImgSaveFileName+"}'>";
 		out += "						<img class='img-fluid img-thumbnail img-viewer'>";
 		out += "					</c:if>";
 		out += "					<div class='row small' style='margin-left: 2px;'>";
