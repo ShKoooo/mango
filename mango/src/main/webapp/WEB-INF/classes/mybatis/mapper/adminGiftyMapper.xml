@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminGifty">
+	
+	<select id="countReport" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt
+		FROM reportGifty
+		WHERE repGiftyChecked = 'F'
+	</select>
+
+	<select id="listReport" parameterType="map" resultType="com.sp.mango.admin.gifty.GiftyReport">
+		SELECT * FROM (
+			SELECT ROWNUM rnum, tb.* FROM (
+				SELECT repGiftyNum reportNum, r.gnum num, v.gcNum catNum, s.rgReasonName reasonName,
+					repGiftyRegDate reportRegDate, repGiftyChecked reportChecked, v.gSubject subject,
+					v.gSubject fullSubject
+				FROM reportGifty r
+				JOIN giftycon v ON r.gnum = v.gnum
+				JOIN reportGifty_Reason s ON r.rgReasonNum = s.rgReasonNum
+			) tb WHERE ROWNUM &lt;= #{end}
+		) WHERE rnum &gt;= #{start}
+	</select>
+	
+	<update id="updateClear" parameterType="Integer">
+		UPDATE reportGifty
+		SET repGiftyChecked = 'T'
+		WHERE repGiftyNum = #{reportNum}
+	</update>
+	
+</mapper>

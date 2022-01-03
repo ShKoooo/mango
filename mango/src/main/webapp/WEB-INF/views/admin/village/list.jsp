@@ -3,6 +3,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/vendor/bootstrap5/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/vendor/bootstrap5/icon/bootstrap-icons.css" type="text/css">
+
 <style type="text/css">
 .body-container {
 	margin-left : 20px;
@@ -88,7 +91,7 @@ $(function() {
 		var reportNum = $(this).closest("tr").attr("data-reportNum");
 		var selBrType = $("#brCode option:selected").val();
 		
-		query = "brType="+brType+"&reportNum="+reportNum
+		var query = "brType="+brType+"&reportNum="+reportNum
 			+"&page=${page}&selBrType="+selBrType;
 
 		var url = "${pageContext.request.contextPath}/admin/village/clear";
