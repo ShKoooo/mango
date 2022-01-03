@@ -74,8 +74,7 @@
 	</update>
 	
 	<update id="updateBoard" parameterType="com.sp.mango.village.forone.VillageForone">
-		UPDATE village_forone SET subject=#{subject}, content=#{content}, areaNum=#{areaNum},
-			vBlat=#{vBlat, jdbcType=DOUBLE}, vBlon=#{vBlon, jdbcType=DOUBLE}
+		UPDATE village_forone SET subject=#{subject}, content=#{content}
 		WHERE vNum = #{vNum}
 	</update>
 	

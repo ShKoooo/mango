@@ -81,9 +81,7 @@ $(function() {
 					<thead>
 						<tr style="text-align: center;">
 							<th class="bw-60">번호</th>
-							<c:if test="${sessionScope.member.membership > 50}">
-								<th class="bw-70">지역</th>
-							</c:if>
+							<th class="bw-70">지역</th>
 							<th class="bw-auto">제목</th>
 							<th class="bw-100">작성자</th>
 							<th class="bw-100">작성일</th>
@@ -95,9 +93,14 @@ $(function() {
 						<c:forEach var="dto" items="${list}">
 							<tr style="text-align: center">
 								<td>${dto.listNum}</td>
-								<c:if test="${sessionScope.member.membership > 50}">
-									<td>${dto.area1}&nbsp;${dto.area3}</td>
-								</c:if>
+								<c:choose>
+									<c:when test="${sessionScope.member.membership > 50}">
+										<td>${dto.area1}&nbsp;${dto.area3}</td>
+									</c:when>
+									<c:otherwise>
+										<td>${dto.area3}</td>
+									</c:otherwise>
+								</c:choose>
 								<td style="text-align: left;">
 									<a href="${articleUrl}&vNum=${dto.vNum}" class="text-reset">${dto.subject}</a>
 									<c:if test="${dto.replyCount!=0}">(${dto.replyCount})</c:if>
@@ -120,7 +123,7 @@ $(function() {
 					</div>
 
 					<div class="col-6 text-center">
-						<form class="row" name="searchVillageForm" action="${pageContext.request.contextPath}/village/with/list" method="post"
+						<form class="row" name="searchVillageForm" action="${pageContext.request.contextPath}/village/qna/list" method="post"
 							style="width: 600px;">
 							<div class="col-auto p-1">
 								<select name="condition" class="form-select">
@@ -143,7 +146,7 @@ $(function() {
 					</div>
 
 					<div class="col text-end">
-						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/with/write';">글쓰기</button>
+						<button type="button" class="btn btn-light" onclick="location.href='${pageContext.request.contextPath}/village/qna/write';">글쓰기</button>
 					</div>
 				</div>
 			</div>
