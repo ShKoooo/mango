@@ -186,7 +186,7 @@ $(function(){
                 <div class="row">
                     <div class="section-header col-md-12">
                         <h2>기프티콘 거래</h2>
-                        <span>안쓰는 기프티콘 팔아요!</span>
+                        <span>안쓰는 기프티콘 팔아요!!</span>
                     </div> <!-- /.section-header -->
                     
                     <div>

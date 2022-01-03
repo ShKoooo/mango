@@ -644,7 +644,9 @@ public class GiftyController {
 		
 		return "redirect:/mypage/note";
 	}
-
+	
+	
+	// 예약 받기 알림설정 인서트
 	@RequestMapping(value = "insertBook")
 	public String insertBook(
 			Gifty dto,

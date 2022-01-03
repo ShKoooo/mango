@@ -165,7 +165,7 @@ $(function(){
                 <div class="row">
                     <div class="section-header col-md-12">
                         <h2>인기매물보기</h2>
-                        <span>요즘 떠오르는 핫템은?!</span>
+                        <span>요즘 떠오르는 핫템은?! pick 6!</span>
                     </div> <!-- /.section-header -->
                     <div>
                     	<a class="btn btn-outline-info back" style="text-decoration: none;" href="${pageContext.request.contextPath}/gifty/list">뒤로가기</a>

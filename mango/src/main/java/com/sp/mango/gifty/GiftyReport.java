@@ -9,7 +9,7 @@ public class GiftyReport {
 	private String reqGiftyChecked;
 	private int gNum;
 	private String userId;
-	
+	//
 	public int getRepGiftyNum() {
 		return repGiftyNum;
 	}

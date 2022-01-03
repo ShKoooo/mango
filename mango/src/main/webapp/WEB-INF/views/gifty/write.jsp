@@ -140,10 +140,7 @@ $(function(){
 								
 								<select name="gStatus" class="form-select" id="inputGroupSelect01" style="width: 500px; margin-left: 10px;">
 					    			<option selected value="판매중" ${dto.gStatus=="판매중" ? "selected='selected'" : ""}>판매중</option>
-					    			
-						    			<option value="예약중" ${dto.gStatus=="예약중" ? "selected='selected'" : ""}>예약중</option>
-						    			<option value="거래완료" ${dto.gStatus=="거래완료" ? "selected='selected'" : ""}>거래완료</option>
-					    			
+						    		<option value="예약중" ${dto.gStatus=="예약중" ? "selected='selected'" : ""}>예약중</option>
 					  			</select>
 								</div>
 							</td>

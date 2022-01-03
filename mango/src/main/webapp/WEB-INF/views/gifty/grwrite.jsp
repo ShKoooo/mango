@@ -73,7 +73,7 @@ function sendReview() {
 		</div>
 		
 		<div class="p-1">
-				<span class="fw-bold">기프티콘 상세리뷰</span><span> </span>
+				<span class="fw-bold">기프티콘 상세리뷰</span>
 			</div>
 		<form name="reviewForm" method="POST">
 				<input type="hidden" name="mannerstar" id="mannerstar" value="0" readonly="readonly">

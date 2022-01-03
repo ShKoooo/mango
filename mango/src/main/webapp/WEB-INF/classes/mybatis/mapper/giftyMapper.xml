@@ -189,15 +189,7 @@
    <update id="updateGstatus" parameterType="com.sp.mango.gifty.Gifty">
    		UPDATE giftycon SET gStatus = '거래완료' WHERE gNum = #{gNum}
    </update>
-   <!-- 
-   <select id="getUserId" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
-   	SELECT g.userId, m.userNickName 
-   	FROM giftycon g
-   	JOIN member m ON g.userId = m.userId
-   	WHERE gNum = #{gNum}
    
-   </select>
-    -->
    <select id="listPop" parameterType="map" resultType="com.sp.mango.gifty.Gifty">
    	SELECT * FROM (
 				SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,

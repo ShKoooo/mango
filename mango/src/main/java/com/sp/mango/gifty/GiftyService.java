@@ -51,5 +51,6 @@ public interface GiftyService {
 	
 	public void insertBook(Gifty dto) throws Exception;
 	
+	// 예약 알림 받자
 	public List<Gifty> selectBook(int gNum);
 }

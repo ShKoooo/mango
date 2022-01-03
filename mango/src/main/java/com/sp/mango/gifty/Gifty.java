@@ -33,7 +33,7 @@ public class Gifty {
 	
 	private int gUp; // 끌어올리는 횟수
 	
-	private String userImgSaveFileName;
+	private String userImgSaveFileName; // 프로필 사진
 	
 	private String sendId; // 판매자에게 쪽지 보낸 사람 아이디
 	private String noteRegDate; // 쪽지 보낸 날짜
@@ -44,7 +44,7 @@ public class Gifty {
 	private int income;
 	private int expenses;
 	
-	private String bookAble;
+	private String bookAble; // 예약받기
 
 	
 	public int getgNum() {

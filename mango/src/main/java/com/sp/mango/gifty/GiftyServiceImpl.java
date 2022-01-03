@@ -323,6 +323,7 @@ public class GiftyServiceImpl implements GiftyService {
 		return list;
 	}
 
+	// 리뷰 작성 입력
 	@Override
 	public void insertGreview(Greview dto) throws Exception {
 		try {
