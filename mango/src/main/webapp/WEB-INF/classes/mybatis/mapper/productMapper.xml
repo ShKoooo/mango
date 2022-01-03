@@ -199,7 +199,7 @@
                                         GROUP BY pNum
                                     ) c ON p.pNum = c.pNum
                 ) pop ON p.pNum = pop.pNum
-        		WHERE popularPoint &gt;= 5 AND 
+        		WHERE popularPoint &gt;= 5 AND pSoldDate IS NULL AND
         			  CASE WHEN #{maLat} = 0 AND #{maLon} = 0 THEN 1
 		                   WHEN p.areaNum IN (
 		                       SELECT areaNum

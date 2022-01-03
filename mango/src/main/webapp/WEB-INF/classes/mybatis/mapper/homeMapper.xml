@@ -26,7 +26,7 @@
 										GROUP BY pNum
 									) c ON p.pNum = c.pNum
 				) pop ON p.pNum = pop.pNum
-				WHERE popularPoint >= 5
+				WHERE popularPoint >= 5 AND pSoldDate IS NULL
 			) T1
 			WHERE T1.RANK <= 3
 		]]>
@@ -55,7 +55,7 @@
 										GROUP BY gNum
 									) c ON g.gNum = c.gNum
 				) pop ON g.gNum = pop.gNum
-				WHERE popularPoint >= 5
+				WHERE popularPoint >= 5 AND gSoldDate IS NULL
 			) T1
 			WHERE T1.RANK <= 3
 		]]>
