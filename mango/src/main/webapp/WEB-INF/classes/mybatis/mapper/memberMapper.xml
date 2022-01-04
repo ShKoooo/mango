@@ -149,4 +149,8 @@
 		INSERT INTO memberState (msNum, memo, regDate, userId, msCodeNum)
 		VALUES (memberState_seq.NEXTVAL, #{memo}, SYSDATE, #{userId}, 400)
 	</insert>
+	
+	<delete id="deleteMember" parameterType="String">
+		DELETE FROM member WHERE userId = #{userId}
+	</delete>
 </mapper>

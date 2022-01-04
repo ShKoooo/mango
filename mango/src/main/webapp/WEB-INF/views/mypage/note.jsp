@@ -11,6 +11,10 @@
 .delete-one-msg:hover {
 	color: red;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <script type="text/javascript">

@@ -11,6 +11,10 @@
 .myRepBox {
 	border-radius : 5px;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <script type="text/javascript">

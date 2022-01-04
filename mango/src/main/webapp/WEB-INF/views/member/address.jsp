@@ -24,6 +24,10 @@ function sendOk() {
 .my-font-size {
 	font-size: 14px;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <div class="content-wrapper">

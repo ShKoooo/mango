@@ -213,6 +213,9 @@ public class MemberController {
 		}
 		
 		if (mode.equals("dropout")) {
+			
+			service.deleteMember(info.getUserId());
+			
 			session.removeAttribute("member");
 			session.invalidate();
 			

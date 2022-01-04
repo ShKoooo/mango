@@ -30,4 +30,6 @@ public interface MemberService {
 	public void updateDefaultEnable(String userId) throws Exception;
 	public void updateEnable(Map<String,Object> map) throws Exception;
 	public void insertMemberState(Map<String, Object> map) throws Exception;
+	
+	public void deleteMember(String userId) throws Exception;
 }

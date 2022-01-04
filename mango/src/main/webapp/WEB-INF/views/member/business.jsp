@@ -27,6 +27,9 @@
 	font-size: 14px;
 }
 
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <script type="text/javascript">

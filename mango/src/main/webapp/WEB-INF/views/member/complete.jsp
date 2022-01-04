@@ -7,6 +7,10 @@
 .body-container {
 	max-width: 800px;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <div class="content-wrapper">

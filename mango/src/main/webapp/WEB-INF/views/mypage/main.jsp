@@ -7,6 +7,10 @@
 .body-container {
 	max-width: 800px;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -101,7 +105,7 @@ $(function() {
 	  	chart: {
 	    	type: 'bar',
 	    	height: 160,
-	    	backgroundColor: '#EFEFEF'
+	    	backgroundColor: '#FFFFFF'
 	  	},
 	  	title: {
 	    	text: null
@@ -187,6 +191,18 @@ $(function() {
 	});
 });
 
+$(function() {
+	$("body").on("click",".btn-dropout", function() {
+		if (!confirm("회원을 탈퇴하면 복구가 불가능합니다.\n회원 탈퇴를 진행하시겠습니까?")) {
+			return false;
+		}
+		
+		var url = "${pageContext.request.contextPath}/member/pwd?dropout=dropout&mode=dropout";
+		
+		location.href = url;
+	});
+});
+
 </script>
 
 <div class="content-wrapper">
@@ -198,11 +214,18 @@ $(function() {
 			
 			<div class="container">
 				<div class="row mb-3">
-					<h4>
-						<a href="${pageContext.request.contextPath}/member/pwd?mode=update">
-							<i class="icofont-edit"></i> 회원 정보수정
-						</a>
-					</h4>
+					<div class="col-auto me-auto">
+						<h4>
+							<a href="${pageContext.request.contextPath}/member/pwd?mode=update">
+								<i class="icofont-edit"></i> 회원 정보수정
+							</a>
+						</h4>
+					</div>
+					<div class="col-auto text-right">
+						<button class="btn btn-danger btn-dropout">
+							<i class="icofont-sign-out"></i> 회원탈퇴
+						</button>
+					</div>
 				</div>
 				<div class="row mb-3">
 					<h4><i class="icofont-thermometer"></i> 나의 매너 온도</h4>

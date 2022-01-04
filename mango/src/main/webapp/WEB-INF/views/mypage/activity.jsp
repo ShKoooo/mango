@@ -11,6 +11,10 @@
 .myLink:hover {
 	color: tomato;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <script type="text/javascript">

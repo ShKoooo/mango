@@ -296,5 +296,15 @@ public class MemberServiceImpl implements MemberService {
 			throw e;
 		}
 	}
+
+	@Override
+	public void deleteMember(String userId) throws Exception {
+		try {
+			dao.deleteData("member.deleteMember",userId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+		}
+	}
 	
 }

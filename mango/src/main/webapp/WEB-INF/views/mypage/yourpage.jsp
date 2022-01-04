@@ -25,6 +25,10 @@
 .buyerNick:hover {
 	color: tomato;
 }
+
+.content-wrapper {
+	background-color: #FFFFFF;
+}
 </style>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
