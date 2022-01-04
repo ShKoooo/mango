@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.home.Home;
 import com.sp.mango.home.HomeService;
-import com.sp.mango.member.MemberSessionInfo;
-import com.sp.mango.mypage.MypageService;
 
 @Controller
 public class HomeController {
