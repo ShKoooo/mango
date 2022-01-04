@@ -17,7 +17,7 @@
 	width : auto;
 	left: -1%;
 	position: fixed;
-	margin-top:5px;
+	margin:5px;
 }
 
 

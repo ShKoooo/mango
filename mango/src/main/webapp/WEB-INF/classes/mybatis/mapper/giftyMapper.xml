@@ -109,7 +109,7 @@
 		SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
 			TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, gc.gcNum, gc.gcName, gUp,
 			gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate, TO_CHAR(gUpdate_date, 'YYYY-MM-DD') gUpdate_date, 
-			gSoldDate, gIsProposable, NVL(gWishCount, 0) gWishCount,
+			gSoldDate, gIsProposable, NVL(gWishCount, 0) gWishCount, m.userImgSaveFileName,
 			(36.5 + (0.1* NVL(man.mannerStar, 0)) + (0.1* NVL(man.productStar, 0)) - NVL(man.minusDeg, 0)) AS manner
 		FROM giftycon g
 		JOIN member m ON g.userId = m.userId
@@ -194,7 +194,7 @@
    	SELECT * FROM (
 				SELECT g.gNum, gSubject, gPrice, gContent, gStatus, m.userNickName, g.userId,
 					 TO_CHAR(g.gRegdate, 'YYYY-MM-DD') gRegdate, g.gcNum,
-					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate, g.gUpdate_date, g.gUp,
+					 gHitCount, TO_CHAR(g.gExpdate, 'YYYY-MM-DD') gExpdate, g.gUpdate_date, g.gUp, m.userImgSaveFileName,
                      NVL(gWishCount, 0) gWishCount, RANK() OVER(ORDER BY popPoint DESC) RANK
 				FROM giftycon g
 				JOIN member m ON g.userId = m.userId

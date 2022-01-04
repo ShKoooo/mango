@@ -349,12 +349,12 @@ function clickBook() {
 									          </div>
 									          <div class="mb-3">
 									            <label for="message-text" class="col-form-label">자세한 사유</label>
-									            <textarea class="form-control" id="message-text" name="repGiftyContent"></textarea>
+									            <textarea class="form-control" id="message-text" name="reqGiftyContent"></textarea>
 									          </div>
 									      </div>
 									      <div class="modal-footer">
-									        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-									        <button type="button" class="repbtn btn btn-primary" onclick="sendReport();">Send</button>
+									        <button type="button" id="closeBtn" class="btn btn-secondary" data-bs-dismiss="modal">취소하기</button>
+									        <button type="button" class="repbtn btn btn-primary" onclick="sendReport();">보내기</button>
 									      </div>
 									      </form>
 									    </div>

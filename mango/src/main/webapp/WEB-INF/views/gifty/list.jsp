@@ -18,7 +18,7 @@
 	width : auto;
 	left: -1%;
 	position: fixed;
-	margin-top:5px;
+	margin:5px;
 }
 
 
@@ -92,7 +92,6 @@ function printGifty(data) {
 	current_page = data.page;
 	total_page = data.total_page;
 	var group = data.group;
-	var list = data.list;
 
 	if(dataCount == 0) {
 		$(".morelist").empty();
@@ -117,6 +116,8 @@ function printGifty(data) {
 		var gcNum = data.list[idx].gcNum;
 		var gImgSaveFileName = data.list[idx].gImgSaveFileName;
 		var gWishCount = data.list[idx].gWishCount;
+		var userImgSaveFileName = data.list[idx].userImgSaveFileName;
+		
 	
 		out += "<div class='col-lg-4 mb-5'>";
 		out += "	<div class='card h-100 shadow border-0'>";
@@ -128,11 +129,11 @@ function printGifty(data) {
 		out += "	<div class='card-footer p-4 pt-0 bg-transparent border-top-0'>";
 		out += "		<div class='d-flex align-items-end justify-content-between'>";
 		out += "			<div class='d-flex align-items-center'>";
-		out += "				<c:if test='${not empty dto.userImgSaveFileName}'>";
+		out += "				<c:if test='${not empty"+userImgSaveFileName+"}'>";
 		out += "				<img class='img-fluid img-thumbnail img-viewer'";
-		out += "				src='${pageContext.request.contextPath}/uploads/photo/"+gImgSaveFileName+"'/>";
+		out += "				src='${pageContext.request.contextPath}/uploads/photo/"+userImgSaveFileName+"'/>";
 		out += "				</c:if>";
-		out += "				<c:if test='${empty dto.userImgSaveFileName}'>";
+		out += "				<c:if test='${empty"+userImgSaveFileName+"}'>";
 		out += "				<img class='img-fluid img-thumbnail img-viewer'>";
 		out += "				</c:if>";
 		out += "			<div class='small ms-2'>";
