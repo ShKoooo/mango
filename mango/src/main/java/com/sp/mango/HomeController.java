@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.sp.mango.common.MyUtil;
 import com.sp.mango.home.Home;
 import com.sp.mango.home.HomeService;
+import com.sp.mango.member.MemberSessionInfo;
+import com.sp.mango.mypage.MypageService;
 
 @Controller
 public class HomeController {
@@ -29,6 +32,7 @@ public class HomeController {
 			@RequestParam(value = "page", defaultValue = "1") int current_page,
 			@RequestParam(value = "pcNum", defaultValue = "0") int pcNum,
 			@RequestParam(value = "group", defaultValue = "0") int group,
+			HttpSession session,
 			HttpServletRequest req,
 			Locale locale, Model model) {
 		

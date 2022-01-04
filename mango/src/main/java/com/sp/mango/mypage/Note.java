@@ -18,6 +18,8 @@ public class Note {
 	private String youNick;
 	private String timeMsg;
 	
+	private int notReadCount;
+	
 	public int getNoteNum() {
 		return noteNum;
 	}
@@ -107,5 +109,12 @@ public class Note {
 	}
 	public void setTimeMsg(String timeMsg) {
 		this.timeMsg = timeMsg;
+	}
+	
+	public int getNotReadCount() {
+		return notReadCount;
+	}
+	public void setNotReadCount(int notReadCount) {
+		this.notReadCount = notReadCount;
 	}
 }

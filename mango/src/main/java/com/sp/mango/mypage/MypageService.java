@@ -59,4 +59,7 @@ public interface MypageService {
 	
 	public List<RepMemberReason> listRepMemReason() throws Exception;
 	public void insertReportMember(Map<String,Object> map) throws Exception;
+	
+	public int countNotReadNote (Map<String, Object> countNoteMap);
+	public int countNotReadEachNote (Map<String,Object> map);
 }

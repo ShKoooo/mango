@@ -529,4 +529,27 @@
 		VALUES (reportMember_seq.NEXTVAL, #{content}, #{reasonNum}, SYSDATE, 'F', #{userId}, #{target_id})
 	</insert>
 	
+	<select id= "countNotReadNote" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt FROM note
+		WHERE receiveId = #{meId}
+		<if test="blockNum &gt; 0">
+			AND sendId NOT IN (
+	            SELECT target_ID FROM blockeduser
+	            WHERE userId = #{meId}
+	        )
+		</if>		
+		AND (noteReadDate IS NULL OR noteReadDate = '')
+		AND isSendDelete = 'F'
+		AND isRecDelete = 'F'	
+	</select>
+	
+	<select id="countNotReadEachNote" parameterType="map" resultType="Integer">
+		SELECT NVL(COUNT(*),0) cnt FROM note
+		WHERE receiveId = #{meId}
+		AND sendId = #{youId}
+		AND (noteReadDate IS NULL OR noteReadDate = '')
+		AND isSendDelete = 'F'
+		AND isRecDelete = 'F'	
+	</select>
+	
 </mapper>

@@ -648,6 +648,12 @@ public class MypageController {
 				noteDto.setNoteContent(noteDto.getNoteContent().substring(0,15)+"...");
 			}
 			
+			Map<String, Object> notReadMap = new HashMap<String, Object>();
+			notReadMap.put("meId", noteDto.getMeId());
+			notReadMap.put("youId", noteDto.getYouId());
+			
+			noteDto.setNotReadCount(service.countNotReadEachNote(notReadMap));
+			
 			rawList.add(noteDto);
 		}
 		
@@ -1518,6 +1524,40 @@ public class MypageController {
 		if (message == null || message.length() == 0 ) return "redirect:/";
 		
 		return ".mypage.complete";
+	}
+	
+	@RequestMapping(value = "notReadTotalNoteCount", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> notReadTotalNoteCount(HttpSession session) throws Exception {
+		String state = "false";
+		int notReadNote = 0;
+		Map<String, Object> map = new HashMap<String, Object>();
+		
+		try {
+			MemberSessionInfo info = (MemberSessionInfo) session.getAttribute("member");
+			
+			if (info == null) {
+				map.put("state", "false");
+				map.put("notReadNote", 0);
+				
+				return map;
+			}
+			
+			int blockNum = service.getBlockCount(info.getUserId());
+
+			Map<String, Object> countNoteMap = new HashMap<String, Object>();
+			countNoteMap.put("blockNum", blockNum);
+			countNoteMap.put("meId", info.getUserId());
+			
+			notReadNote = service.countNotReadNote(countNoteMap);
+			state = "true";
+		} catch (Exception e) {
+		}
+		
+		map.put("state", state);
+		map.put("notReadNote", notReadNote);
+		
+		return map;
 	}
 }
 

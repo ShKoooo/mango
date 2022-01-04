@@ -9,6 +9,63 @@ function searchWard() {
 	f.submit();
 }
 
+function login2() {
+	location.href="${pageContext.request.contextPath}/member/login";
+}
+
+function ajaxFun2(url, method, query, dataType, fn) {
+	$.ajax({
+		type:method,
+		url:url,
+		data:query,
+		dataType:dataType,
+		success:function(data) {
+			fn(data);
+		},
+		beforeSend:function(jqXHR) {
+			jqXHR.setRequestHeader("AJAX", true);
+		},
+		error:function(jqXHR) {
+			if(jqXHR.status === 403) {
+				// login2();
+				return false;
+			} else if(jqXHR.status === 400) {
+				alert("요청 처리가 실패했습니다.");
+				return false;
+			}
+	    	
+			console.log(jqXHR.responseText);
+		}
+	});
+}
+
+$(function(){
+	$(window).on("load",function() {
+		var url = "${pageContext.request.contextPath}/mypage/notReadTotalNoteCount";
+		var query = "tmp=0";
+		
+		var fn = function(data) {
+			var state = data.state;
+			var num = Number(data.notReadNote);
+			
+			if (state === "true" && num > 0 ) {
+				if (num < 100) {
+					var titleStr = "안 읽은 쪽지: "+num+"개";					
+				} else {
+					var titleStr = "안 읽은 쪽지: 99+개";
+				}
+				
+				$('#myNoteAlarm').html('<i class="icofont-alarm"></i>');
+				$('#myNoteAlarm').css('color','red');
+				$('#myNoteAlarm').css('font-size','1.1em');
+				$('#myNoteAlarm').closest('a').attr('title',titleStr);
+			}
+		};
+		
+		ajaxFun2(url, "post", query, "json", fn);
+	});
+});
+
 </script>
 
 	<div class="site-header container-fluid">
@@ -23,27 +80,35 @@ function searchWard() {
 								<c:choose>
 									<c:when test="${empty sessionScope.member}">
 										<div class="p-2">
-											<a href="javascript:dialogLogin();" title="로그인"><i class="bi bi-lock"></i></a>
+											<a href="javascript:dialogLogin();" title="로그인">
+												<span><i class="bi bi-lock"></i></span>
+											</a>
 										</div>
 										<div class="p-2">
-											<a href="${pageContext.request.contextPath}/member/member" title="회원가입"><i class="bi bi-person-plus"></i></a>
+											<a href="${pageContext.request.contextPath}/member/member" title="회원가입">
+												<span><i class="bi bi-person-plus"></i></span>
+											</a>
 										</div>	
 									</c:when>
 									<c:otherwise>
 										<div class="p-2">
-											<a href="${pageContext.request.contextPath}/member/logout" title="로그아웃"><i class="bi bi-unlock"></i></a>
+											<a href="${pageContext.request.contextPath}/member/logout" title="로그아웃">
+												<span><i class="bi bi-unlock"></i></span>
+											</a>
 										</div>					
 										<div class="p-2">
-											<a href="#" title="알림"><i class="bi bi-bell"></i></a>
+											<a href="${pageContext.request.contextPath}/mypage/note" title="알림">
+												<span id="myNoteAlarm"><i class="bi bi-bell"></i></span>
+											</a>
 										</div>
 										<c:if test="${sessionScope.member.membership>50}">
 											<div class="p-2">
-												<a href="${pageContext.request.contextPath}/admin" title="관리자"><i class="bi bi-gear"></i></a>
+												<span><a href="${pageContext.request.contextPath}/admin" title="관리자"><i class="bi bi-gear"></i></a></span>
 											</div>					
 										</c:if>
 										<c:if test="${sessionScope.member.membership<50}">
 											<div class="p-2">
-												<a href="${pageContext.request.contextPath}/mypage/main" title="마이페이지">${sessionScope.member.userNickName} 님</a>
+												<span><a href="${pageContext.request.contextPath}/mypage/main" title="마이페이지">${sessionScope.member.userNickName} 님</a></span>
 											</div>					
 										</c:if>
 									</c:otherwise>

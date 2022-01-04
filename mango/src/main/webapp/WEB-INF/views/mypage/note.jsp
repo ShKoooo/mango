@@ -15,6 +15,20 @@
 .content-wrapper {
 	background-color: #FFFFFF;
 }
+
+.myCount {
+    font-size: .8em;
+    width: 1.5em;
+    border-radius: 3em;
+    padding: .1em  .2em;
+    line-height: 1.25em;
+    border: none;
+    display: inline-block;
+    text-align: center;
+    color:white;
+    background-color:red;
+    font-weight: 600;
+}
 </style>
 
 <script type="text/javascript">
@@ -222,6 +236,12 @@ $(function() {
 												</c:if>
 												<c:if test="${dto.youId==dto.receiveId}">
 													<i class="icofont-paper-plane"></i>&nbsp;${dto.noteContent}
+												</c:if>
+												<c:if test="${dto.notReadCount>0 and dto.notReadCount<100}">
+													<span class="ms-3 myCount">${dto.notReadCount}</span>
+												</c:if>
+												<c:if test="${dto.notReadCount>100}">
+													<span class="ms-3 myCount">99</span>
 												</c:if>
 											</a>
 										</td>

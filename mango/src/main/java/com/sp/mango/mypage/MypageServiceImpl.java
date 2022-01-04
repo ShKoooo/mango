@@ -535,4 +535,30 @@ public class MypageServiceImpl implements MypageService {
 		}
 	}
 
+	@Override
+	public int countNotReadNote(Map<String, Object> countNoteMap) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.countNotReadNote", countNoteMap);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int countNotReadEachNote(Map<String, Object> map) {
+		int result = 0;
+		
+		try {
+			result = dao.selectOne("mypage.countNotReadEachNote", map);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+
 }
