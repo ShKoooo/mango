@@ -53,6 +53,7 @@ public class VillageEatController {
 		int rows = 10;
 		int total_page = 0;
 		int dataCount = 0;
+		String userId = "";
 		
 		if(req.getMethod().equalsIgnoreCase("GET")) {
 			keyword = URLDecoder.decode(keyword, "utf-8");
@@ -74,6 +75,7 @@ public class VillageEatController {
 			map.put("membership",  info.getMembership());
 			listMemberAddr = service.listMemberAddr(info.getUserId());
 			memAddrCount = service.memAddrCount(info.getUserId());
+			userId = info.getUserId();
 			
 			if(listMemberAddr.size() >= 1 && maLat == 0 && maLon == 0) {
 				map.put("maLat", listMemberAddr.get(0).getaLat());
@@ -81,6 +83,8 @@ public class VillageEatController {
 				memAddrCount = service.memAddrCount(info.getUserId());
 			}
 		}
+		
+		map.put("userId", userId);
 		
 		dataCount = service.dataCount(map);
 		if(dataCount != 0) {

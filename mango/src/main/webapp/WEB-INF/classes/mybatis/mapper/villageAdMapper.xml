@@ -30,8 +30,16 @@
 		FROM village_bbs v
 		JOIN area a ON v.areaNum = a.areaNum
 		JOIN member m ON v.userId = m.userId
+		LEFT OUTER JOIN (
+			SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+			FROM BLOCKEDUSER
+			GROUP BY USERID
+		)BLOCKED ON BLOCKED.USERID = #{userId}
 		<where>
 		vcNum = 7
+		AND CASE WHEN blocked.blockedId IS NULL THEN 1
+                 WHEN not regexp_like(v.userId, blocked.blockedId) THEN 1
+            ELSE 0 END = 1
 			<if test="keyword!=null and keyword!='' ">
 				AND <include refid="where-list"/>
 			</if>
@@ -73,8 +81,16 @@
 				FROM village_bbs v
 				JOIN area a ON v.areaNum = a.areaNum
 				JOIN member m ON v.userId = m.userId
+				LEFT OUTER JOIN (
+					SELECT USERID, LISTAGG(TARGET_ID, '|')  WITHIN GROUP(ORDER BY USERID) AS BLOCKEDID
+					FROM BLOCKEDUSER
+					GROUP BY USERID
+				)BLOCKED ON BLOCKED.USERID = #{userId}
 				<where>
 				vcNum = 7
+				AND CASE WHEN blocked.blockedId is null THEN 1
+		                 WHEN not regexp_like(v.userId, blocked.blockedId) THEN 1
+		            ELSE 0 END = 1
 					<if test="keyword != null and keyword != ''">
 						AND <include refid="where-list"/>
 					</if>
