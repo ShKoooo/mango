@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sp.mango.common.MyUtil;
+import com.sp.mango.member.MemberSessionInfo;
 import com.sp.mango.village.ad.VillageAd;
 import com.sp.mango.village.ad.VillageAdService;
 import com.sp.mango.village.eat.VillageEat;
@@ -54,13 +56,17 @@ public class VillageController {
 	private MyUtil myUtil;
 	
 	@RequestMapping(value="list", method = RequestMethod.GET)
-	public String list(HttpServletRequest req, Model model) throws Exception {
+	public String list(HttpServletRequest req, Model model, HttpSession session) throws Exception {
+		
+		MemberSessionInfo info = (MemberSessionInfo)session.getAttribute("member");
 		
 		String cp = req.getContextPath();
+		String userId = info.getUserId();
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("start", 1);
 		map.put("end",  10);
+		map.put("userId", userId);
 		
 		
 		
@@ -81,6 +87,7 @@ public class VillageController {
 		Map<String, Object> map2 = new HashMap<>();
 		map2.put("start", 1);
 		map2.put("end", 3);
+		map2.put("userId", userId);
 		
 		List<VillageLost> listLost = lostService.memberListBoard(map2);
 		List<VillageAd> listAd = adService.memberListBoard(map2);
