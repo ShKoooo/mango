@@ -71,7 +71,7 @@ function sendOk() {
 <div class="container">
 	<div class="body-container">	
 		<div class="body-title">
-			<h3><i class="bi bi-app"></i> 자주 묻는 질문 </h3>
+			<h3><i class="bi bi-app"></i> 이벤트 </h3>
 		</div>
 		
 		<div class="body-main">
