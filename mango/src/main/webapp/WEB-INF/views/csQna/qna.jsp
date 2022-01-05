@@ -94,6 +94,7 @@ function deleteFaq(faqNum, page) {
 	};
 	
 	ajaxFun(url, "post", query, "json", fn);
+	location.reload();
 }
 
 </script>

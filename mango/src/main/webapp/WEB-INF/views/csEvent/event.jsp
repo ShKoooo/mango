@@ -76,15 +76,16 @@ function deleteFaq(num, page) {
 	
 	var query="num="+ num;
 	
-	if(! confirm("위 게시물을 삭제 하시 겠습니까 ? ")) {
-		  return;
-	}
+	if(! confirm("위 게시물을 삭제 하시 겠습니까 ? ")) {		
+		return;
+	} 
 	
 	var fn = function(data){
 		listPage(page);
 	};
 	
 	ajaxFun(url, "post", query, "json", fn);
+	location.reload();
 }
 
 </script>
