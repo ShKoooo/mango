@@ -322,12 +322,12 @@ function searchFaq() {
 				
 				<div>
 					<label style="width: 100%; padding-bottom: 10px;">무엇을 도와 드릴까요?</label>
-					<textarea rows="5" cols="38" name="inquiryContent" style="color: black; border-radius: 10px;"></textarea>
+					<textarea rows="5" cols="33" name="inquiryContent" style="color: black; border-radius: 10px;"></textarea>
 				</div>
 				
 				<div>
 					<label style="width: 100%; padding-bottom: 10px;">첨부 파일</label>
-					<input type="file" name="selectFile" style="border-radius: 10px;">
+					<input type="file" name="selectFile" style="border-radius: 10px; width: 100%;">
 				</div>
 				<div>
 					<button type="button" id="personalSend" onclick="sendPersonalBtn();">보내기</button>
