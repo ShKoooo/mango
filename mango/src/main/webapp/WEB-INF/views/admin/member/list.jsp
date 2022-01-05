@@ -9,7 +9,7 @@
 <style type="text/css">
 .body-container {
 	margin-left : 20px;
-	max-width: 1000px;
+	max-width: 1200px;
 }
 </style>
 
