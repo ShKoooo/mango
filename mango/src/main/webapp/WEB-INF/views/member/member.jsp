@@ -372,9 +372,14 @@ $(function() {
 								</div>
 		    				</div>
 							<small class="form-control-plaintext help-block2">
-								${nickChangeable=="true"?
-									"욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.":
-									"닉네임을 변경하고 30일이 지난 이후 변경할 수 있습니다."}
+								<c:if test="${mode=='update'}">
+									${nickChangeable=="true"?
+										"욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.":
+										"닉네임을 변경하고 30일이 지난 이후 변경할 수 있습니다."}
+								</c:if>
+								<c:if test="${mode=='member'}">
+									욕설을 사용하거나 기타 약관에 위배되는 닉네임은 운영자에 의해 임의 변경될 수 있음을 고지해 드립니다.
+								</c:if>
 							</small>
 		    			</div>
 		    		</div>

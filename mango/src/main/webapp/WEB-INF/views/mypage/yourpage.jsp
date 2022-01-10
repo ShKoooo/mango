@@ -89,7 +89,7 @@ $(function() {
 	  	chart: {
 	    	type: 'bar',
 	    	height: 160,
-	    	backgroundColor: '#EFEFEF'
+	    	backgroundColor: '#FFFFFF'
 	  	},
 	  	title: {
 	    	text: null
