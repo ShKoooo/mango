@@ -222,7 +222,11 @@ $(function() {
 							</tr>
 							<tr style="border-bottom-width: 3px;">
 								<td colspan="1" class="table-light">내용</td>
-								<td colspan="6">${dto.repMemContent}</td>
+								<td colspan="6">${dto.repMemContent}
+									<c:if test="${dto.repMemContent == null or dto.repMemContent == ''}">
+										(상세내역 미작성)
+									</c:if>
+								</td>
 							</tr>
 						</c:forEach>
 					</tbody>

@@ -93,7 +93,11 @@ $(function() {
 								data-reportNum="${dto.reportNum}">
 								<td>${dto.reasonName}</td>
 								<td class="myBtnArticle" title="${dto.fullSubject}">${dto.subject}</td>
-								<td>${dto.reportContent}</td>
+								<td>${dto.reportContent}
+									<c:if test="${dto.reportContent == null or dto.reportContent == ''}">
+										(상세내역 미작성)
+									</c:if>
+								</td>
 								<td>${dto.reportRegDate}</td>
 								<td class="myBtnClear">처리&nbsp;<i class="icofont-ui-check"></i></td>
 							</tr>

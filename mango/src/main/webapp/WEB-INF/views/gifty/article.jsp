@@ -282,19 +282,18 @@ function clickBook() {
                                 </c:if>
                             
                             	 <li>
-                            	 	<c:choose>
-                            	 		<c:when test=" ${dto.gPrice==0}">
-                            	 			무료나눔<span style="color: orange;"><i class="bi bi-suit-heart-fill"></i></span>
-                            	 		</c:when>
-                            	 		<c:otherwise>
-		                            	 	<c:if test="${dto.gIsProposable eq 'T'}">
-		                                		<a href="">가격 제안하기</a>
-		                                	</c:if>
-		                                	<c:if test="${dto.gIsProposable eq 'F'}">
-		                                		가격 제안 불가
-		                                	</c:if>
-                            	 		</c:otherwise>
-                            	 	</c:choose>
+                            	 	<c:if test="${dto.gPrice<=0}">
+                            	 		무료나눔<span style="color: orange;"><i class="bi bi-suit-heart-fill"></i></span>
+                            	 	</c:if>
+                            	 	<c:if test="${dto.gPrice>0}">
+                            	 		${dto.gPrice}원 /
+	                            	 	<c:if test="${dto.gIsProposable eq 'T'}">
+	                                		<a href="">가격 제안하기</a>
+	                                	</c:if>
+	                                	<c:if test="${dto.gIsProposable eq 'F'}">
+	                                		가격 제안 불가
+	                                	</c:if>
+                            	 	</c:if>
                             	 </li>
                                  <li>
                                 	<c:if test="${dto.gStatus eq '판매중'}">

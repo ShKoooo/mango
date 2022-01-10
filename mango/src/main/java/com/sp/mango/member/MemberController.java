@@ -109,6 +109,8 @@ public class MemberController {
 			uri = "redirect:/";
 		} else if (uri.indexOf("/images/slide") >= 0) {	// 임시 처리
 			uri = "redirect:/";
+		} else if (uri.indexOf("/uploads/") >= 0) {	// 임시 처리 2
+			uri = "redirect:/";
 		} else {
 			uri = "redirect:" + uri;
 		}
