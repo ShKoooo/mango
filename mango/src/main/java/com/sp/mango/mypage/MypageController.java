@@ -1243,6 +1243,10 @@ public class MypageController {
 		}
 		String userId = memberInfo.getUserId();
 		
+		if (current_page < 1) {
+			current_page = 1;
+		}
+		
 		if (!product.equals("true")&&
 				!giftycon.equals("true")&&
 				!vbbs.equals("true")&&
