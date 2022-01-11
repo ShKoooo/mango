@@ -295,6 +295,9 @@ function clickBook() {
 	                                	</c:if>
                             	 	</c:if>
                             	 </li>
+                            	 <li>
+                                	<span>유효기간 : ${dto.gExpdate}</span>
+                               	 </li>
                                  <li>
                                 	<c:if test="${dto.gStatus eq '판매중'}">
                                       <c:if test="${sessionScope.member.userId==dto.userId || empty sessionScope.member}">
